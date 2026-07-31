@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Vconnectech &amp; ZMD — Product Pipeline Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F8FC; --panel:#FFFFFF; --panel2:#EEF3FA; --line:#DEE6F0;
+  --text:#182338; --sub:#5C6B84; --mute:#8B98AE;
+  --teal:#0E9C8C; --amber:#C97A0A; --red:#D93636;
+  --cam:#3B6FE0; --sen:#7C4FE0; --edg:#0E9C8C; --drn:#E0507F; --vdb:#C97A0A;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;}
+.wrap{max-width:1280px;margin:0 auto;padding:32px 28px 60px;}
+.topbar{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:20px;border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:26px;}
+.brand{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;}
+.brand span{color:var(--teal);}
+.sub{color:var(--sub);font-size:13px;margin-top:4px;}
+.sync-note{color:var(--mute);font-size:11px;margin-top:6px;font-family:'JetBrains Mono',monospace;}
+.sync-note.live{color:var(--teal);}
+.sync-note.stale{color:var(--amber);}
+.topbtns{display:flex;gap:10px;flex-wrap:wrap;}
+button.lib{background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:10px 16px;border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;cursor:pointer;font-weight:500;}
+button.lib:hover{border-color:var(--teal);color:var(--teal);}
+
+/* ---- Category strip ---- */
+.cat-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:28px;}
+.cat-tile{background:var(--panel);border:2px solid var(--line);border-radius:12px;padding:16px;cursor:pointer;transition:.15s;box-shadow:0 1px 3px rgba(24,35,56,.06);}
+.cat-tile:hover{border-color:#3a4a6b;}
+.cat-tile.active{border-color:var(--tile-color,var(--teal));background:var(--panel2);}
+.cat-tile .icon{font-size:22px;margin-bottom:8px;}
+.cat-tile .cname{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;}
+.cat-tile .ccount{color:var(--sub);font-size:11.5px;margin-top:2px;}
+.cat-tile .cbar{height:5px;border-radius:3px;background:#E4EAF3;margin-top:10px;overflow:hidden;}
+.cat-tile .cbar i{display:block;height:100%;background:var(--tile-color,var(--teal));}
+.cat-tile .cpct{font-size:11px;color:var(--sub);margin-top:5px;}
+
+/* ---- Variant grid ---- */
+.section-label{font-size:12px;color:var(--sub);text-transform:uppercase;letter-spacing:.6px;margin:0 0 12px;}
+.variant-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-bottom:34px;}
+.variant{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;cursor:pointer;transition:.15s;box-shadow:0 1px 3px rgba(24,35,56,.06);}
+.variant:hover{border-color:var(--teal);}
+.variant.selected{border-color:var(--teal);background:var(--panel2);}
+.variant .vname{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;}
+.variant .vid{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--mute);margin-top:2px;}
+.variant .vmeta{display:flex;justify-content:space-between;align-items:center;margin-top:10px;}
+.variant .vpct{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;}
+.variant .vstage{font-size:11px;color:var(--sub);}
+.variant.blocked{border-left:3px solid var(--red);}
+
+/* ---- Detail panel ---- */
+.detail{display:none;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px 26px;margin-bottom:20px;box-shadow:0 2px 8px rgba(24,35,56,.07);}
+.detail.open{display:block;}
+.dhead{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:18px;}
+.dname{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:600;}
+.did{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--mute);margin-top:3px;}
+.dpeople{display:flex;gap:26px;margin-top:10px;font-size:12.5px;}
+.dpeople div span{display:block;color:var(--mute);font-size:10px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;}
+.pm-missing{color:var(--red);font-style:italic;}
+.dstats{text-align:right;}
+.dpct{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;color:var(--teal);}
+.dsub{color:var(--sub);font-size:11.5px;margin-top:2px;}
+.ddays{display:flex;gap:18px;margin-top:8px;font-size:11.5px;color:var(--sub);}
+.ddays b{color:var(--text);}
+
+.dblocker{background:rgba(217,54,54,.07);border:1px solid rgba(217,54,54,.25);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:12.5px;}
+.dblocker .k{color:var(--red);font-size:10px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;}
+
+.eng-panel{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:20px;}
+.eng-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.eng-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13.5px;}
+.eng-period{font-size:10.5px;color:var(--mute);}
+.status-badge{font-size:11px;font-weight:700;padding:4px 11px;border-radius:6px;text-transform:uppercase;letter-spacing:.3px;}
+.status-badge.red{background:rgba(217,54,54,.12);color:var(--red);}
+.status-badge.amber{background:rgba(201,122,10,.12);color:var(--amber);}
+.status-badge.teal{background:rgba(14,156,140,.12);color:var(--teal);}
+.status-badge.mute{background:rgba(139,152,174,.15);color:var(--mute);}
+.eng-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px;}
+.eng-field .k{color:var(--mute);font-size:10px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;}
+.eng-field .v{font-size:12.5px;}
+.eng-lists{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.eng-list .k{color:var(--mute);font-size:10px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;}
+.eng-list ul{margin:0;padding-left:16px;font-size:12px;line-height:1.6;}
+.eng-risk{background:rgba(217,54,54,.06);border:1px solid rgba(217,54,54,.2);border-radius:7px;padding:8px 12px;margin-top:12px;font-size:12px;}
+.eng-risk .k{color:var(--red);font-size:10px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;}
+.eng-note{font-size:10.5px;color:var(--mute);font-style:italic;margin-top:10px;}
+
+/* Stage timeline */
+.stage-row{display:flex;align-items:center;gap:14px;padding:10px 8px;border-radius:8px;cursor:pointer;border:1px solid transparent;}
+.stage-row:hover{background:var(--panel2);}
+.stage-row.expanded{background:var(--panel2);border-color:var(--line);}
+.stage-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;background:#E4EAF3;color:var(--mute);}
+.stage-num.done{background:var(--teal);color:#FFFFFF;}
+.stage-num.current{background:var(--amber);color:#FFFFFF;}
+.stage-line{flex:1;}
+.stage-name{font-size:13.5px;font-weight:500;}
+.stage-owner{font-size:10.5px;color:var(--mute);margin-top:1px;}
+.stage-status{font-size:11px;padding:3px 9px;border-radius:5px;font-weight:600;flex-shrink:0;}
+.stage-status.done{background:rgba(45,212,191,.15);color:var(--teal);}
+.stage-status.current{background:rgba(245,166,35,.15);color:var(--amber);}
+.stage-status.upcoming{background:rgba(140,150,170,.1);color:var(--mute);}
+.chev{color:var(--mute);font-size:11px;transition:.15s;flex-shrink:0;}
+.stage-row.expanded .chev{transform:rotate(90deg);}
+
+.stage-detail{max-height:0;overflow:hidden;transition:max-height .18s ease;padding-left:40px;}
+.stage-detail.open{max-height:1400px;}
+.stage-detail-inner{padding:6px 0 14px;font-size:12.5px;}
+.stage-info-row{display:flex;justify-content:space-between;align-items:center;padding:5px 10px;font-size:12px;}
+.stage-info-row .k{color:var(--mute);font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;}
+.stage-info-row .v{color:var(--text);}
+.stage-info-list{padding:5px 10px 8px;}
+.stage-info-list .k{display:block;color:var(--mute);font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;}
+.stage-info-list ul{margin:0;padding-left:16px;font-size:12px;line-height:1.55;}
+.stage-info-blocker{background:rgba(217,54,54,.07);border:1px solid rgba(217,54,54,.25);border-radius:6px;padding:7px 10px;margin:4px 10px 6px;font-size:12px;}
+.stage-info-blocker .k{display:block;color:var(--red);font-size:10px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;}
+.dl-btn-sm{background:var(--teal);color:#FFFFFF;border:none;padding:3px 9px;border-radius:5px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;}
+.dl-btn-sm:hover{opacity:.85;}
+.doc-row{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:var(--bg);border-radius:6px;margin-top:6px;border:1px solid var(--line);}
+.doc-status{font-size:10.5px;padding:2px 8px;border-radius:4px;font-weight:600;}
+.doc-status.ready{background:rgba(45,212,191,.15);color:var(--teal);}
+.doc-status.progress{background:rgba(245,166,35,.15);color:var(--amber);}
+.doc-status.notstarted{background:rgba(140,150,170,.1);color:var(--mute);}
+
+.footer-note{color:var(--mute);font-size:11.5px;margin-top:20px;text-align:center;}
+
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(4,7,14,.7);z-index:50;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--panel);border:1px solid var(--line);border-radius:14px;width:min(600px,92vw);max-height:82vh;overflow-y:auto;padding:22px 24px;}
+.modal h3{font-family:'Space Grotesk',sans-serif;margin:0 0 4px;font-size:17px;}
+.modal .sub{margin-bottom:16px;color:var(--sub);font-size:12px;}
+.tmpl-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);font-size:13px;gap:12px;}
+.tmpl-row:last-child{border-bottom:none;}
+.tmpl-name{font-weight:500;}
+.tmpl-desc{color:var(--sub);font-size:11.5px;margin-top:2px;}
+.tmpl-stage{font-size:10.5px;color:var(--teal);text-transform:uppercase;letter-spacing:.4px;white-space:nowrap;}
+.dl-btn{background:var(--teal);color:#FFFFFF;border:none;padding:7px 13px;border-radius:6px;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap;}
+.dl-btn:hover{opacity:.85;}
+.close-x{float:right;background:none;border:none;color:var(--sub);font-size:18px;cursor:pointer;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div>
+      <div class="brand">Vconnectech <span>+</span> ZMD</div>
+      <div class="sub">Product development pipeline — snapshot as of <span id="today"></span></div>
+      <div class="sync-note" id="syncNote">Loading live data…</div>
+    </div>
+    <div class="topbtns">
+      <button class="lib" onclick="loadData(true)">↻ Refresh data</button>
+      <button class="lib" onclick="document.getElementById('libModal').classList.add('open')">Master Template Library</button>
+    </div>
+  </div>
+
+  <div class="section-label">Product lines — click to view variants</div>
+  <div class="cat-strip" id="catStrip"></div>
+
+  <div class="section-label" id="variantLabel">Variants</div>
+  <div class="variant-grid" id="variantGrid"></div>
+
+  <div class="detail" id="detail"></div>
+
+  <div class="footer-note">Stage 1–5: PDM owns solo &nbsp;·&nbsp; Stage 6&ndash;11: PDM + PM jointly &nbsp;·&nbsp; click any stage below to see required documents</div>
+</div>
+
+<div class="modal-overlay" id="libModal">
+  <div class="modal">
+    <button class="close-x" onclick="document.getElementById('libModal').classList.remove('open')">✕</button>
+    <h3>Master Template Library</h3>
+    <div class="sub">Reference templates by stage. Click download to save a starter file.</div>
+    <div id="tmplList"></div>
+  </div>
+</div>
+
+<script>
+const STAGES = [
+ 'Requirement Analysis','Proposal Presentation','Proposal','Commercial Finalization','Statement of Work (SOW)',
+ 'Project Kickoff','Project Planning','Detailed Design','Critical Design Review (CDR)',
+ 'Procurement & Development','Integration, Verification & Validation'
+];
+const TOTAL_STAGES = STAGES.length; // 11
+
+// ---- Fallback snapshot (baked in at publish time) ----
+// Used only if data.json cannot be fetched (e.g. opened as a local file, or the
+// live sync endpoint is briefly unreachable). Overwritten in memory once data.json loads.
+const DATA_FALLBACK = [
+ {cat:"Camera",name:"Dual Lens IP Camera",id:"CAM-001",pdm:"Praddumna Raut",pm:"Prithvi Nagilla",stage:7,daysStage:0,daysTotal:0,doc:"TBD",blocker:null,tentative:"7-Aug-2026"},
+ {cat:"Camera",name:"Single Lens Bullet Camera",id:"CAM-002",pdm:"Praddumna Raut",pm:"Prithvi Nagilla",stage:9,daysStage:0,daysTotal:0,doc:"TBD",blocker:"IR Cut filter issue; SoM failing on our boards; IMX662 camera not streaming",tentative:"5-Aug-2026"},
+ {cat:"Camera",name:"Single Lens Dome Camera",id:"CAM-003",pdm:"Praddumna Raut",pm:"Prithvi Nagilla",stage:6,daysStage:0,daysTotal:0,doc:"TBD",blocker:"Which SoC to use (R2V2N or R2V2L) not yet finalized; awaiting full ISP software package from Renesas",tentative:"31-Jul-2026"},
+ {cat:"Camera",name:"Head Mount Camera",id:"CAM-004",pdm:"Praddumna Raut",pm:"Prithvi Nagilla",stage:7,daysStage:0,daysTotal:0,doc:"TBD",blocker:"On hold — PRD document pending, battery IC still being checked",tentative:null},
+ {cat:"Camera",name:"Body Cam",id:"CAM-005",pdm:"Praddumna Raut",pm:"Prithvi Nagilla",stage:7,daysStage:0,daysTotal:0,doc:"TBD",blocker:"Ethernet switch pending from AerX labs; DXF file needed from AerX labs",tentative:"3-Aug-2026"},
+ {cat:"Camera",name:"Satellite",id:"CAM-006",pdm:"Praddumna Raut",pm:"Prithvi Nagilla",stage:7,daysStage:0,daysTotal:0,doc:"TBD",blocker:"Design size constraint (38x28) under discussion",tentative:"7-Aug-2026"},
+ {cat:"VDelibot",name:"VDelibot",id:"VDB-001",pdm:"Swapnil Mandal",pm:null,stage:1,daysStage:0,daysTotal:0,doc:"TBD",blocker:null,tentative:null},
+ {cat:"Edge",name:"Rack Server",id:"EDG-001",pdm:"Tarun Allani",pm:"Venkata Kiran Venigalla",stage:3,daysStage:0,daysTotal:0,doc:"TBD",blocker:null,tentative:null},
+ {cat:"Edge",name:"Edge Server – Ultra 5/7/9",id:"EDG-002",pdm:"Tarun Allani",pm:"Venkata Kiran Venigalla",stage:3,daysStage:0,daysTotal:0,doc:"TBD",blocker:null,tentative:null},
+ {cat:"Sensor",name:"Parking Sensor",id:"SEN-001",pdm:"Durga",pm:null,stage:10,daysStage:0,daysTotal:0,doc:"TBD",blocker:"Waiting for quotes",tentative:null},
+ {cat:"Sensor",name:"Occupancy Sensor",id:"SEN-002",pdm:"Durga",pm:null,stage:1,daysStage:0,daysTotal:0,doc:"TBD",blocker:"Status was blank in source — confirm",tentative:null},
+ {cat:"Sensor",name:"Band",id:"SEN-003",pdm:"Durga",pm:null,stage:2,daysStage:0,daysTotal:0,doc:"ZMD_Safety_Band_Product_Proposal.pptx",blocker:null,tentative:"29-Jul-2026"},
+ {cat:"Sensor",name:"SOS",id:"SEN-004",pdm:"Durga",pm:null,stage:2,daysStage:0,daysTotal:0,doc:"SOS Device_Product_Proposal",blocker:null,tentative:"29-Jul-2026"},
+ {cat:"Drone",name:"Smart City",id:"DRN-001",pdm:"Bharath Mamidi",pm:null,stage:3,daysStage:0,daysTotal:0,doc:"TBD",blocker:null,tentative:null},
+ {cat:"Drone",name:"Railway",id:"DRN-002",pdm:"Bharath Mamidi",pm:null,stage:1,daysStage:0,daysTotal:0,doc:"TBD",blocker:null,tentative:null},
+];
+
+const CAM_ENGINEERING_FALLBACK = {
+  "CAM-002": {
+    period:"27–31 Jul 2026", owners:"Harika", platform:"NXP", approach:"SoM-based",
+    completed:["Received all boards post assembly and fabrication","Mechanical LED caps, 3mm connector, and PMIC order placed","ONVIF Profile S, G and T implementation completed","99% of PRD features developed","Working on new additional features (device + server side)"],
+    next:["Fix the IR Cut filter and SoM issues","RTSP authentication and multicast development","ANPR, fire and more AI models addition","Grid view, AI enrollment features, OSD configuration","STQC documentation to be completed"],
+    risk:"IR Cut filter issue; SoM failing on our boards; IMX662 camera not streaming",
+    status:"High Risk", eta:"5-Aug-2026"
+  },
+  "CAM-001": {
+    period:"27–31 Jul 2026", owners:"Not specified", platform:"Not specified", approach:"Not specified",
+    completed:["Schematics completed, review yet to be done"],
+    next:["Layout and routing to be completed","PoE + Gerber files to be released"],
+    risk:null, status:"In Progress", eta:"7-Aug-2026"
+  },
+  "CAM-004": {
+    period:"27–31 Jul 2026", owners:"Sandhya and Samudra", platform:"Novatek", approach:"SoC-based",
+    completed:["Design completed, review yet to be done","Schematics completed"],
+    next:["PRD document pending","Checking battery IC"],
+    risk:null, status:"HOLD", eta:null
+  },
+  "CAM-003": {
+    period:"27–31 Jul 2026 (folded from Renesas Platform note — confirm this belongs to Dome)", owners:"Samudra", platform:"Renesas", approach:"SoM-based",
+    completed:["IMX462 sensor working end-to-end on RZ/V2N board with stable live streaming over RTSP/UDP, stable post-reboot","Green color tint issue resolved"],
+    next:["Complete schematics once PRD and SoC finalized by Product Manager","Integrate ISP into pipeline, adapt sensor-replacement guide for IMX462, tune AE/AWB for varying-light conditions"],
+    risk:"Which SoC to use (R2V2N or R2V2L) not decided; need full ISP software package from Renesas, built for IMX415, requires adapting via sensor-replacement guide for IMX462",
+    status:"In Progress", eta:"31-Jul-2026"
+  },
+  "CAM-005": {
+    period:"27–31 Jul 2026 (folded from Bellycam note — confirm this belongs to Body Cam)", owners:"Samudra", platform:"NXP", approach:"SoC-based",
+    completed:["Completed in-rush analysis","USB 3.0 SuperSpeed signal changes (per Jagadeesh, PVC/CC) in progress"],
+    next:["Confirm the HD-SDI IC","Freeze placement and start routing","Verification of schematics in progress"],
+    risk:"Ethernet switch pending from AerX labs; DXF file needed from AerX labs",
+    status:"In Progress", eta:"3-Aug-2026"
+  },
+  "CAM-006": {
+    period:"27–31 Jul 2026 (folded from VCT SoM / Compulab replacement note — confirm this belongs to Satellite)", owners:"Not specified", platform:"Not specified", approach:"SoM-based",
+    completed:["Design changes (USB, HDMI, Display) in progress","Schematics in progress"],
+    next:["Layout and routing to be completed","BOM order to be placed"],
+    risk:"Design size constraint under discussion (38x28)",
+    status:"At Risk", eta:"7-Aug-2026"
+  }
+};
+const STATUS_COLOR = {"High Risk":"red","At Risk":"amber","HOLD":"mute","In Progress":"teal"};
+
+// Live-loaded (from data.json, produced by the Sheet → GitHub Action pipeline).
+// Starts out as the fallback snapshot and is replaced once loadData() succeeds.
+let DATA = DATA_FALLBACK;
+let CAM_ENGINEERING = CAM_ENGINEERING_FALLBACK;
+
+const CATS = ["Camera","Sensor","Edge","Drone","VDelibot"];
+const CAT_COLOR = {Camera:"--cam",Sensor:"--sen",Edge:"--edg",Drone:"--drn",VDelibot:"--vdb"};
+const CAT_ICON = {Camera:"◉",Sensor:"◆",Edge:"▦",Drone:"✈",VDelibot:"●"};
+
+// Real per-stage document checklist (multiple documents per stage) — structural, kept static.
+const STAGE_DOCS = {
+ 1: ["MRD","PRD","PRD Matrix"],
+ 2: ["Proposal Presentation (PPT)"],
+ 3: ["NDA","Quotation (Price Breakup, Commercial Terms, Payment Schedule, Delivery Schedule)"],
+ 4: ["Final SOW (Scope Matrix, Deliverables List, Exclusions List, Assumptions, Dependencies, Acceptance Criteria)"],
+ 5: ["Kickoff Presentation","Meeting Minutes (MoM)","RACI Matrix"],
+ 6: ["Work Breakdown Structure (WBS)","PDM Document","Hardware Architecture","Software Architecture","Block Diagram",
+     "Data Flow Diagram (DFD)","Interface Control Document (ICD)","Milestone Plan","Resource Plan","Budget Tracker",
+     "Procurement Plan","Risk Register"],
+ 7: ["Schematics","PCB Layout","Bill of Materials (BOM)","PCB Stack-up","Simulation Reports","Software Design Document (SDD)",
+     "API Specification","Database Design","UI Mockups","CAD Models","Mechanical Drawings","Thermal Analysis Report"],
+ 8: ["CDR Package","Design Review Presentation","Simulation Results","Review Minutes","Risk Closure Report",
+     "Manufacturing Readiness Report","Design Freeze Approval"],
+ 9: ["Approved Vendor List (AVL)","RFQ","Purchase Request (PR)","Purchase Order (PO)","Delivery Tracker",
+     "Incoming Inspection Report","PCB Assembly Report","Bring-up Report","Debug Logs","Source Code Repository",
+     "Code Review Report","Unit Test Report","Dataset","AI Training Report","Sprint Board","Bug Tracker","Version Control Log"],
+ 10: ["Verification Plan","Validation Plan","Test Cases","Test Reports","Defect Log","Regression Test Report",
+      "Requirements Traceability Matrix (RTM)","Customer Acceptance Test (CAT/UAT) Report","Final Validation Report"],
+ 11: []
+};
+
+const TEMPLATES = [];
+STAGES.forEach((s,i)=>{ (STAGE_DOCS[i+1]||[]).forEach(name=>TEMPLATES.push({stage:s,name:name,desc:`Standard ${s} deliverable`})); });
+
+document.getElementById('today').textContent = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+
+let selectedCat = "Camera";
+let selectedProduct = null;
+let expandedStage = null;
+
+function catProducts(cat){ return DATA.filter(d=>d.cat===cat); }
+
+function renderCatStrip(){
+  document.getElementById('catStrip').innerHTML = CATS.map(cat=>{
+    const list = catProducts(cat);
+    if(!list.length){ return `
+    <div class="cat-tile" style="--tile-color:var(${CAT_COLOR[cat]});opacity:.4;cursor:default">
+      <div class="icon">${CAT_ICON[cat]}</div>
+      <div class="cname">${cat}</div>
+      <div class="ccount">0 variants</div>
+    </div>`; }
+    const avg = Math.round(list.reduce((s,d)=>s+d.stage/TOTAL_STAGES,0)/list.length*100);
+    const active = cat===selectedCat ? 'active' : '';
+    return `
+    <div class="cat-tile ${active}" style="--tile-color:var(${CAT_COLOR[cat]})" onclick="selectCategory('${cat}')">
+      <div class="icon">${CAT_ICON[cat]}</div>
+      <div class="cname">${cat}</div>
+      <div class="ccount">${list.length} variant${list.length>1?'s':''}</div>
+      <div class="cbar"><i style="width:${avg}%"></i></div>
+      <div class="cpct">${avg}% avg progress</div>
+    </div>`;
+  }).join('');
+}
+
+function selectCategory(cat){
+  selectedCat = cat;
+  selectedProduct = null;
+  document.getElementById('detail').classList.remove('open');
+  renderCatStrip();
+  renderVariants();
+}
+
+function renderVariants(){
+  const list = catProducts(selectedCat);
+  document.getElementById('variantLabel').textContent = `${selectedCat} — variants`;
+  document.getElementById('variantGrid').innerHTML = list.map(d=>{
+    const pct = Math.round(d.stage/TOTAL_STAGES*100);
+    const sel = d.id===selectedProduct ? 'selected' : '';
+    const blk = d.blocker ? 'blocked' : '';
+    return `
+    <div class="variant ${sel} ${blk}" onclick="selectProduct('${d.id}')">
+      <div class="vname">${d.name}</div>
+      <div class="vid">${d.id}</div>
+      <div class="vmeta">
+        <div class="vstage">Stage ${d.stage}/${TOTAL_STAGES}</div>
+        <div class="vpct">${pct}%</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function selectProduct(id){
+  selectedProduct = id;
+  expandedStage = null;
+  renderVariants();
+  renderDetail();
+}
+
+function toggleStage(n){
+  expandedStage = expandedStage===n ? null : n;
+  renderDetail();
+}
+
+function stageDocStatus(d, n){
+  if(n < d.stage) return {label:'Ready', cls:'ready'};
+  if(n === d.stage) return {label:'In progress', cls:'progress'};
+  return {label:'Not started', cls:'notstarted'};
+}
+
+function renderDetail(){
+  const panel = document.getElementById('detail');
+  if(!selectedProduct){ panel.classList.remove('open'); return; }
+  const d = DATA.find(x=>x.id===selectedProduct);
+  if(!d){ selectedProduct=null; panel.classList.remove('open'); return; }
+  const pct = Math.round(d.stage/TOTAL_STAGES*100);
+  const owner = d.stage<=5 ? 'PDM' : 'PDM + PM';
+
+  const stageRows = STAGES.map((s,i)=>{
+    const n=i+1;
+    const status = n<d.stage?'done':n===d.stage?'current':'upcoming';
+    const label = n<d.stage?'Completed':n===d.stage?'In progress':'Upcoming';
+    const rowOwner = n<=5?'PDM':'PDM + PM';
+    const isOpen = expandedStage===n;
+    const docs = STAGE_DOCS[n] || [];
+    const ds = stageDocStatus(d,n);
+    const docRow = docs.length ? docs.map(docName=>{
+      const isCurrentDoc = (status==='current' && d.doc && d.doc!=='TBD' && d.doc===docName);
+      const label2 = status==='current' ? (isCurrentDoc ? `In progress — ${d.doc}` : ds.label) : ds.label;
+      return `<div class="doc-row"><span>${docName}</span><div style="display:flex;align-items:center;gap:8px;"><span class="doc-status ${ds.cls}">${label2}</span><button class="dl-btn-sm" onclick="event.stopPropagation();downloadTemplate('${docName}','${s}','${s}')">Download</button></div></div>`;
+    }).join('') : `<div class="doc-row"><span style="color:var(--mute)">No standard documents defined for this stage</span></div>`;
+
+    let extra = '';
+    if(status==='current'){
+      const eng = CAM_ENGINEERING[d.id];
+      const milestones = eng ? eng.completed : null;
+      const nextSteps = eng ? eng.next : null;
+      const riskText = eng && eng.risk ? eng.risk : d.blocker;
+      extra = `
+        <div class="stage-info-row"><span class="k">Days in this stage</span><span class="v"><b>${d.daysStage}</b> days</span></div>
+        <div class="stage-info-list"><span class="k">Key Milestones</span>${milestones ? `<ul>${milestones.map(x=>`<li>${x}</li>`).join('')}</ul>` : `<div class="v" style="color:var(--mute)">Not tracked for this product yet</div>`}</div>
+        <div class="stage-info-list"><span class="k">Immediate Next Step</span>${nextSteps ? `<ul>${nextSteps.slice(0,3).map(x=>`<li>${x}</li>`).join('')}</ul>` : `<div class="v" style="color:var(--mute)">Not tracked for this product yet</div>`}</div>
+        ${riskText ? `<div class="stage-info-blocker"><span class="k">Blocker</span>${riskText}</div>` : `<div class="stage-info-row"><span class="k">Blocker</span><span class="v" style="color:var(--mute)">None active</span></div>`}`;
+    } else if(status==='done'){
+      extra = `<div class="stage-info-row"><span class="k">Duration</span><span class="v" style="color:var(--mute)">Not individually logged (historical)</span></div>`;
+    } else {
+      extra = `<div class="stage-info-row"><span class="k">Status</span><span class="v" style="color:var(--mute)">Not started yet</span></div>`;
+    }
+
+    return `
+    <div class="stage-row ${isOpen?'expanded':''}" onclick="toggleStage(${n})">
+      <div class="stage-num ${status}">${n}</div>
+      <div class="stage-line">
+        <div class="stage-name">${s}</div>
+        <div class="stage-owner">${rowOwner}</div>
+      </div>
+      <div class="stage-status ${status}">${label}</div>
+      <div class="chev">▶</div>
+    </div>
+    <div class="stage-detail ${isOpen?'open':''}">
+      <div class="stage-detail-inner">
+        ${extra}
+        ${docRow}
+      </div>
+    </div>`;
+  }).join('');
+
+  const eng = CAM_ENGINEERING[d.id];
+  const stageName = STAGES[d.stage-1];
+  const engHtml = eng ? `
+    <div class="eng-panel">
+      <div class="eng-head">
+        <div>
+          <div class="eng-title">Stage ${d.stage} — ${stageName} Update</div>
+          <div class="eng-period">${eng.period}</div>
+        </div>
+        <div class="status-badge ${STATUS_COLOR[eng.status]||'mute'}">${eng.status}</div>
+      </div>
+      <div class="eng-grid">
+        <div class="eng-field"><div class="k">Owner(s)</div><div class="v">${eng.owners}</div></div>
+        <div class="eng-field"><div class="k">ETA</div><div class="v">${eng.eta || 'Not set'}</div></div>
+      </div>
+      <div class="eng-lists">
+        <div class="eng-list"><div class="k">Completed</div><ul>${eng.completed.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+        <div class="eng-list"><div class="k">Next Milestone</div><ul>${eng.next.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+      </div>
+      ${eng.risk ? `<div class="eng-risk"><div class="k">Key Risk / Dependency</div>${eng.risk}</div>` : ''}
+      ${eng.period.includes('folded') ? `<div class="eng-note">⚠ Mapped from a platform/component note in the source update — please confirm this belongs under ${d.name}.</div>` : ''}
+    </div>` : '';
+
+  panel.innerHTML = `
+    <div class="dhead">
+      <div>
+        <div class="dname">${d.name}</div>
+        <div class="did">${d.id} · ${d.cat}</div>
+        <div class="dpeople">
+          <div><span>PDM</span>${d.pdm}</div>
+          <div><span>PM / TL</span>${d.pm ? d.pm : '<span class="pm-missing">Not assigned</span>'}</div>
+          <div><span>Owner (current stage)</span>${owner}</div>
+        </div>
+      </div>
+      <div class="dstats">
+        <div class="dpct">${pct}%</div>
+        <div class="dsub">overall progress</div>
+        <div class="ddays"><span><b>${d.daysStage}</b>d in stage</span><span><b>${d.daysTotal}</b>d total</span></div>
+      </div>
+    </div>
+    ${d.blocker ? `<div class="dblocker"><div class="k">Blocker</div>${d.blocker}</div>` : ''}
+    ${engHtml}
+    ${stageRows}
+  `;
+  panel.classList.add('open');
+}
+
+function downloadTemplate(name, desc, stage){
+  const content = `${name}\n${'='.repeat(name.length)}\n\nStage: ${stage}\nPurpose: ${desc}\n\n[Fill in this template for the product/project]\n\n1. Overview\n\n2. Details\n\n3. Sign-off\n\n`;
+  const blob = new Blob([content], {type:'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = name.replace(/[^a-z0-9]+/gi,'_') + '.txt';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById('tmplList').innerHTML = TEMPLATES.map((t,i)=>`
+  <div class="tmpl-row">
+    <div><div class="tmpl-name">${t.name}</div><div class="tmpl-desc">${t.desc}</div></div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span class="tmpl-stage">${t.stage}</span>
+      <button class="dl-btn" onclick="downloadTemplate('${t.name}','${t.desc}','${t.stage}')">Download</button>
+    </div>
+  </div>`).join('');
+
+// ---- Live data sync ----
+// data.json is written by the Google Apps Script bound to the "PDM & PM" sheet
+// every time it publishes (see apps-script/Code.gs). This page just reads the
+// committed file — no API keys or auth live in the browser.
+async function loadData(manual){
+  const note = document.getElementById('syncNote');
+  if(manual) note.textContent = 'Refreshing…';
+  try{
+    const res = await fetch('./data.json', {cache:'no-store'});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const j = await res.json();
+    if(!Array.isArray(j.products)) throw new Error('malformed data.json');
+    DATA = j.products;
+    CAM_ENGINEERING = j.engineering || {};
+    const when = j.generatedAt ? new Date(j.generatedAt).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : 'unknown time';
+    note.textContent = `Live — synced from sheet at ${when}`;
+    note.className = 'sync-note live';
+  }catch(e){
+    DATA = DATA_FALLBACK;
+    CAM_ENGINEERING = CAM_ENGINEERING_FALLBACK;
+    note.textContent = 'Showing last saved snapshot — live sync unavailable (open via GitHub Pages, not as a local file)';
+    note.className = 'sync-note stale';
+  }
+  if(!DATA.some(d=>d.id===selectedProduct)) selectedProduct = null;
+  renderCatStrip();
+  renderVariants();
+  renderDetail();
+}
+
+loadData(false);
+</script>
+</body>
+</html>
