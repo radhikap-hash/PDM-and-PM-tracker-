@@ -542,7 +542,7 @@ async function loadData(manual){
   }
   rebuildTemplates();
   if(!DATA.some(d=>d.id===selectedProduct)) selectedProduct = null;
-  if(!CATS.includes(selectedCat)) selectedCat = CATS.find(c=>catProducts(c).length) || CATS[0];
+  const cats = currentCats_();  if (!cats.includes(selectedCat)) {   selectedCat =     cats.find(category => catProducts(category).length) ||     cats[0] ||     ''; }
   renderCatStrip();
   renderVariants();
   renderDetail();
