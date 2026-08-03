@@ -1,31 +1,17 @@
 {
-  "generatedAt": "2026-08-03T04:36:08.932Z",
-  "stages": [
-    "Requirement Analysis",
-    "Proposal",
-    "Commercial Finalization",
-    "Statement of Work (SOW)",
-    "Project Kickoff",
-    "Project Planning",
-    "Detailed Design",
-    "Critical Design Review (CDR)",
-    "Procurement & Development",
-    "Integration, Verification & Validation",
-    "Project Closure"
-  ],
+  "generatedAt": "2026-08-03T11:16:26.140Z",
+  "stages": [],
+  "stageDocs": {},
   "products": [
     {
       "cat": "Camera",
       "name": "Dual Lens IP Camera",
       "id": "CAM-001",
       "pdm": "Praddumna Raut",
-      "pm": "Prithvi Nagilla",
-      "stage": 9,
-      "daysStage": 0,
-      "daysTotal": 0,
-      "doc": "TBD",
-      "blocker": null,
-      "tentative": null,
+      "pm": null,
+      "stage": 1,
+      "plannedStart": null,
+      "plannedEnd": null,
       "statusLabel": "Procurement & Development"
     },
     {
@@ -33,13 +19,10 @@
       "name": "Single Lens Bullet Camera",
       "id": "CAM-002",
       "pdm": "Praddumna Raut",
-      "pm": "Prithvi Nagilla",
-      "stage": 9,
-      "daysStage": 0,
-      "daysTotal": 0,
-      "doc": "TBD",
-      "blocker": null,
-      "tentative": null,
+      "pm": null,
+      "stage": 1,
+      "plannedStart": null,
+      "plannedEnd": null,
       "statusLabel": "Procurement & Development"
     },
     {
@@ -47,13 +30,10 @@
       "name": "Single Lens Dome Camera",
       "id": "CAM-003",
       "pdm": "Praddumna Raut",
-      "pm": "Prithvi Nagilla",
-      "stage": 9,
-      "daysStage": 0,
-      "daysTotal": 0,
-      "doc": "TBD",
-      "blocker": null,
-      "tentative": null,
+      "pm": null,
+      "stage": 1,
+      "plannedStart": null,
+      "plannedEnd": null,
       "statusLabel": "Procurement & Development"
     },
     {
@@ -61,13 +41,10 @@
       "name": "Head Mount Camera",
       "id": "CAM-004",
       "pdm": "Praddumna Raut",
-      "pm": "Prithvi Nagilla",
+      "pm": null,
       "stage": 1,
-      "daysStage": 0,
-      "daysTotal": 0,
-      "doc": "TBD",
-      "blocker": null,
-      "tentative": null,
+      "plannedStart": null,
+      "plannedEnd": null,
       "statusLabel": "Ordered for learning"
     },
     {
@@ -75,13 +52,10 @@
       "name": "Body Cam",
       "id": "CAM-005",
       "pdm": "Praddumna Raut",
-      "pm": "Prithvi Nagilla",
+      "pm": null,
       "stage": 1,
-      "daysStage": 0,
-      "daysTotal": 0,
-      "doc": "TBD",
-      "blocker": null,
-      "tentative": null,
+      "plannedStart": null,
+      "plannedEnd": null,
       "statusLabel": "Requirement Analysis"
     },
     {
@@ -89,13 +63,10 @@
       "name": "Satellite",
       "id": "CAM-006",
       "pdm": "Praddumna Raut",
-      "pm": "Prithvi Nagilla",
+      "pm": null,
       "stage": 1,
-      "daysStage": 0,
-      "daysTotal": 0,
-      "doc": "TBD",
-      "blocker": null,
-      "tentative": null,
+      "plannedStart": null,
+      "plannedEnd": null,
       "statusLabel": "Waiting for input from tertrasoft"
     },
     {
@@ -105,12 +76,9 @@
       "pdm": "Praddumna Raut",
       "pm": null,
       "stage": 1,
-      "daysStage": 0,
-      "daysTotal": 0,
-      "doc": "TBD",
-      "blocker": null,
-      "tentative": null,
-      "statusLabel": "Requirement Analysis"
+      "plannedStart": null,
+      "plannedEnd": null,
+      "statusLabel": null
     },
     {
       "cat": "VDelibot",
@@ -119,11 +87,8 @@
       "pdm": "Swapnil Mandal",
       "pm": null,
       "stage": 1,
-      "daysStage": 0,
-      "daysTotal": 0,
-      "doc": "TBD",
-      "blocker": null,
-      "tentative": "2026-07-31",
+      "plannedStart": null,
+      "plannedEnd": null,
       "statusLabel": "Requirement Analysis"
     },
     {
@@ -131,13 +96,10 @@
       "name": "Rack Server",
       "id": "EDG-001",
       "pdm": "Tarun Allani",
-      "pm": "Venkata Kiran Venigalla",
-      "stage": 2,
-      "daysStage": 0,
-      "daysTotal": 0,
-      "doc": "TBD",
-      "blocker": null,
-      "tentative": null,
+      "pm": null,
+      "stage": 1,
+      "plannedStart": null,
+      "plannedEnd": null,
       "statusLabel": "Proposal"
     },
     {
@@ -145,13 +107,10 @@
       "name": "Edge Server - Ultra 5 225H / Ultra 7 255H / Ultra 9 285H",
       "id": "EDG-002",
       "pdm": "Tarun Allani",
-      "pm": "Venkata Kiran Venigalla",
-      "stage": 2,
-      "daysStage": 0,
-      "daysTotal": 0,
-      "doc": "TBD",
-      "blocker": null,
-      "tentative": null,
+      "pm": null,
+      "stage": 1,
+      "plannedStart": null,
+      "plannedEnd": null,
       "statusLabel": "Proposal"
     },
     {
@@ -160,12 +119,9 @@
       "id": "SEN-001",
       "pdm": "Durga",
       "pm": null,
-      "stage": 2,
-      "daysStage": 0,
-      "daysTotal": 0,
-      "doc": "TBD",
-      "blocker": null,
-      "tentative": "2026-08-03",
+      "stage": 1,
+      "plannedStart": null,
+      "plannedEnd": null,
       "statusLabel": "Proposal"
     },
     {
@@ -175,12 +131,9 @@
       "pdm": "Durga",
       "pm": null,
       "stage": 1,
-      "daysStage": 0,
-      "daysTotal": 0,
-      "doc": "TBD",
-      "blocker": null,
-      "tentative": null,
-      "statusLabel": "Requirement Analysis"
+      "plannedStart": null,
+      "plannedEnd": null,
+      "statusLabel": null
     },
     {
       "cat": "Sensor",
@@ -189,11 +142,8 @@
       "pdm": "Durga",
       "pm": null,
       "stage": 1,
-      "daysStage": 0,
-      "daysTotal": 0,
-      "doc": "TBD",
-      "blocker": "Waiting for quotes",
-      "tentative": null,
+      "plannedStart": null,
+      "plannedEnd": null,
       "statusLabel": "Requirement Analysis"
     },
     {
@@ -203,12 +153,9 @@
       "pdm": "Durga",
       "pm": null,
       "stage": 1,
-      "daysStage": 0,
-      "daysTotal": 0,
-      "doc": "TBD",
-      "blocker": null,
-      "tentative": null,
-      "statusLabel": "Requirement Analysis"
+      "plannedStart": null,
+      "plannedEnd": null,
+      "statusLabel": null
     },
     {
       "cat": "Drone",
@@ -216,12 +163,9 @@
       "id": "DRN-001",
       "pdm": "Bharath Mamidi",
       "pm": null,
-      "stage": 2,
-      "daysStage": 0,
-      "daysTotal": 0,
-      "doc": "TBD",
-      "blocker": null,
-      "tentative": "2026-07-09",
+      "stage": 1,
+      "plannedStart": null,
+      "plannedEnd": null,
       "statusLabel": "Proposal"
     },
     {
@@ -231,71 +175,232 @@
       "pdm": "Bharath Mamidi",
       "pm": null,
       "stage": 1,
-      "daysStage": 0,
-      "daysTotal": 0,
-      "doc": "TBD",
-      "blocker": null,
-      "tentative": null,
+      "plannedStart": null,
+      "plannedEnd": null,
       "statusLabel": "Requirement Analysis"
     }
   ],
   "engineering": {
-    "VDB-001": {
-      "period": "2026-08-04",
-      "owners": "Swapnil",
-      "platform": "Not specified",
-      "approach": "Not specified",
-      "completed": [],
-      "next": [],
-      "risk": null,
-      "status": "🟠 Due Soon",
-      "eta": "2026-07-31",
-      "source": "Project details, Delivery bot-Swapnil"
-    },
     "SEN-001": {
-      "period": "2026-08-03",
-      "owners": "PDM",
-      "platform": "Not specified",
-      "approach": "Not specified",
-      "completed": [
-        "Wed Jul 29 2026 00:00:00 GMT+0530 (India Standard Time)"
-      ],
-      "next": [],
-      "risk": null,
-      "status": "🟢 Completed",
-      "eta": "2026-08-03",
-      "source": "Project details, Sensor-Durga"
+      "1": {
+        "plannedStart": "1-Aug-2026",
+        "dueDate": "3-Aug-2026",
+        "completedDate": "3-Aug-2026",
+        "status": "🟢 Completed",
+        "milestone": null,
+        "blocker": null,
+        "nextStep": "Approval"
+      },
+      "2": {
+        "plannedStart": "3-Aug-2026",
+        "dueDate": "3-Aug-2026",
+        "completedDate": "3-Aug-2026",
+        "status": "🟢 Completed",
+        "milestone": null,
+        "blocker": null,
+        "nextStep": "Approval"
+      },
+      "10": {
+        "plannedStart": "27-Jul-2026",
+        "dueDate": "30-Aug-2026",
+        "completedDate": null,
+        "status": "🟢 On Track",
+        "milestone": null,
+        "blocker": "Waiting for quotes",
+        "nextStep": "Procurement"
+      }
     },
-    "SEN-003": {
-      "period": "2026-08-30",
-      "owners": "PDM & PM",
-      "platform": "Not specified",
-      "approach": "Not specified",
-      "completed": [
-        "Thu Jul 30 2026 00:00:00 GMT+0530 (India Standard Time)",
-        "Mon Aug 31 2026 00:00:00 GMT+0530 (India Standard Time)",
-        "Wed Jul 29 2026 00:00:00 GMT+0530 (India Standard Time)",
-        "Fri Jul 31 2026 00:00:00 GMT+0530 (India Standard Time)"
-      ],
-      "next": [
-        "Procurement"
-      ],
-      "risk": "Waiting for quotes",
-      "status": "🟢 On Track",
-      "eta": null,
-      "source": "Project details, Sensor-Durga"
+    "BAN-1": {
+      "1": {
+        "plannedStart": "11-Jul-2026",
+        "dueDate": "31-Jul-2026",
+        "completedDate": "31-Jul-2026",
+        "status": "🟢 Completed",
+        "milestone": null,
+        "blocker": null,
+        "nextStep": "Approval"
+      },
+      "2": {
+        "plannedStart": "6-Jul-2026",
+        "dueDate": "31-Jul-2026",
+        "completedDate": "31-Jul-2026",
+        "status": "🟢 Completed",
+        "milestone": null,
+        "blocker": null,
+        "nextStep": "Any changes if required"
+      },
+      "5": {
+        "plannedStart": "31-Jul-2026",
+        "dueDate": "31-Jul-2026",
+        "completedDate": "31-Jul-2026",
+        "status": "🟢 Completed",
+        "milestone": null,
+        "blocker": null,
+        "nextStep": "To decide prototyping start date"
+      }
     },
-    "DRN-001": {
-      "period": "2026-07-09",
-      "owners": "Bharath",
-      "platform": "Not specified",
-      "approach": "Not specified",
-      "completed": [],
-      "next": [],
-      "risk": null,
-      "status": "🟢 Completed",
-      "eta": "2026-07-09",
-      "source": "Project details, Drone-Bharath"
+    "SOS-1": {
+      "1": {
+        "plannedStart": "11-Jul-2026",
+        "dueDate": "31-Aug-2026",
+        "completedDate": "31-Aug-2026",
+        "status": "🟢 Completed",
+        "milestone": null,
+        "blocker": null,
+        "nextStep": "Approval"
+      },
+      "2": {
+        "plannedStart": "28-Jul-2026",
+        "dueDate": "29-Jul-2026",
+        "completedDate": "29-Jul-2026",
+        "status": "🟢 Completed",
+        "milestone": null,
+        "blocker": null,
+        "nextStep": "Any changes if required"
+      },
+      "5": {
+        "plannedStart": "31-Jul-2026",
+        "dueDate": "31-Jul-2026",
+        "completedDate": "31-Jul-2026",
+        "status": "🟢 Completed",
+        "milestone": null,
+        "blocker": null,
+        "nextStep": "To decide prototyping start date"
+      }
     }
+  },
+  "documents": {
+    "SEN-001": [
+      {
+        "stage": 1,
+        "document": "MRD",
+        "plannedStart": "1-Aug-2026",
+        "dueDate": "3-Aug-2026",
+        "completedDate": "3-Aug-2026",
+        "status": "🟢 Completed",
+        "link": null
+      },
+      {
+        "stage": 1,
+        "document": "PRD",
+        "plannedStart": "3-Aug-2026",
+        "dueDate": "3-Aug-2026",
+        "completedDate": "3-Aug-2026",
+        "status": "🟢 Completed",
+        "link": null
+      },
+      {
+        "stage": 2,
+        "document": "Proposal Presentation (PPT)",
+        "plannedStart": "3-Aug-2026",
+        "dueDate": "3-Aug-2026",
+        "completedDate": "3-Aug-2026",
+        "status": "🟢 Completed",
+        "link": null
+      },
+      {
+        "stage": 10,
+        "document": "• Verification Plan\n• Validation Plan\n• Test Cases\n• Test Reports\n• Defect Log\n• Regression Test Report\n• Requirements Traceability Matrix (RTM)\n• Customer Acceptance Test (CAT/UAT) Report\n• Final Validation Report",
+        "plannedStart": "27-Jul-2026",
+        "dueDate": "30-Aug-2026",
+        "completedDate": null,
+        "status": "🟢 On Track",
+        "link": null
+      }
+    ],
+    "BAN-1": [
+      {
+        "stage": 1,
+        "document": "MRD",
+        "plannedStart": "6-Jul-2026",
+        "dueDate": "30-Jul-2026",
+        "completedDate": "29-Jul-2026",
+        "status": "🟢 Completed",
+        "link": null
+      },
+      {
+        "stage": 1,
+        "document": "PRD",
+        "plannedStart": "11-Jul-2026",
+        "dueDate": "30-Jul-2026",
+        "completedDate": "30-Jul-2026",
+        "status": "🟢 Completed",
+        "link": null
+      },
+      {
+        "stage": 1,
+        "document": "PRD Matrix",
+        "plannedStart": "31-Jul-2026",
+        "dueDate": "31-Jul-2026",
+        "completedDate": "31-Jul-2026",
+        "status": "🟢 Completed",
+        "link": null
+      },
+      {
+        "stage": 2,
+        "document": "Proposal Presentation (PPT)",
+        "plannedStart": "6-Jul-2026",
+        "dueDate": "31-Jul-2026",
+        "completedDate": "31-Jul-2026",
+        "status": "🟢 Completed",
+        "link": null
+      },
+      {
+        "stage": 5,
+        "document": "• Kickoff Presentation\n• Meeting Minutes (MoM)\n• RACI Matrix",
+        "plannedStart": "31-Jul-2026",
+        "dueDate": "31-Jul-2026",
+        "completedDate": "31-Jul-2026",
+        "status": "🟢 Completed",
+        "link": null
+      }
+    ],
+    "SOS-1": [
+      {
+        "stage": 1,
+        "document": "MRD",
+        "plannedStart": "6-Jul-2026",
+        "dueDate": "30-Jul-2026",
+        "completedDate": "29-Jul-2026",
+        "status": "🟢 Completed",
+        "link": null
+      },
+      {
+        "stage": 1,
+        "document": "PRD",
+        "plannedStart": "11-Jul-2026",
+        "dueDate": "30-Jul-2026",
+        "completedDate": "30-Jul-2026",
+        "status": "🟢 Completed",
+        "link": null
+      },
+      {
+        "stage": 1,
+        "document": "PRD Matrix",
+        "plannedStart": "3-Aug-2026",
+        "dueDate": "31-Aug-2026",
+        "completedDate": "31-Aug-2026",
+        "status": "🟢 Completed",
+        "link": null
+      },
+      {
+        "stage": 2,
+        "document": "Proposal Presentation (PPT)",
+        "plannedStart": "28-Jul-2026",
+        "dueDate": "29-Jul-2026",
+        "completedDate": "29-Jul-2026",
+        "status": "🟢 Completed",
+        "link": null
+      },
+      {
+        "stage": 5,
+        "document": "• Kickoff Presentation\n• Meeting Minutes (MoM)\n• RACI Matrix",
+        "plannedStart": "31-Jul-2026",
+        "dueDate": "31-Jul-2026",
+        "completedDate": "31-Jul-2026",
+        "status": "🟢 Completed",
+        "link": null
+      }
+    ]
   }
 }
