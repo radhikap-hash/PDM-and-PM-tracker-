@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-01T06:10:58.795Z",
+  "generatedAt": "2026-08-03T04:36:08.932Z",
   "stages": [
     "Requirement Analysis",
     "Proposal",
@@ -165,7 +165,7 @@
       "daysTotal": 0,
       "doc": "TBD",
       "blocker": null,
-      "tentative": null,
+      "tentative": "2026-08-03",
       "statusLabel": "Proposal"
     },
     {
@@ -252,15 +252,29 @@
       "eta": "2026-07-31",
       "source": "Project details, Delivery bot-Swapnil"
     },
+    "SEN-001": {
+      "period": "2026-08-03",
+      "owners": "PDM",
+      "platform": "Not specified",
+      "approach": "Not specified",
+      "completed": [
+        "Wed Jul 29 2026 00:00:00 GMT+0530 (India Standard Time)"
+      ],
+      "next": [],
+      "risk": null,
+      "status": "🟢 Completed",
+      "eta": "2026-08-03",
+      "source": "Project details, Sensor-Durga"
+    },
     "SEN-003": {
       "period": "2026-08-30",
       "owners": "PDM & PM",
       "platform": "Not specified",
       "approach": "Not specified",
       "completed": [
-        "Wed Jul 29 2026 00:00:00 GMT+0530 (India Standard Time)",
         "Thu Jul 30 2026 00:00:00 GMT+0530 (India Standard Time)",
         "Mon Aug 31 2026 00:00:00 GMT+0530 (India Standard Time)",
+        "Wed Jul 29 2026 00:00:00 GMT+0530 (India Standard Time)",
         "Fri Jul 31 2026 00:00:00 GMT+0530 (India Standard Time)"
       ],
       "next": [
