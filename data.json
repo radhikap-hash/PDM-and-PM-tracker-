@@ -1,105 +1,7 @@
 {
-  "generatedAt": "2026-08-04T06:57:05.681Z",
-  "stages": [
-    "Requirement Analysis",
-    "Proposal",
-    "Commercial Finalization",
-    "Statement of Work (SOW)",
-    "Project Kickoff",
-    "Project Planning",
-    "Detailed Design",
-    "Critical Design Review (CDR)",
-    "Procurement & Development",
-    "Integration, Verification & Validation"
-  ],
-  "stageDocs": {
-    "1": [
-      "MRD",
-      "PRD",
-      "PRD Matrix"
-    ],
-    "2": [
-      "Proposal Presentation (PPT)",
-      "NDA",
-      "Quotation (Price Breakup, Commercial Terms, Payment Schedule, Delivery Schedule)"
-    ],
-    "3": [
-      "Final SOW (Scope Matrix, Deliverables List, Exclusions List, Assumptions, Dependencies, Acceptance Criteria)"
-    ],
-    "4": [
-      "Kickoff Presentation",
-      "Meeting Minutes (MoM)",
-      "RACI Matrix"
-    ],
-    "5": [
-      "Work Breakdown Structure (WBS)",
-      "PDM Document",
-      "Hardware Architecture",
-      "Software Architecture",
-      "Block Diagram",
-      "Data Flow Diagram (DFD)",
-      "Interface Control Document (ICD)",
-      "Milestone Plan",
-      "Resource Plan",
-      "Budget Tracker",
-      "Procurement Plan",
-      "Risk Register"
-    ],
-    "6": [
-      "Schematics",
-      "PCB Layout",
-      "Bill of Materials (BOM)",
-      "PCB Stack-up",
-      "Simulation Reports",
-      "Software Design Document (SDD)",
-      "API Specification",
-      "Database Design",
-      "UI Mockups",
-      "CAD Models",
-      "Mechanical Drawings",
-      "Thermal Analysis Report"
-    ],
-    "7": [
-      "CDR Package",
-      "Design Review Presentation",
-      "Simulation Results",
-      "Review Minutes",
-      "Risk Closure Report",
-      "Manufacturing Readiness Report",
-      "Design Freeze Approval"
-    ],
-    "8": [
-      "Approved Vendor List (AVL)",
-      "RFQ",
-      "Purchase Request (PR)",
-      "Purchase Order (PO)",
-      "Delivery Tracker",
-      "Incoming Inspection Report",
-      "PCB Assembly Report",
-      "Bring-up Report",
-      "Debug Logs",
-      "Source Code Repository",
-      "Code Review Report",
-      "Unit Test Report",
-      "Dataset",
-      "AI Training Report",
-      "Sprint Board",
-      "Bug Tracker",
-      "Version Control Log"
-    ],
-    "9": [
-      "Verification Plan",
-      "Validation Plan",
-      "Test Cases",
-      "Test Reports",
-      "Defect Log",
-      "Regression Test Report",
-      "Requirements Traceability Matrix (RTM)",
-      "Customer Acceptance Test (CAT/UAT) Report",
-      "Final Validation Report"
-    ],
-    "10": []
-  },
+  "generatedAt": "2026-08-04T07:00:04.903Z",
+  "stages": [],
+  "stageDocs": {},
   "products": [
     {
       "cat": "Camera",
@@ -107,7 +9,7 @@
       "id": "CAM-001",
       "pdm": "Praddumna Raut",
       "pm": "Prithvi Nagilla",
-      "stage": 9,
+      "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
       "statusLabel": "Procurement & Development"
@@ -118,7 +20,7 @@
       "id": "CAM-002",
       "pdm": "Praddumna Raut",
       "pm": "Prithvi Nagilla",
-      "stage": 9,
+      "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
       "statusLabel": "Procurement & Development"
@@ -129,7 +31,7 @@
       "id": "CAM-003",
       "pdm": "Praddumna Raut",
       "pm": "Prithvi Nagilla",
-      "stage": 9,
+      "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
       "statusLabel": "Procurement & Development"
@@ -195,7 +97,7 @@
       "id": "EDG-001",
       "pdm": "Tarun Allani",
       "pm": "Venkata Kiran Venigalla",
-      "stage": 2,
+      "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
       "statusLabel": "Proposal"
@@ -206,7 +108,7 @@
       "id": "EDG-002",
       "pdm": "Tarun Allani",
       "pm": "Venkata Kiran Venigalla",
-      "stage": 2,
+      "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
       "statusLabel": "Proposal"
@@ -217,7 +119,7 @@
       "id": "SEN-001",
       "pdm": "Durga",
       "pm": null,
-      "stage": 2,
+      "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
       "statusLabel": "Proposal"
@@ -246,11 +148,11 @@
     },
     {
       "cat": "Drone",
-      "name": "Internal drone",
+      "name": "Smart city",
       "id": "DRN-001",
       "pdm": "Bharath Mamidi",
       "pm": null,
-      "stage": 2,
+      "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
       "statusLabel": "Proposal"
