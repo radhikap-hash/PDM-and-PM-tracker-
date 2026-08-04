@@ -1,15 +1,113 @@
 {
-  "generatedAt": "2026-08-04T06:48:32.751Z",
-  "stages": [],
-  "stageDocs": {},
+  "generatedAt": "2026-08-04T06:57:05.681Z",
+  "stages": [
+    "Requirement Analysis",
+    "Proposal",
+    "Commercial Finalization",
+    "Statement of Work (SOW)",
+    "Project Kickoff",
+    "Project Planning",
+    "Detailed Design",
+    "Critical Design Review (CDR)",
+    "Procurement & Development",
+    "Integration, Verification & Validation"
+  ],
+  "stageDocs": {
+    "1": [
+      "MRD",
+      "PRD",
+      "PRD Matrix"
+    ],
+    "2": [
+      "Proposal Presentation (PPT)",
+      "NDA",
+      "Quotation (Price Breakup, Commercial Terms, Payment Schedule, Delivery Schedule)"
+    ],
+    "3": [
+      "Final SOW (Scope Matrix, Deliverables List, Exclusions List, Assumptions, Dependencies, Acceptance Criteria)"
+    ],
+    "4": [
+      "Kickoff Presentation",
+      "Meeting Minutes (MoM)",
+      "RACI Matrix"
+    ],
+    "5": [
+      "Work Breakdown Structure (WBS)",
+      "PDM Document",
+      "Hardware Architecture",
+      "Software Architecture",
+      "Block Diagram",
+      "Data Flow Diagram (DFD)",
+      "Interface Control Document (ICD)",
+      "Milestone Plan",
+      "Resource Plan",
+      "Budget Tracker",
+      "Procurement Plan",
+      "Risk Register"
+    ],
+    "6": [
+      "Schematics",
+      "PCB Layout",
+      "Bill of Materials (BOM)",
+      "PCB Stack-up",
+      "Simulation Reports",
+      "Software Design Document (SDD)",
+      "API Specification",
+      "Database Design",
+      "UI Mockups",
+      "CAD Models",
+      "Mechanical Drawings",
+      "Thermal Analysis Report"
+    ],
+    "7": [
+      "CDR Package",
+      "Design Review Presentation",
+      "Simulation Results",
+      "Review Minutes",
+      "Risk Closure Report",
+      "Manufacturing Readiness Report",
+      "Design Freeze Approval"
+    ],
+    "8": [
+      "Approved Vendor List (AVL)",
+      "RFQ",
+      "Purchase Request (PR)",
+      "Purchase Order (PO)",
+      "Delivery Tracker",
+      "Incoming Inspection Report",
+      "PCB Assembly Report",
+      "Bring-up Report",
+      "Debug Logs",
+      "Source Code Repository",
+      "Code Review Report",
+      "Unit Test Report",
+      "Dataset",
+      "AI Training Report",
+      "Sprint Board",
+      "Bug Tracker",
+      "Version Control Log"
+    ],
+    "9": [
+      "Verification Plan",
+      "Validation Plan",
+      "Test Cases",
+      "Test Reports",
+      "Defect Log",
+      "Regression Test Report",
+      "Requirements Traceability Matrix (RTM)",
+      "Customer Acceptance Test (CAT/UAT) Report",
+      "Final Validation Report"
+    ],
+    "10": []
+  },
   "products": [
     {
       "cat": "Camera",
       "name": "Dual Lens IP Camera",
       "id": "CAM-001",
       "pdm": "Praddumna Raut",
-      "pm": null,
-      "stage": 1,
+      "pm": "Prithvi Nagilla",
+      "stage": 9,
       "plannedStart": null,
       "plannedEnd": null,
       "statusLabel": "Procurement & Development"
@@ -19,8 +117,8 @@
       "name": "Single Lens Bullet Camera",
       "id": "CAM-002",
       "pdm": "Praddumna Raut",
-      "pm": null,
-      "stage": 1,
+      "pm": "Prithvi Nagilla",
+      "stage": 9,
       "plannedStart": null,
       "plannedEnd": null,
       "statusLabel": "Procurement & Development"
@@ -30,8 +128,8 @@
       "name": "Single Lens Dome Camera",
       "id": "CAM-003",
       "pdm": "Praddumna Raut",
-      "pm": null,
-      "stage": 1,
+      "pm": "Prithvi Nagilla",
+      "stage": 9,
       "plannedStart": null,
       "plannedEnd": null,
       "statusLabel": "Procurement & Development"
@@ -41,7 +139,7 @@
       "name": "Head Mount Camera",
       "id": "CAM-004",
       "pdm": "Praddumna Raut",
-      "pm": null,
+      "pm": "Prithvi Nagilla",
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
@@ -52,7 +150,7 @@
       "name": "Body Cam",
       "id": "CAM-005",
       "pdm": "Praddumna Raut",
-      "pm": null,
+      "pm": "Prithvi Nagilla",
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
@@ -63,7 +161,7 @@
       "name": "Satellite",
       "id": "CAM-006",
       "pdm": "Praddumna Raut",
-      "pm": null,
+      "pm": "Prithvi Nagilla",
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
@@ -96,8 +194,8 @@
       "name": "Rack Server",
       "id": "EDG-001",
       "pdm": "Tarun Allani",
-      "pm": null,
-      "stage": 1,
+      "pm": "Venkata Kiran Venigalla",
+      "stage": 2,
       "plannedStart": null,
       "plannedEnd": null,
       "statusLabel": "Proposal"
@@ -107,8 +205,8 @@
       "name": "Edge Server - Ultra 5 225H / Ultra 7 255H / Ultra 9 285H",
       "id": "EDG-002",
       "pdm": "Tarun Allani",
-      "pm": null,
-      "stage": 1,
+      "pm": "Venkata Kiran Venigalla",
+      "stage": 2,
       "plannedStart": null,
       "plannedEnd": null,
       "statusLabel": "Proposal"
@@ -119,7 +217,7 @@
       "id": "SEN-001",
       "pdm": "Durga",
       "pm": null,
-      "stage": 1,
+      "stage": 2,
       "plannedStart": null,
       "plannedEnd": null,
       "statusLabel": "Proposal"
@@ -152,7 +250,7 @@
       "id": "DRN-001",
       "pdm": "Bharath Mamidi",
       "pm": null,
-      "stage": 1,
+      "stage": 2,
       "plannedStart": null,
       "plannedEnd": null,
       "statusLabel": "Proposal"
