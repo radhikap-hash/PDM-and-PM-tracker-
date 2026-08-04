@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-04T06:33:41.241Z",
+  "generatedAt": "2026-08-04T06:38:29.967Z",
   "stages": [],
   "stageDocs": {},
   "products": [
@@ -126,8 +126,8 @@
     },
     {
       "cat": "Sensor",
-      "name": "Occupancy Sensor",
-      "id": "SEN-002",
+      "name": "Band",
+      "id": "BAN-001",
       "pdm": "Durga",
       "pm": null,
       "stage": 1,
@@ -137,8 +137,8 @@
     },
     {
       "cat": "Sensor",
-      "name": "Band",
-      "id": "SEN-003",
+      "name": "SOS",
+      "id": "SOS-001",
       "pdm": "Durga",
       "pm": null,
       "stage": 1,
@@ -147,19 +147,8 @@
       "statusLabel": "Requirement Analysis"
     },
     {
-      "cat": "Sensor",
-      "name": "SOS",
-      "id": "SEN-004",
-      "pdm": "Durga",
-      "pm": null,
-      "stage": 1,
-      "plannedStart": null,
-      "plannedEnd": null,
-      "statusLabel": null
-    },
-    {
       "cat": "Drone",
-      "name": "Smart City",
+      "name": "Internal drone",
       "id": "DRN-001",
       "pdm": "Bharath Mamidi",
       "pm": null,
@@ -210,7 +199,7 @@
         "nextStep": "Procurement"
       }
     },
-    "SEN-003": {
+    "BAN-001": {
       "1": {
         "plannedStart": "11-Jul-2026",
         "dueDate": "31-Jul-2026",
@@ -279,7 +268,7 @@
         "link": null
       }
     ],
-    "SEN-003": [
+    "BAN-001": [
       {
         "stage": 1,
         "document": "MRD",
