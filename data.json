@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-04T06:00:25.050Z",
+  "generatedAt": "2026-08-04T06:20:04.717Z",
   "stages": [],
   "stageDocs": {},
   "products": [
@@ -210,7 +210,7 @@
         "nextStep": "Procurement"
       }
     },
-    "BAN-1": {
+    "SEN-003": {
       "1": {
         "plannedStart": "11-Jul-2026",
         "dueDate": "31-Jul-2026",
@@ -224,35 +224,6 @@
         "plannedStart": "6-Jul-2026",
         "dueDate": "31-Jul-2026",
         "completedDate": "31-Jul-2026",
-        "status": "🟢 Completed",
-        "milestone": null,
-        "blocker": null,
-        "nextStep": "Any changes if required"
-      },
-      "5": {
-        "plannedStart": "31-Jul-2026",
-        "dueDate": "31-Jul-2026",
-        "completedDate": "31-Jul-2026",
-        "status": "🟢 Completed",
-        "milestone": null,
-        "blocker": null,
-        "nextStep": "To decide prototyping start date"
-      }
-    },
-    "SOS-1": {
-      "1": {
-        "plannedStart": "11-Jul-2026",
-        "dueDate": "31-Aug-2026",
-        "completedDate": "31-Aug-2026",
-        "status": "🟢 Completed",
-        "milestone": null,
-        "blocker": null,
-        "nextStep": "Approval"
-      },
-      "2": {
-        "plannedStart": "28-Jul-2026",
-        "dueDate": "29-Jul-2026",
-        "completedDate": "29-Jul-2026",
         "status": "🟢 Completed",
         "milestone": null,
         "blocker": null,
@@ -308,7 +279,7 @@
         "link": null
       }
     ],
-    "BAN-1": [
+    "SEN-003": [
       {
         "stage": 1,
         "document": "MRD",
@@ -342,53 +313,6 @@
         "plannedStart": "6-Jul-2026",
         "dueDate": "31-Jul-2026",
         "completedDate": "31-Jul-2026",
-        "status": "🟢 Completed",
-        "link": null
-      },
-      {
-        "stage": 5,
-        "document": "• Kickoff Presentation\n• Meeting Minutes (MoM)\n• RACI Matrix",
-        "plannedStart": "31-Jul-2026",
-        "dueDate": "31-Jul-2026",
-        "completedDate": "31-Jul-2026",
-        "status": "🟢 Completed",
-        "link": null
-      }
-    ],
-    "SOS-1": [
-      {
-        "stage": 1,
-        "document": "MRD",
-        "plannedStart": "6-Jul-2026",
-        "dueDate": "30-Jul-2026",
-        "completedDate": "29-Jul-2026",
-        "status": "🟢 Completed",
-        "link": null
-      },
-      {
-        "stage": 1,
-        "document": "PRD",
-        "plannedStart": "11-Jul-2026",
-        "dueDate": "30-Jul-2026",
-        "completedDate": "30-Jul-2026",
-        "status": "🟢 Completed",
-        "link": null
-      },
-      {
-        "stage": 1,
-        "document": "PRD Matrix",
-        "plannedStart": "3-Aug-2026",
-        "dueDate": "31-Aug-2026",
-        "completedDate": "31-Aug-2026",
-        "status": "🟢 Completed",
-        "link": null
-      },
-      {
-        "stage": 2,
-        "document": "Proposal Presentation (PPT)",
-        "plannedStart": "28-Jul-2026",
-        "dueDate": "29-Jul-2026",
-        "completedDate": "29-Jul-2026",
         "status": "🟢 Completed",
         "link": null
       },
