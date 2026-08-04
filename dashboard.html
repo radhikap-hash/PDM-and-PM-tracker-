@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Vconnectech &amp; ZMD — Product Pipeline Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDM & PM Tracker Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#F5F8FC; --panel:#FFFFFF; --panel2:#EEF3FA; --line:#DEE6F0;
+:root {
+  --bg:#F5F8FC; --panel:#FFFFFF; --panel2:#F0F4F8; --line:#DEE6F0;
   --text:#182338; --sub:#5C6B84; --mute:#8B98AE;
   --teal:#0E9C8C; --amber:#C97A0A; --red:#D93636;
   --cam:#3B6FE0; --sen:#7C4FE0; --edg:#0E9C8C; --drn:#E0507F; --vdb:#C97A0A; --nvr:#4B5DA8;
@@ -25,7 +26,7 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',sans-se
 button.lib{background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:10px 16px;border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;cursor:pointer;font-weight:500;}
 button.lib:hover{border-color:var(--teal);color:var(--teal);}
 
-/* ---- Category strip ---- */
+/* Category strip */
 .cat-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:28px;}
 .cat-tile{background:var(--panel);border:2px solid var(--line);border-radius:12px;padding:16px;cursor:pointer;transition:.15s;box-shadow:0 1px 3px rgba(24,35,56,.06);}
 .cat-tile:hover{border-color:#3a4a6b;}
@@ -37,10 +38,10 @@ button.lib:hover{border-color:var(--teal);color:var(--teal);}
 .cat-tile .cbar i{display:block;height:100%;background:var(--tile-color,var(--teal));}
 .cat-tile .cpct{font-size:11px;color:var(--sub);margin-top:5px;}
 
-/* ---- Variant grid ---- */
+/* Variant grid */
 .section-label{font-size:12px;color:var(--sub);text-transform:uppercase;letter-spacing:.6px;margin:0 0 12px;}
-.variant-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-bottom:34px;}
-.variant{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;cursor:pointer;transition:.15s;box-shadow:0 1px 3px rgba(24,35,56,.06);}
+.variant-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-bottom:34px;}
+.variant{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;cursor:pointer;transition:.15s;box-shadow:0 1px 3px rgba(24,35,56,.06);position:relative;overflow:hidden;}
 .variant:hover{border-color:var(--teal);}
 .variant.selected{border-color:var(--teal);background:var(--panel2);}
 .variant .vname{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;}
@@ -50,13 +51,19 @@ button.lib:hover{border-color:var(--teal);color:var(--teal);}
 .variant .vstage{font-size:11px;color:var(--sub);}
 .variant.blocked{border-left:3px solid var(--red);}
 
-/* ---- Detail panel ---- */
+/* Stuck badge on variant card */
+.stuck-badge{position:absolute;top:0;right:0;font-size:10px;font-weight:700;padding:4px 8px;border-bottom-left-radius:8px;text-transform:uppercase;letter-spacing:.3px;}
+.stuck-badge.red{background:rgba(217,54,54,.12);color:var(--red);}
+.stuck-badge.amber{background:rgba(201,122,10,.12);color:var(--amber);}
+.stuck-badge.teal{background:rgba(14,156,140,.12);color:var(--teal);}
+
+/* Detail panel */
 .detail{display:none;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px 26px;margin-bottom:20px;box-shadow:0 2px 8px rgba(24,35,56,.07);}
 .detail.open{display:block;}
 .dhead{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:18px;}
 .dname{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:600;}
 .did{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--mute);margin-top:3px;}
-.dpeople{display:flex;gap:26px;margin-top:10px;font-size:12.5px;}
+.dpeople{display:flex;gap:26px;margin-top:10px;font-size:12.5px;flex-wrap:wrap;}
 .dpeople div span{display:block;color:var(--mute);font-size:10px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;}
 .pm-missing{color:var(--red);font-style:italic;}
 .dstats{text-align:right;}
@@ -65,27 +72,16 @@ button.lib:hover{border-color:var(--teal);color:var(--teal);}
 .ddays{display:flex;gap:18px;margin-top:8px;font-size:11.5px;color:var(--sub);}
 .ddays b{color:var(--text);}
 
+/* Stuck banner in detail */
+.stuck-banner{background:rgba(201,122,10,.08);border:1px solid rgba(201,122,10,.25);border-radius:8px;padding:10px 14px;margin-bottom:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.stuck-banner.red{background:rgba(217,54,54,.08);border-color:rgba(217,54,54,.25);}
+.stuck-banner .k{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13px;}
+.stuck-banner.red .k{color:var(--red);}
+.stuck-banner .k{color:var(--amber);}
+.stuck-banner .v{font-size:12.5px;color:var(--text);}
+
 .dblocker{background:rgba(217,54,54,.07);border:1px solid rgba(217,54,54,.25);border-radius:8px;padding:10px 14px;margin-bottom:16px;font-size:12.5px;}
 .dblocker .k{color:var(--red);font-size:10px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;}
-
-.eng-panel{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:20px;}
-.eng-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
-.eng-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13.5px;}
-.eng-period{font-size:10.5px;color:var(--mute);}
-.status-badge{font-size:11px;font-weight:700;padding:4px 11px;border-radius:6px;text-transform:uppercase;letter-spacing:.3px;}
-.status-badge.red{background:rgba(217,54,54,.12);color:var(--red);}
-.status-badge.amber{background:rgba(201,122,10,.12);color:var(--amber);}
-.status-badge.teal{background:rgba(14,156,140,.12);color:var(--teal);}
-.status-badge.mute{background:rgba(139,152,174,.15);color:var(--mute);}
-.eng-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:12px;}
-.eng-field .k{color:var(--mute);font-size:10px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;}
-.eng-field .v{font-size:12.5px;}
-.eng-lists{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-.eng-list .k{color:var(--mute);font-size:10px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;}
-.eng-list ul{margin:0;padding-left:16px;font-size:12px;line-height:1.6;}
-.eng-risk{background:rgba(217,54,54,.06);border:1px solid rgba(217,54,54,.2);border-radius:7px;padding:8px 12px;margin-top:12px;font-size:12px;}
-.eng-risk .k{color:var(--red);font-size:10px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;}
-.eng-note{font-size:10.5px;color:var(--mute);font-style:italic;margin-top:10px;}
 
 /* Stage timeline */
 .stage-row{display:flex;align-items:center;gap:14px;padding:10px 8px;border-radius:8px;cursor:pointer;border:1px solid transparent;}
@@ -107,17 +103,25 @@ button.lib:hover{border-color:var(--teal);color:var(--teal);}
 .stage-detail{max-height:0;overflow:hidden;transition:max-height .18s ease;padding-left:40px;}
 .stage-detail.open{max-height:1400px;}
 .stage-detail-inner{padding:6px 0 14px;font-size:12.5px;}
-.stage-info-row{display:flex;justify-content:space-between;align-items:center;padding:5px 10px;font-size:12px;}
-.stage-info-row .k{color:var(--mute);font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;}
-.stage-info-row .v{color:var(--text);}
-.stage-info-list{padding:5px 10px 8px;}
-.stage-info-list .k{display:block;color:var(--mute);font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;}
-.stage-info-list ul{margin:0;padding-left:16px;font-size:12px;line-height:1.55;}
-.stage-info-blocker{background:rgba(217,54,54,.07);border:1px solid rgba(217,54,54,.25);border-radius:6px;padding:7px 10px;margin:4px 10px 6px;font-size:12px;}
-.stage-info-blocker .k{display:block;color:var(--red);font-size:10px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;}
-.dl-btn-sm{background:var(--teal);color:#FFFFFF;border:none;padding:3px 9px;border-radius:5px;font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;}
-.dl-btn-sm:hover{opacity:.85;}
+
+/* Engineering fields */
+.eng-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:12px;}
+.eng-field .k{color:var(--mute);font-size:10px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px;}
+.eng-field .v{font-size:12.5px;}
+.eng-field .v.empty{color:var(--mute);font-style:italic;}
+.eng-blocker{background:rgba(217,54,54,.06);border:1px solid rgba(217,54,54,.2);border-radius:6px;padding:7px 10px;margin:4px 0 6px;font-size:12px;}
+.eng-blocker .k{display:block;color:var(--red);font-size:10px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;}
+.eng-milestone{background:rgba(14,156,140,.06);border:1px solid rgba(14,156,140,.2);border-radius:6px;padding:7px 10px;margin:4px 0 6px;font-size:12px;}
+.eng-milestone .k{display:block;color:var(--teal);font-size:10px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;}
+.eng-next{background:rgba(201,122,10,.06);border:1px solid rgba(201,122,10,.2);border-radius:6px;padding:7px 10px;margin:4px 0 6px;font-size:12px;}
+.eng-next .k{display:block;color:var(--amber);font-size:10px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px;}
+
+/* Document rows */
+.doc-section{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);}
+.doc-section .k{color:var(--mute);font-size:10px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;}
 .doc-row{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:var(--bg);border-radius:6px;margin-top:6px;border:1px solid var(--line);}
+.doc-row a{color:var(--teal);text-decoration:none;font-size:11px;}
+.doc-row a:hover{text-decoration:underline;}
 .doc-status{font-size:10.5px;padding:2px 8px;border-radius:4px;font-weight:600;}
 .doc-status.ready{background:rgba(45,212,191,.15);color:var(--teal);}
 .doc-status.progress{background:rgba(245,166,35,.15);color:var(--amber);}
@@ -128,7 +132,7 @@ button.lib:hover{border-color:var(--teal);color:var(--teal);}
 /* Modal */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(4,7,14,.7);z-index:50;align-items:center;justify-content:center;}
 .modal-overlay.open{display:flex;}
-.modal{background:var(--panel);border:1px solid var(--line);border-radius:14px;width:min(600px,92vw);max-height:82vh;overflow-y:auto;padding:22px 24px;}
+.modal{background:var(--panel);border:1px solid var(--line);border-radius:14px;width:min(700px,92vw);max-height:82vh;overflow-y:auto;padding:22px 24px;}
 .modal h3{font-family:'Space Grotesk',sans-serif;margin:0 0 4px;font-size:17px;}
 .modal .sub{margin-bottom:16px;color:var(--sub);font-size:12px;}
 .tmpl-row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);font-size:13px;gap:12px;}
@@ -140,13 +144,13 @@ button.lib:hover{border-color:var(--teal);color:var(--teal);}
 .dl-btn:hover{opacity:.85;}
 .close-x{float:right;background:none;border:none;color:var(--sub);font-size:18px;cursor:pointer;}
 </style>
+<base target="_blank">
 </head>
 <body>
 <div class="wrap">
-
   <div class="topbar">
     <div>
-      <div class="brand">Vconnectech <span>+</span> ZMD</div>
+      <div class="brand">PDM <span>&</span> PM Tracker</div>
       <div class="sub">Product development pipeline — snapshot as of <span id="today"></span></div>
       <div class="sync-note" id="syncNote">Loading live data…</div>
     </div>
@@ -164,7 +168,7 @@ button.lib:hover{border-color:var(--teal);color:var(--teal);}
 
   <div class="detail" id="detail"></div>
 
-  <div class="footer-note">Stage 1–5: PDM owns solo &nbsp;·&nbsp; Stage 6&ndash;11: PDM + PM jointly &nbsp;·&nbsp; click any stage below to see required documents</div>
+  <div class="footer-note">Stage 1–5: PDM owns solo &nbsp;·&nbsp; Stage 6+: PDM + PM jointly &nbsp;·&nbsp; click any stage below to see tracker fields + documents</div>
 </div>
 
 <div class="modal-overlay" id="libModal">
@@ -177,149 +181,151 @@ button.lib:hover{border-color:var(--teal);color:var(--teal);}
 </div>
 
 <script>
-// Default/fallback — overridden by data.json's "stages" array, which is read
-// live from the sheet's own "Stages" legend (rows below the product table),
-// so the sheet is always the single source of truth for stage names.
+// ── CONFIG ──
+// Days thresholds for "stuck" warnings
+const STUCK_WARN_DAYS = 7;   // amber warning
+const STUCK_CRITICAL_DAYS = 14; // red critical
+
+// Fallback stage names (overridden by data.json's "stages" array, read live
+// from the sheet's "Stages/documents" tab — this fallback matches that tab's
+// confirmed real content, so it's correct even if data.json is unreachable).
 const STAGES_FALLBACK = [
- 'Requirement Analysis','Proposal','Statement of Work (SOW)','Project Kickoff','Project Planning',
- 'Detailed Design','Critical Design Review','Procurement & Development',
- 'Integration, Verification & Validation','Customer Acceptance','Project Closure'
+  'Requirement Analysis','Proposal','Commercial Finalization','Statement of Work (SOW)','Project Kickoff',
+  'Project Planning','Detailed Design','Critical Design Review (CDR)',
+  'Procurement & Development','Integration, Verification & Validation'
 ];
 let STAGES = STAGES_FALLBACK;
 let TOTAL_STAGES = STAGES.length;
 
-// ---- Fallback snapshot (baked in at publish time) ----
-// Used only if data.json cannot be fetched (e.g. opened as a local file, or the
-// live sync endpoint is briefly unreachable). Overwritten in memory once data.json loads.
-const DATA_FALLBACK = [
- {cat:"Camera",name:"Dual Lens IP Camera",id:"CAM-001",pdm:"Praddumna Raut",pm:"Prithvi Nagilla",stage:8,daysStage:0,daysTotal:0,doc:"TBD",blocker:null,tentative:null,statusLabel:"Procurement & Development"},
- {cat:"Camera",name:"Single Lens Bullet Camera",id:"CAM-002",pdm:"Praddumna Raut",pm:"Prithvi Nagilla",stage:8,daysStage:0,daysTotal:0,doc:"TBD",blocker:"IR Cut filter issue; SoM failing on our boards; IMX662 camera not streaming",tentative:null,statusLabel:"Procurement & Development"},
- {cat:"Camera",name:"Single Lens Dome Camera",id:"CAM-003",pdm:"Praddumna Raut",pm:"Prithvi Nagilla",stage:8,daysStage:0,daysTotal:0,doc:"TBD",blocker:null,tentative:null,statusLabel:"Procurement & Development"},
- {cat:"Camera",name:"Head Mount Camera",id:"CAM-004",pdm:"Praddumna Raut",pm:"Prithvi Nagilla",stage:1,daysStage:0,daysTotal:0,doc:"TBD",blocker:null,tentative:null,statusLabel:"Ordered for learning"},
- {cat:"Camera",name:"Body Cam",id:"CAM-005",pdm:"Praddumna Raut",pm:"Prithvi Nagilla",stage:1,daysStage:0,daysTotal:0,doc:"TBD",blocker:null,tentative:null,statusLabel:"Requirement Analysis"},
- {cat:"Camera",name:"Satellite",id:"CAM-006",pdm:"Praddumna Raut",pm:"Prithvi Nagilla",stage:1,daysStage:0,daysTotal:0,doc:"TBD",blocker:null,tentative:null,statusLabel:"Waiting for input from tertrasoft"},
- {cat:"NVR",name:"NVR-001",id:"NVR-001",pdm:"Praddumna Raut",pm:null,stage:1,daysStage:0,daysTotal:0,doc:"TBD",blocker:null,tentative:null,statusLabel:null},
- {cat:"VDelibot",name:"VDelibot",id:"VDB-001",pdm:"Swapnil Mandal",pm:null,stage:1,daysStage:0,daysTotal:0,doc:"TBD",blocker:null,tentative:null,statusLabel:"Requirement Analysis"},
- {cat:"Edge",name:"Rack Server",id:"EDG-001",pdm:"Tarun Allani",pm:"Venkata Kiran Venigalla",stage:2,daysStage:0,daysTotal:0,doc:"TBD",blocker:null,tentative:null,statusLabel:"Proposal"},
- {cat:"Edge",name:"Edge Server – Ultra 5 225H / Ultra 7 255H / Ultra 9 285H",id:"EDG-002",pdm:"Tarun Allani",pm:"Venkata Kiran Venigalla",stage:2,daysStage:0,daysTotal:0,doc:"TBD",blocker:null,tentative:null,statusLabel:"Proposal"},
- {cat:"Sensor",name:"Parking Sensor",id:"SEN-001",pdm:"Durga",pm:null,stage:2,daysStage:0,daysTotal:0,doc:"TBD",blocker:null,tentative:null,statusLabel:"Proposal"},
- {cat:"Sensor",name:"Occupancy Sensor",id:"SEN-002",pdm:"Durga",pm:null,stage:1,daysStage:0,daysTotal:0,doc:"TBD",blocker:null,tentative:null,statusLabel:null},
- {cat:"Sensor",name:"Band",id:"SEN-003",pdm:"Durga",pm:null,stage:1,daysStage:0,daysTotal:0,doc:"ZMD_Safety_Band_Product_Proposal.pptx",blocker:null,tentative:null,statusLabel:"Requirement Analysis"},
- {cat:"Sensor",name:"SOS",id:"SEN-004",pdm:"Durga",pm:null,stage:1,daysStage:0,daysTotal:0,doc:"SOS Device_Product_Proposal",blocker:null,tentative:null,statusLabel:null},
- {cat:"Drone",name:"Smart City",id:"DRN-001",pdm:"Bharath Mamidi",pm:null,stage:2,daysStage:0,daysTotal:0,doc:"TBD",blocker:null,tentative:null,statusLabel:"Proposal"},
- {cat:"Drone",name:"Railway",id:"DRN-002",pdm:"Bharath Mamidi",pm:null,stage:1,daysStage:0,daysTotal:0,doc:"TBD",blocker:null,tentative:null,statusLabel:"Requirement Analysis"},
-];
-
-const CAM_ENGINEERING_FALLBACK = {
-  "CAM-002": {
-    period:"27–31 Jul 2026", owners:"Harika", platform:"NXP", approach:"SoM-based",
-    completed:["Received all boards post assembly and fabrication","Mechanical LED caps, 3mm connector, and PMIC order placed","ONVIF Profile S, G and T implementation completed","99% of PRD features developed","Working on new additional features (device + server side)"],
-    next:["Fix the IR Cut filter and SoM issues","RTSP authentication and multicast development","ANPR, fire and more AI models addition","Grid view, AI enrollment features, OSD configuration","STQC documentation to be completed"],
-    risk:"IR Cut filter issue; SoM failing on our boards; IMX662 camera not streaming",
-    status:"High Risk", eta:"5-Aug-2026"
-  },
-  "CAM-001": {
-    period:"27–31 Jul 2026", owners:"Not specified", platform:"Not specified", approach:"Not specified",
-    completed:["Schematics completed, review yet to be done"],
-    next:["Layout and routing to be completed","PoE + Gerber files to be released"],
-    risk:null, status:"In Progress", eta:"7-Aug-2026"
-  },
-  "CAM-004": {
-    period:"27–31 Jul 2026", owners:"Sandhya and Samudra", platform:"Novatek", approach:"SoC-based",
-    completed:["Design completed, review yet to be done","Schematics completed"],
-    next:["PRD document pending","Checking battery IC"],
-    risk:null, status:"HOLD", eta:null
-  },
-  "CAM-003": {
-    period:"27–31 Jul 2026 (folded from Renesas Platform note — confirm this belongs to Dome)", owners:"Samudra", platform:"Renesas", approach:"SoM-based",
-    completed:["IMX462 sensor working end-to-end on RZ/V2N board with stable live streaming over RTSP/UDP, stable post-reboot","Green color tint issue resolved"],
-    next:["Complete schematics once PRD and SoC finalized by Product Manager","Integrate ISP into pipeline, adapt sensor-replacement guide for IMX462, tune AE/AWB for varying-light conditions"],
-    risk:"Which SoC to use (R2V2N or R2V2L) not decided; need full ISP software package from Renesas, built for IMX415, requires adapting via sensor-replacement guide for IMX462",
-    status:"In Progress", eta:"31-Jul-2026"
-  },
-  "CAM-005": {
-    period:"27–31 Jul 2026 (folded from Bellycam note — confirm this belongs to Body Cam)", owners:"Samudra", platform:"NXP", approach:"SoC-based",
-    completed:["Completed in-rush analysis","USB 3.0 SuperSpeed signal changes (per Jagadeesh, PVC/CC) in progress"],
-    next:["Confirm the HD-SDI IC","Freeze placement and start routing","Verification of schematics in progress"],
-    risk:"Ethernet switch pending from AerX labs; DXF file needed from AerX labs",
-    status:"In Progress", eta:"3-Aug-2026"
-  },
-  "CAM-006": {
-    period:"27–31 Jul 2026 (folded from VCT SoM / Compulab replacement note — confirm this belongs to Satellite)", owners:"Not specified", platform:"Not specified", approach:"SoM-based",
-    completed:["Design changes (USB, HDMI, Display) in progress","Schematics in progress"],
-    next:["Layout and routing to be completed","BOM order to be placed"],
-    risk:"Design size constraint under discussion (38x28)",
-    status:"At Risk", eta:"7-Aug-2026"
-  }
+// Fallback per-stage document checklist (matches the confirmed real scheme) —
+// used both for the actual per-stage checklist below AND the Master Template
+// Library modal, whenever data.json's live stageDocs is empty (e.g. the
+// "Stages/documents" tab hasn't been found by the script yet).
+const STAGE_DOCS_FALLBACK = {
+  1: ["MRD","PRD","PRD Matrix"],
+  2: ["Proposal Presentation (PPT)","NDA","Quotation (Price Breakup, Commercial Terms, Payment Schedule, Delivery Schedule)"],
+  3: ["Final SOW (Scope Matrix, Deliverables List, Exclusions List, Assumptions, Dependencies, Acceptance Criteria)"],
+  4: ["Kickoff Presentation","Meeting Minutes (MoM)","RACI Matrix"],
+  5: ["Work Breakdown Structure (WBS)","PDM Document","Hardware Architecture","Software Architecture","Block Diagram","Data Flow Diagram (DFD)","Interface Control Document (ICD)","Milestone Plan","Resource Plan","Budget Tracker","Procurement Plan","Risk Register"],
+  6: ["Schematics","PCB Layout","Bill of Materials (BOM)","PCB Stack-up","Simulation Reports","Software Design Document (SDD)","API Specification","Database Design","UI Mockups","CAD Models","Mechanical Drawings","Thermal Analysis Report"],
+  7: ["CDR Package","Design Review Presentation","Simulation Results","Review Minutes","Risk Closure Report","Manufacturing Readiness Report","Design Freeze Approval"],
+  8: ["Approved Vendor List (AVL)","RFQ","Purchase Request (PR)","Purchase Order (PO)","Delivery Tracker","Incoming Inspection Report","PCB Assembly Report","Bring-up Report","Debug Logs","Source Code Repository","Code Review Report","Unit Test Report","Dataset","AI Training Report","Sprint Board","Bug Tracker","Version Control Log"],
+  9: ["Verification Plan","Validation Plan","Test Cases","Test Reports","Defect Log","Regression Test Report","Requirements Traceability Matrix (RTM)","Customer Acceptance Test (CAT/UAT) Report","Final Validation Report"],
+  10: []
 };
-const STATUS_COLOR = {"High Risk":"red","At Risk":"amber","HOLD":"mute","In Progress":"teal"};
 
-// Live-loaded (from data.json, produced by the Sheet → GitHub Action pipeline).
-// Starts out as the fallback snapshot and is replaced once loadData() succeeds.
-let DATA = DATA_FALLBACK;
-let CAM_ENGINEERING = CAM_ENGINEERING_FALLBACK;
+// Live-loaded data
+let DATA = { products: [], engineering: {}, documents: {}, stageDocs: {} };
 
-// Static defaults for the categories we know about; any other category value
-// that shows up in the sheet still renders fine (falls back to a neutral tile
-// via catColor_/catIcon_ below) rather than being dropped.
 const CAT_COLOR = {Camera:"--cam",Sensor:"--sen",Edge:"--edg",Drone:"--drn",VDelibot:"--vdb",NVR:"--nvr"};
-const CAT_ICON = {Camera:"◉",Sensor:"◆",Edge:"▦",Drone:"✈",VDelibot:"●",NVR:"▣"};
+const CAT_ICON = {Camera:"📷",Sensor:"🔌",Edge:"🖥️",Drone:"🚁",VDelibot:"📦",NVR:"💾"};
 function catColor_(cat){ return CAT_COLOR[cat] || '--sub'; }
-function catIcon_(cat){ return CAT_ICON[cat] || '◈'; }
+function catIcon_(cat){ return CAT_ICON[cat] || '📁'; }
 function currentCats_(){
-  // Preserve a sensible default order, then append any new categories the sheet introduces.
   const known = ["Camera","Sensor","Edge","Drone","VDelibot","NVR"];
-  const present = Array.from(new Set(DATA.map(d=>d.cat).filter(Boolean)));
+  const present = Array.from(new Set(DATA.products.map(d=>d.cat).filter(Boolean)));
   return known.filter(c=>present.includes(c)).concat(present.filter(c=>!known.includes(c)));
-}
-
-// Real per-stage document checklist (multiple documents per stage) — structural, kept static.
-// Keyed to the sheet's actual 11 stages: Requirement Analysis, Proposal, SOW, Kickoff,
-// Planning, Detailed Design, Critical Design Review, Procurement & Development,
-// Integration/Verification/Validation, Customer Acceptance, Project Closure.
-const STAGE_DOCS = {
- 1: ["MRD","PRD","PRD Matrix"],
- 2: ["Proposal Presentation (PPT)","NDA","Quotation (Price Breakup, Commercial Terms, Payment Schedule, Delivery Schedule)"],
- 3: ["Final SOW (Scope Matrix, Deliverables List, Exclusions List, Assumptions, Dependencies, Acceptance Criteria)"],
- 4: ["Kickoff Presentation","Meeting Minutes (MoM)","RACI Matrix"],
- 5: ["Work Breakdown Structure (WBS)","Milestone Plan","Resource Plan","Budget Tracker","Procurement Plan","Risk Register"],
- 6: ["PDM Document","Hardware Architecture","Software Architecture","Block Diagram","Data Flow Diagram (DFD)",
-     "Interface Control Document (ICD)","Schematics","PCB Layout","Bill of Materials (BOM)","PCB Stack-up",
-     "Simulation Reports","Software Design Document (SDD)","API Specification","Database Design","UI Mockups",
-     "CAD Models","Mechanical Drawings","Thermal Analysis Report"],
- 7: ["CDR Package","Design Review Presentation","Simulation Results","Review Minutes","Risk Closure Report",
-     "Manufacturing Readiness Report","Design Freeze Approval"],
- 8: ["Approved Vendor List (AVL)","RFQ","Purchase Request (PR)","Purchase Order (PO)","Delivery Tracker",
-     "Incoming Inspection Report","PCB Assembly Report","Bring-up Report","Debug Logs","Source Code Repository",
-     "Code Review Report","Unit Test Report","Dataset","AI Training Report","Sprint Board","Bug Tracker","Version Control Log"],
- 9: ["Verification Plan","Validation Plan","Test Cases","Test Reports","Defect Log","Regression Test Report",
-      "Requirements Traceability Matrix (RTM)","Final Validation Report"],
- 10: ["Customer Acceptance Test (CAT/UAT) Report","Customer Sign-off","Handover Document","Training Material"],
- 11: ["Closure Report","Lessons Learned","Final Documentation Archive","Project Retrospective"]
-};
-
-let TEMPLATES = [];
-function rebuildTemplates(){
-  TEMPLATES = [];
-  STAGES.forEach((s,i)=>{ (STAGE_DOCS[i+1]||[]).forEach(name=>TEMPLATES.push({stage:s,name:name,desc:`Standard ${s} deliverable`})); });
-  document.getElementById('tmplList').innerHTML = TEMPLATES.map((t,i)=>`
-    <div class="tmpl-row">
-      <div><div class="tmpl-name">${t.name}</div><div class="tmpl-desc">${t.desc}</div></div>
-      <div style="display:flex;align-items:center;gap:10px;">
-        <span class="tmpl-stage">${t.stage}</span>
-        <button class="dl-btn" onclick="downloadTemplate('${t.name}','${t.desc}','${t.stage}')">Download</button>
-      </div>
-    </div>`).join('');
 }
 
 document.getElementById('today').textContent = new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
 
-let selectedCat = "Camera";
+let selectedCat = "";
 let selectedProduct = null;
 let expandedStage = null;
 
-function catProducts(cat){ return DATA.filter(d=>d.cat===cat); }
+function catProducts(cat){ return DATA.products.filter(d=>d.cat===cat); }
 
+// ── DATE HELPERS ──
+function parseDate_(str){
+  if(!str) return null;
+  // Handles "1-Aug-2026" or "01-Aug-2026"
+  const m = str.match(/^(\d{1,2})-([A-Za-z]{3})-(\d{4})$/);
+  if(!m) return null;
+  const months = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+  const mon = months[m[2].toLowerCase()];
+  if(mon===undefined) return null;
+  const d = new Date(parseInt(m[3]), mon, parseInt(m[1]));
+  d.setHours(0,0,0,0);
+  return isNaN(d) ? null : d;
+}
+
+function daysBetween_(a,b){
+  if(!a || !b) return null;
+  const ms = b - a;
+  return Math.ceil(ms / (1000*60*60*24));
+}
+
+// ── STUCK CALCULATION ──
+function getStuckInfo_(product){
+  const eng = DATA.engineering[product.id];
+  const stageNum = product.stage;
+  if(!eng) return {days:null, label:'—', status:'unknown', overdue:0, blocked:false};
+
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  const current = eng[stageNum];
+
+  // If current stage is completed, not stuck
+  if(current && current.completedDate){
+    return {days:0, label:'Stage complete', status:'done', overdue:0, blocked:false};
+  }
+
+  // Find stage start date
+  let startDate = null;
+
+  // 1. Current stage plannedStart
+  if(current && current.plannedStart){
+    startDate = parseDate_(current.plannedStart);
+  }
+
+  // 2. Previous stage completedDate
+  if(!startDate && stageNum > 1){
+    const prev = eng[stageNum-1];
+    if(prev && prev.completedDate){
+      startDate = parseDate_(prev.completedDate);
+    }
+  }
+
+  // 3. Current stage dueDate (fallback — stage probably started around dueDate of planning)
+  if(!startDate && current && current.dueDate){
+    // Only use dueDate as proxy if it's in the past
+    const due = parseDate_(current.dueDate);
+    if(due && due <= today) startDate = due;
+  }
+
+  if(!startDate){
+    return {days:null, label:'—', status:'unknown', overdue:0, blocked:false};
+  }
+
+  const daysInStage = daysBetween_(startDate, today);
+
+  // Overdue check
+  let overdueDays = 0;
+  if(current && current.dueDate){
+    const due = parseDate_(current.dueDate);
+    if(due && today > due){
+      overdueDays = daysBetween_(due, today);
+    }
+  }
+
+  const hasBlocker = !!( (current && current.blocker) || product.blocker );
+
+  // Build label
+  let label = daysInStage + 'd in stage';
+  if(overdueDays > 0) label += ' (' + overdueDays + 'd overdue)';
+  else if(hasBlocker) label += ' (blocked)';
+
+  // Status for coloring
+  let status = 'active';
+  if(hasBlocker || overdueDays > 0) status = 'stuck';
+  else if(daysInStage >= STUCK_CRITICAL_DAYS) status = 'critical';
+  else if(daysInStage >= STUCK_WARN_DAYS) status = 'warn';
+
+  return {days:daysInStage, label, status, overdue:overdueDays, blocked:hasBlocker};
+}
+
+// ── RENDER ──
 function renderCatStrip(){
   document.getElementById('catStrip').innerHTML = currentCats_().map(cat=>{
     const list = catProducts(cat);
@@ -356,9 +362,22 @@ function renderVariants(){
   document.getElementById('variantGrid').innerHTML = list.map(d=>{
     const pct = Math.round(d.stage/TOTAL_STAGES*100);
     const sel = d.id===selectedProduct ? 'selected' : '';
-    const blk = d.blocker ? 'blocked' : '';
+    const eng = DATA.engineering[d.id] || {};
+    const currentStage = eng[d.stage] || {};
+    const hasBlocker = currentStage.blocker || d.blocker;
+    const blk = hasBlocker ? 'blocked' : '';
+
+    // Stuck calculation
+    const stuck = getStuckInfo_(d);
+    let stuckBadge = '';
+    if(stuck.days !== null && stuck.status !== 'done'){
+      const cls = stuck.status==='critical' || stuck.status==='stuck' ? 'red' : stuck.status==='warn' ? 'amber' : 'teal';
+      stuckBadge = `<div class="stuck-badge ${cls}">${stuck.label}</div>`;
+    }
+
     return `
     <div class="variant ${sel} ${blk}" onclick="selectProduct('${d.id}')">
+      ${stuckBadge}
       <div class="vname">${d.name}</div>
       <div class="vid">${d.id}</div>
       <div class="vmeta">
@@ -384,7 +403,7 @@ function toggleStage(n){
 function vstageLabel_(d){
   const canonical = STAGES[d.stage-1] || '';
   if(d.statusLabel && d.statusLabel.trim().toLowerCase() !== canonical.trim().toLowerCase()){
-    return `Stage ${d.stage}/${TOTAL_STAGES} · "${d.statusLabel}"`;
+    return `Stage ${d.stage}/${TOTAL_STAGES} — "${d.statusLabel}"`;
   }
   return `Stage ${d.stage}/${TOTAL_STAGES}`;
 }
@@ -398,10 +417,12 @@ function stageDocStatus(d, n){
 function renderDetail(){
   const panel = document.getElementById('detail');
   if(!selectedProduct){ panel.classList.remove('open'); return; }
-  const d = DATA.find(x=>x.id===selectedProduct);
+  const d = DATA.products.find(x=>x.id===selectedProduct);
   if(!d){ selectedProduct=null; panel.classList.remove('open'); return; }
   const pct = Math.round(d.stage/TOTAL_STAGES*100);
   const owner = d.stage<=5 ? 'PDM' : 'PDM + PM';
+  const eng = DATA.engineering[d.id] || {};
+  const stuck = getStuckInfo_(d);
 
   const stageRows = STAGES.map((s,i)=>{
     const n=i+1;
@@ -409,29 +430,56 @@ function renderDetail(){
     const label = n<d.stage?'Completed':n===d.stage?'In progress':'Upcoming';
     const rowOwner = n<=5?'PDM':'PDM + PM';
     const isOpen = expandedStage===n;
-    const docs = STAGE_DOCS[n] || [];
+    const docs = ((DATA.stageDocs && DATA.stageDocs[n]) || STAGE_DOCS_FALLBACK[n] || []);
     const ds = stageDocStatus(d,n);
-    const docRow = docs.length ? docs.map(docName=>{
-      const isCurrentDoc = (status==='current' && d.doc && d.doc!=='TBD' && d.doc===docName);
-      const label2 = status==='current' ? (isCurrentDoc ? `In progress — ${d.doc}` : ds.label) : ds.label;
-      return `<div class="doc-row"><span>${docName}</span><div style="display:flex;align-items:center;gap:8px;"><span class="doc-status ${ds.cls}">${label2}</span><button class="dl-btn-sm" onclick="event.stopPropagation();downloadTemplate('${docName}','${s}','${s}')">Download</button></div></div>`;
-    }).join('') : `<div class="doc-row"><span style="color:var(--mute)">No standard documents defined for this stage</span></div>`;
+
+    const stageEng = eng[n] || {};
+    const hasEng = stageEng.plannedStart || stageEng.dueDate || stageEng.completedDate || stageEng.status || stageEng.milestone || stageEng.blocker || stageEng.nextStep;
 
     let extra = '';
-    if(status==='current'){
-      const eng = CAM_ENGINEERING[d.id];
-      const milestones = eng ? eng.completed : null;
-      const nextSteps = eng ? eng.next : null;
-      const riskText = eng && eng.risk ? eng.risk : d.blocker;
+    if(status==='current' || status==='done'){
+      const fields = [];
+      if(stageEng.plannedStart) fields.push(`<div class="eng-field"><div class="k">Planned Start</div><div class="v">${stageEng.plannedStart}</div></div>`);
+      if(stageEng.dueDate) fields.push(`<div class="eng-field"><div class="k">Due Date</div><div class="v">${stageEng.dueDate}</div></div>`);
+      if(stageEng.completedDate) fields.push(`<div class="eng-field"><div class="k">Completion Date</div><div class="v">${stageEng.completedDate}</div></div>`);
+      if(stageEng.status) fields.push(`<div class="eng-field"><div class="k">Status</div><div class="v">${stageEng.status}</div></div>`);
+
+      let milestoneHtml = '';
+      if(stageEng.milestone) {
+        milestoneHtml = `<div class="eng-milestone"><span class="k">Key Milestones</span>${stageEng.milestone}</div>`;
+      }
+      let blockerHtml = '';
+      if(stageEng.blocker) {
+        blockerHtml = `<div class="eng-blocker"><span class="k">Blocker</span>${stageEng.blocker}</div>`;
+      }
+      let nextHtml = '';
+      if(stageEng.nextStep) {
+        nextHtml = `<div class="eng-next"><span class="k">Immediate Next Step</span>${stageEng.nextStep}</div>`;
+      }
+
+      const docRows = docs.length ? docs.map(docName=>{
+        const allForStage = (DATA.documents[d.id] || []).filter(doc=>doc.stage===n);
+        const docList = allForStage.filter(doc=>doc.document===docName);
+        if(!docList.length){
+          const partial = allForStage.find(doc=>doc.document && doc.document.toLowerCase().includes(docName.toLowerCase()));
+          if(partial) docList.push(partial);
+        }
+        const docEntry = docList[0] || {};
+        const docStatus = docEntry.status || ds.label;
+        const docCls = /complet/i.test(docStatus||'') ? 'ready' : /progress|on track|in progress/i.test(docStatus||'') ? 'progress' : 'notstarted';
+        const linkHtml = docEntry.link ? `<a href="${docEntry.link}" target="_blank" onclick="event.stopPropagation()">Open ↗</a>` : '';
+        return `<div class="doc-row"><span>${docName}</span><div style="display:flex;align-items:center;gap:8px;"><span class="doc-status ${docCls}">${docStatus}</span>${linkHtml}</div></div>`;
+      }).join('') : `<div class="doc-row"><span style="color:var(--mute)">No standard documents defined for this stage</span></div>`;
+
       extra = `
-        <div class="stage-info-row"><span class="k">Days in this stage</span><span class="v"><b>${d.daysStage}</b> days</span></div>
-        <div class="stage-info-list"><span class="k">Key Milestones</span>${milestones ? `<ul>${milestones.map(x=>`<li>${x}</li>`).join('')}</ul>` : `<div class="v" style="color:var(--mute)">Not tracked for this product yet</div>`}</div>
-        <div class="stage-info-list"><span class="k">Immediate Next Step</span>${nextSteps ? `<ul>${nextSteps.slice(0,3).map(x=>`<li>${x}</li>`).join('')}</ul>` : `<div class="v" style="color:var(--mute)">Not tracked for this product yet</div>`}</div>
-        ${riskText ? `<div class="stage-info-blocker"><span class="k">Blocker</span>${riskText}</div>` : `<div class="stage-info-row"><span class="k">Blocker</span><span class="v" style="color:var(--mute)">None active</span></div>`}`;
-    } else if(status==='done'){
-      extra = `<div class="stage-info-row"><span class="k">Duration</span><span class="v" style="color:var(--mute)">Not individually logged (historical)</span></div>`;
+        ${hasEng ? `<div class="eng-grid">${fields.join('')}</div>` : ''}
+        ${milestoneHtml}
+        ${blockerHtml}
+        ${nextHtml}
+        <div class="doc-section"><div class="k">Documents</div>${docRows}</div>
+      `;
     } else {
-      extra = `<div class="stage-info-row"><span class="k">Status</span><span class="v" style="color:var(--mute)">Not started yet</span></div>`;
+      extra = `<div style="color:var(--mute);font-size:12px;padding:5px 0;">Not started yet</div>`;
     }
 
     return `
@@ -447,41 +495,28 @@ function renderDetail(){
     <div class="stage-detail ${isOpen?'open':''}">
       <div class="stage-detail-inner">
         ${extra}
-        ${docRow}
       </div>
     </div>`;
   }).join('');
 
-  const eng = CAM_ENGINEERING[d.id];
-  const stageName = STAGES[d.stage-1];
-  const engHtml = eng ? `
-    <div class="eng-panel">
-      <div class="eng-head">
-        <div>
-          <div class="eng-title">Stage ${d.stage} — ${stageName} Update</div>
-          <div class="eng-period">${eng.period}</div>
-        </div>
-        <div class="status-badge ${STATUS_COLOR[eng.status]||'mute'}">${eng.status}</div>
-      </div>
-      <div class="eng-grid">
-        <div class="eng-field"><div class="k">Owner(s)</div><div class="v">${eng.owners}</div></div>
-        <div class="eng-field"><div class="k">ETA</div><div class="v">${eng.eta || 'Not set'}</div></div>
-      </div>
-      <div class="eng-lists">
-        <div class="eng-list"><div class="k">Completed</div><ul>${eng.completed.map(x=>`<li>${x}</li>`).join('')}</ul></div>
-        <div class="eng-list"><div class="k">Next Milestone</div><ul>${eng.next.map(x=>`<li>${x}</li>`).join('')}</ul></div>
-      </div>
-      ${eng.risk ? `<div class="eng-risk"><div class="k">Key Risk / Dependency</div>${eng.risk}</div>` : ''}
-      ${eng.period.includes('folded') ? `<div class="eng-note">⚠ Mapped from a platform/component note in the source update — please confirm this belongs under ${d.name}.</div>` : ''}
-    </div>` : '';
+  const currentEng = eng[d.stage] || {};
+  const productBlocker = d.blocker || currentEng.blocker;
+
+  // Stuck banner
+  let stuckBanner = '';
+  if(stuck.days !== null && stuck.status !== 'done'){
+    const bannerCls = stuck.status==='critical' || stuck.status==='stuck' ? 'red' : '';
+    const bannerIcon = stuck.blocked ? '⛔' : stuck.overdue > 0 ? '⚠️' : '⏱️';
+    stuckBanner = `<div class="stuck-banner ${bannerCls}"><span class="k">${bannerIcon} Stuck for ${stuck.days} days</span><span class="v">${stuck.label}</span></div>`;
+  }
 
   panel.innerHTML = `
     <div class="dhead">
       <div>
         <div class="dname">${d.name}</div>
-        <div class="did">${d.id} · ${d.cat}</div>
+        <div class="did">${d.id} — ${d.cat}</div>
         <div class="dpeople">
-          <div><span>PDM</span>${d.pdm}</div>
+          <div><span>PDM</span>${d.pdm||'—'}</div>
           <div><span>PM / TL</span>${d.pm ? d.pm : '<span class="pm-missing">Not assigned</span>'}</div>
           <div><span>Owner (current stage)</span>${owner}</div>
         </div>
@@ -489,12 +524,11 @@ function renderDetail(){
       <div class="dstats">
         <div class="dpct">${pct}%</div>
         <div class="dsub">overall progress</div>
-        <div class="ddays"><span><b>${d.daysStage}</b>d in stage</span><span><b>${d.daysTotal}</b>d total</span></div>
+        <div class="ddays"><span><b>${d.plannedStart||'—'}</b> start</span><span><b>${d.plannedEnd||'—'}</b> end</span></div>
       </div>
     </div>
-    ${(d.statusLabel && d.statusLabel.trim().toLowerCase() !== (STAGES[d.stage-1]||'').trim().toLowerCase()) ? `<div class="dblocker" style="border-color:rgba(201,122,10,.3);background:rgba(201,122,10,.07)"><div class="k" style="color:var(--amber)">Sheet status (not one of the 11 standard stages)</div>${d.statusLabel} — showing closest match: ${STAGES[d.stage-1]||'—'}</div>` : ''}
-    ${d.blocker ? `<div class="dblocker"><div class="k">Blocker</div>${d.blocker}</div>` : ''}
-    ${engHtml}
+    ${stuckBanner}
+    ${productBlocker ? `<div class="dblocker"><div class="k">Blocker</div>${productBlocker}</div>` : ''}
     ${stageRows}
   `;
   panel.classList.add('open');
@@ -513,10 +547,22 @@ function downloadTemplate(name, desc, stage){
   URL.revokeObjectURL(url);
 }
 
-// ---- Live data sync ----
-// data.json is written by the Google Apps Script bound to the "PDM & PM" sheet
-// every time it publishes (see apps-script/Code.gs). This page just reads the
-// committed file — no API keys or auth live in the browser.
+let TEMPLATES = [];
+function rebuildTemplates(){
+  TEMPLATES = [];
+  const docs = (DATA.stageDocs && Object.keys(DATA.stageDocs).length) ? DATA.stageDocs : STAGE_DOCS_FALLBACK;
+  STAGES.forEach((s,i)=>{ (docs[i+1]||[]).forEach(name=>TEMPLATES.push({stage:s,name:name,desc:`Standard ${s} deliverable`})); });
+  document.getElementById('tmplList').innerHTML = TEMPLATES.map((t,i)=>`
+    <div class="tmpl-row">
+      <div><div class="tmpl-name">${t.name}</div><div class="tmpl-desc">${t.desc}</div></div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="tmpl-stage">${t.stage}</span>
+        <button class="dl-btn" onclick="downloadTemplate('${t.name}','${t.desc}','${t.stage}')">Download</button>
+      </div>
+    </div>`).join('');
+}
+
+// ── LIVE DATA SYNC ──
 async function loadData(manual){
   const note = document.getElementById('syncNote');
   if(manual) note.textContent = 'Refreshing…';
@@ -525,24 +571,23 @@ async function loadData(manual){
     if(!res.ok) throw new Error('HTTP '+res.status);
     const j = await res.json();
     if(!Array.isArray(j.products)) throw new Error('malformed data.json');
-    DATA = j.products;
-    CAM_ENGINEERING = j.engineering || {};
+    DATA = j;
     STAGES = (Array.isArray(j.stages) && j.stages.length) ? j.stages : STAGES_FALLBACK;
     TOTAL_STAGES = STAGES.length;
     const when = j.generatedAt ? new Date(j.generatedAt).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : 'unknown time';
     note.textContent = `Live — synced from sheet at ${when}`;
     note.className = 'sync-note live';
   }catch(e){
-    DATA = DATA_FALLBACK;
-    CAM_ENGINEERING = CAM_ENGINEERING_FALLBACK;
-    STAGES = STAGES_FALLBACK;
-    TOTAL_STAGES = STAGES.length;
-    note.textContent = 'Showing last saved snapshot — live sync unavailable (open via GitHub Pages, not as a local file)';
+    console.error('Load failed:', e);
+    note.textContent = 'Showing fallback snapshot — live sync unavailable (open via GitHub Pages, not as a local file)';
     note.className = 'sync-note stale';
   }
   rebuildTemplates();
-  if(!DATA.some(d=>d.id===selectedProduct)) selectedProduct = null;
-  const cats = currentCats_();  if (!cats.includes(selectedCat)) {   selectedCat =     cats.find(category => catProducts(category).length) ||     cats[0] ||     ''; }
+  const cats = currentCats_();
+  if(!cats.includes(selectedCat)){
+    selectedCat = cats.find(c=>catProducts(c).length) || cats[0] || '';
+  }
+  if(!DATA.products.some(d=>d.id===selectedProduct)) selectedProduct = null;
   renderCatStrip();
   renderVariants();
   renderDetail();
