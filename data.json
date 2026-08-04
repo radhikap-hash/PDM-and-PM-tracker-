@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-04T08:55:01.408Z",
+  "generatedAt": "2026-08-04T09:06:04.694Z",
   "stages": [],
   "stageDocs": {},
   "products": [
@@ -12,7 +12,7 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": "Procurement & Development"
+      "statusLabel": null
     },
     {
       "cat": "Camera",
@@ -23,7 +23,7 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": "Procurement & Development"
+      "statusLabel": null
     },
     {
       "cat": "Camera",
@@ -34,7 +34,7 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": "Procurement & Development"
+      "statusLabel": null
     },
     {
       "cat": "Camera",
@@ -45,7 +45,7 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": "Ordered for learning"
+      "statusLabel": null
     },
     {
       "cat": "Camera",
@@ -56,7 +56,7 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": "Requirement Analysis"
+      "statusLabel": null
     },
     {
       "cat": "Camera",
@@ -67,7 +67,7 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": "Waiting for input from tertrasoft"
+      "statusLabel": null
     },
     {
       "cat": "NVR",
@@ -89,7 +89,7 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": "Requirement Analysis"
+      "statusLabel": null
     },
     {
       "cat": "Edge",
@@ -100,7 +100,7 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": "Proposal"
+      "statusLabel": null
     },
     {
       "cat": "Edge",
@@ -111,7 +111,7 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": "Proposal"
+      "statusLabel": null
     },
     {
       "cat": "Sensor",
@@ -122,7 +122,7 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": "Proposal"
+      "statusLabel": null
     },
     {
       "cat": "Sensor",
@@ -144,7 +144,7 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": "Requirement Analysis"
+      "statusLabel": null
     },
     {
       "cat": "Drone",
@@ -155,7 +155,7 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": "Proposal"
+      "statusLabel": null
     },
     {
       "cat": "Drone",
@@ -166,7 +166,7 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": "Requirement Analysis"
+      "statusLabel": null
     }
   ],
   "engineering": {
