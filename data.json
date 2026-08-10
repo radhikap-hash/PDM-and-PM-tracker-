@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-10T04:27:30.621Z",
+  "generatedAt": "2026-08-10T04:37:37.287Z",
   "stages": [
     "Requirement Analysis",
     "Proposal",
@@ -375,6 +375,26 @@
         "nextStep": null
       }
     },
+    "DRN-002": {
+      "1": {
+        "plannedStart": "2-Jul-2026",
+        "dueDate": "7-Aug-2026",
+        "completedDate": null,
+        "status": "🟢 On Track",
+        "milestone": null,
+        "blocker": null,
+        "nextStep": null
+      },
+      "2": {
+        "plannedStart": "27-Jul-2026",
+        "dueDate": "10-Aug-2026",
+        "completedDate": null,
+        "status": "🟠 Due Soon",
+        "milestone": null,
+        "blocker": null,
+        "nextStep": null
+      }
+    },
     "CAM-004": {
       "1": {
         "plannedStart": null,
@@ -410,6 +430,37 @@
         "dueDate": null,
         "completedDate": null,
         "status": "Completed",
+        "milestone": null,
+        "blocker": null,
+        "nextStep": null
+      }
+    },
+    "VDB-001": {
+      "1": {
+        "plannedStart": "16-Jul-2026",
+        "dueDate": "4-Aug-2026",
+        "completedDate": "4-Aug-2026",
+        "status": "🟢 Completed",
+        "milestone": null,
+        "blocker": null,
+        "nextStep": "Re-iterate as per directions/discussion/approvals"
+      }
+    },
+    "EDG-001": {
+      "1": {
+        "plannedStart": null,
+        "dueDate": null,
+        "completedDate": null,
+        "status": "In progress",
+        "milestone": null,
+        "blocker": null,
+        "nextStep": null
+      },
+      "2": {
+        "plannedStart": null,
+        "dueDate": null,
+        "completedDate": null,
+        "status": "In progress",
         "milestone": null,
         "blocker": null,
         "nextStep": null
@@ -578,6 +629,44 @@
         "link": null
       }
     ],
+    "DRN-002": [
+      {
+        "stage": 1,
+        "document": "MRD",
+        "plannedStart": "22-Jun-2026",
+        "dueDate": "14-Jul-2026",
+        "completedDate": "14-Jul-2026",
+        "status": "🟢 Completed",
+        "link": null
+      },
+      {
+        "stage": 1,
+        "document": "PRD",
+        "plannedStart": "2-Jul-2026",
+        "dueDate": "7-Aug-2026",
+        "completedDate": "7-Aug-2026",
+        "status": "🟢 Completed",
+        "link": null
+      },
+      {
+        "stage": 1,
+        "document": "PRD Matrix",
+        "plannedStart": "2-Jul-2026",
+        "dueDate": "15-Aug-2026",
+        "completedDate": null,
+        "status": "🟢 On Track",
+        "link": null
+      },
+      {
+        "stage": 2,
+        "document": "Proposal Presentation (PPT)",
+        "plannedStart": "27-Jul-2026",
+        "dueDate": "10-Aug-2026",
+        "completedDate": null,
+        "status": "🟠 Due Soon",
+        "link": null
+      }
+    ],
     "CAM-004": [
       {
         "stage": 1,
@@ -651,6 +740,73 @@
         "dueDate": null,
         "completedDate": null,
         "status": "Completed",
+        "link": null
+      }
+    ],
+    "VDB-001": [
+      {
+        "stage": 1,
+        "document": "MRD",
+        "plannedStart": "16-Jul-2026",
+        "dueDate": "31-Jul-2026",
+        "completedDate": "31-Jul-2026",
+        "status": "🟢 Completed",
+        "link": null
+      },
+      {
+        "stage": 1,
+        "document": "PRD",
+        "plannedStart": "28-Jul-2026",
+        "dueDate": "4-Aug-2026",
+        "completedDate": "4-Aug-2026",
+        "status": "🟢 Completed",
+        "link": null
+      },
+      {
+        "stage": 1,
+        "document": "PRD Matrix",
+        "plannedStart": "28-Jul-2026",
+        "dueDate": "4-Aug-2026",
+        "completedDate": "4-Aug-2026",
+        "status": "🟢 Completed",
+        "link": null
+      }
+    ],
+    "EDG-001": [
+      {
+        "stage": 1,
+        "document": "MRD",
+        "plannedStart": null,
+        "dueDate": null,
+        "completedDate": null,
+        "status": "Completed",
+        "link": null
+      },
+      {
+        "stage": 1,
+        "document": "PRD",
+        "plannedStart": null,
+        "dueDate": null,
+        "completedDate": null,
+        "status": "Completed",
+        "link": null
+      },
+      {
+        "stage": 1,
+        "document": "PRD Matrix",
+        "plannedStart": null,
+        "dueDate": null,
+        "completedDate": null,
+        "status": "In progress",
+        "link": null
+      },
+      {
+        "stage": 2,
+        "document": "Proposal Presentation (PPT)",
+        "plannedStart": null,
+        "dueDate": null,
+        "completedDate": null,
+        "status": "In progress",
         "link": null
       }
     ]
