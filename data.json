@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-10T06:15:35.271Z",
+  "generatedAt": "2026-08-10T06:27:50.175Z",
   "stages": [
     "Requirement Analysis",
     "Proposal",
@@ -790,10 +790,10 @@
       },
       {
         "stage": 1,
-        "document": null,
-        "plannedStart": null,
-        "dueDate": null,
-        "completedDate": null,
+        "document": "Parking_Sensor_PRD_Matrix.xlsx",
+        "plannedStart": "8-Aug-2026",
+        "dueDate": "10-Aug-2026",
+        "completedDate": "10-Aug-2026",
         "status": "Completed",
         "link": null
       },
