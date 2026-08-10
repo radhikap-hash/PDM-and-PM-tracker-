@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-10T04:49:33.318Z",
+  "generatedAt": "2026-08-10T05:32:39.884Z",
   "stages": [
     "Requirement Analysis",
     "Proposal",
@@ -424,10 +424,10 @@
       "plannedStart": null,
       "plannedEnd": null,
       "statusLabel": null,
-      "currentStage": 2,
-      "progressPct": 7,
-      "completedStages": 0,
-      "currentStageName": "Proposal",
+      "currentStage": 1,
+      "progressPct": 17,
+      "completedStages": 1,
+      "currentStageName": "Requirement Analysis",
       "milestones": [],
       "blockers": [],
       "nextActions": [],
@@ -605,15 +605,15 @@
       "2": {
         "stage": 2,
         "plannedStart": "27-Jul-2026",
-        "dueDate": "10-Aug-2026",
-        "completedDate": null,
-        "status": "🟠 Due Soon",
+        "dueDate": "7-Aug-2026",
+        "completedDate": "7-Aug-2026",
+        "status": "🟢 Completed",
         "milestone": null,
         "blocker": null,
         "nextStep": null,
-        "completedCount": 0,
+        "completedCount": 1,
         "totalCount": 1,
-        "completionRatio": 0
+        "completionRatio": 1
       }
     },
     "CAM-004": {
@@ -910,9 +910,9 @@
         "stage": 2,
         "document": "DRONE- PROPOSAL",
         "plannedStart": "27-Jul-2026",
-        "dueDate": "10-Aug-2026",
-        "completedDate": null,
-        "status": "🟠 Due Soon",
+        "dueDate": "7-Aug-2026",
+        "completedDate": "7-Aug-2026",
+        "status": "🟢 Completed",
         "link": null
       }
     ],
