@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-10T04:15:13.224Z",
+  "generatedAt": "2026-08-10T04:27:30.621Z",
   "stages": [
     "Requirement Analysis",
     "Proposal",
@@ -354,6 +354,66 @@
         "blocker": null,
         "nextStep": "To decide prototyping start date"
       }
+    },
+    "DRN-001": {
+      "1": {
+        "plannedStart": "6-Jul-2026",
+        "dueDate": "24-Jul-2026",
+        "completedDate": "24-Jul-2026",
+        "status": "🟢 Completed",
+        "milestone": null,
+        "blocker": null,
+        "nextStep": null
+      },
+      "2": {
+        "plannedStart": "6-Jul-2026",
+        "dueDate": "9-Jul-2026",
+        "completedDate": "9-Jul-2026",
+        "status": "🟢 Completed",
+        "milestone": null,
+        "blocker": null,
+        "nextStep": null
+      }
+    },
+    "CAM-004": {
+      "1": {
+        "plannedStart": null,
+        "dueDate": null,
+        "completedDate": null,
+        "status": null,
+        "milestone": null,
+        "blocker": null,
+        "nextStep": null
+      }
+    },
+    "CAM-005": {
+      "1": {
+        "plannedStart": null,
+        "dueDate": null,
+        "completedDate": null,
+        "status": "In Revision",
+        "milestone": null,
+        "blocker": null,
+        "nextStep": null
+      },
+      "2": {
+        "plannedStart": null,
+        "dueDate": null,
+        "completedDate": null,
+        "status": "Completed",
+        "milestone": null,
+        "blocker": null,
+        "nextStep": null
+      },
+      "5": {
+        "plannedStart": null,
+        "dueDate": null,
+        "completedDate": null,
+        "status": "Completed",
+        "milestone": null,
+        "blocker": null,
+        "nextStep": null
+      }
     }
   },
   "documents": {
@@ -486,6 +546,111 @@
         "dueDate": "31-Jul-2026",
         "completedDate": "31-Jul-2026",
         "status": "🟢 Completed",
+        "link": null
+      }
+    ],
+    "DRN-001": [
+      {
+        "stage": 1,
+        "document": "MRD",
+        "plannedStart": "6-Jul-2026",
+        "dueDate": "20-Jul-2026",
+        "completedDate": "20-Jul-2026",
+        "status": "🟢 Completed",
+        "link": null
+      },
+      {
+        "stage": 1,
+        "document": "PRD",
+        "plannedStart": "6-Jul-2026",
+        "dueDate": "24-Jul-2026",
+        "completedDate": "24-Jul-2026",
+        "status": "🟢 Completed",
+        "link": null
+      },
+      {
+        "stage": 2,
+        "document": "Proposal Presentation (PPT)",
+        "plannedStart": "6-Jul-2026",
+        "dueDate": "9-Jul-2026",
+        "completedDate": "9-Jul-2026",
+        "status": "🟢 Completed",
+        "link": null
+      }
+    ],
+    "CAM-004": [
+      {
+        "stage": 1,
+        "document": "MRD",
+        "plannedStart": null,
+        "dueDate": null,
+        "completedDate": null,
+        "status": null,
+        "link": null
+      },
+      {
+        "stage": 1,
+        "document": "PRD",
+        "plannedStart": null,
+        "dueDate": null,
+        "completedDate": null,
+        "status": null,
+        "link": null
+      },
+      {
+        "stage": 1,
+        "document": "Market Reaserch Our VS Existing",
+        "plannedStart": null,
+        "dueDate": null,
+        "completedDate": null,
+        "status": null,
+        "link": null
+      }
+    ],
+    "CAM-005": [
+      {
+        "stage": 1,
+        "document": "MRD",
+        "plannedStart": null,
+        "dueDate": null,
+        "completedDate": null,
+        "status": "In Revision",
+        "link": null
+      },
+      {
+        "stage": 1,
+        "document": "PRD",
+        "plannedStart": null,
+        "dueDate": null,
+        "completedDate": null,
+        "status": "In Revision",
+        "link": null
+      },
+      {
+        "stage": 1,
+        "document": "Market Reaserch Our VS Existing",
+        "plannedStart": null,
+        "dueDate": null,
+        "completedDate": null,
+        "status": "In Revision",
+        "link": null
+      },
+      {
+        "stage": 2,
+        "document": "Proposal Presentation (PPT)",
+        "plannedStart": null,
+        "dueDate": null,
+        "completedDate": null,
+        "status": "Completed",
+        "link": null
+      },
+      {
+        "stage": 5,
+        "document": "• Kickoff Presentation\n• Meeting Minutes (MoM)\n• RACI Matrix",
+        "plannedStart": null,
+        "dueDate": null,
+        "completedDate": null,
+        "status": "Completed",
         "link": null
       }
     ]
