@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-10T04:39:28.065Z",
+  "generatedAt": "2026-08-10T04:49:33.318Z",
   "stages": [
     "Requirement Analysis",
     "Proposal",
@@ -110,7 +110,17 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": null
+      "statusLabel": null,
+      "currentStage": 1,
+      "progressPct": 0,
+      "completedStages": 0,
+      "currentStageName": "Requirement Analysis",
+      "milestones": [],
+      "blockers": [],
+      "nextActions": [],
+      "currentMilestones": [],
+      "currentBlockers": [],
+      "currentNextActions": []
     },
     {
       "cat": "Camera",
@@ -121,7 +131,17 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": null
+      "statusLabel": null,
+      "currentStage": 1,
+      "progressPct": 0,
+      "completedStages": 0,
+      "currentStageName": "Requirement Analysis",
+      "milestones": [],
+      "blockers": [],
+      "nextActions": [],
+      "currentMilestones": [],
+      "currentBlockers": [],
+      "currentNextActions": []
     },
     {
       "cat": "Camera",
@@ -132,7 +152,17 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": null
+      "statusLabel": null,
+      "currentStage": 1,
+      "progressPct": 0,
+      "completedStages": 0,
+      "currentStageName": "Requirement Analysis",
+      "milestones": [],
+      "blockers": [],
+      "nextActions": [],
+      "currentMilestones": [],
+      "currentBlockers": [],
+      "currentNextActions": []
     },
     {
       "cat": "Camera",
@@ -143,7 +173,17 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": null
+      "statusLabel": null,
+      "currentStage": 1,
+      "progressPct": 0,
+      "completedStages": 0,
+      "currentStageName": "Requirement Analysis",
+      "milestones": [],
+      "blockers": [],
+      "nextActions": [],
+      "currentMilestones": [],
+      "currentBlockers": [],
+      "currentNextActions": []
     },
     {
       "cat": "Camera",
@@ -154,7 +194,17 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": null
+      "statusLabel": null,
+      "currentStage": 1,
+      "progressPct": 20,
+      "completedStages": 2,
+      "currentStageName": "Requirement Analysis",
+      "milestones": [],
+      "blockers": [],
+      "nextActions": [],
+      "currentMilestones": [],
+      "currentBlockers": [],
+      "currentNextActions": []
     },
     {
       "cat": "Camera",
@@ -165,7 +215,17 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": null
+      "statusLabel": null,
+      "currentStage": 1,
+      "progressPct": 0,
+      "completedStages": 0,
+      "currentStageName": "Requirement Analysis",
+      "milestones": [],
+      "blockers": [],
+      "nextActions": [],
+      "currentMilestones": [],
+      "currentBlockers": [],
+      "currentNextActions": []
     },
     {
       "cat": "NVR",
@@ -176,7 +236,17 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": null
+      "statusLabel": null,
+      "currentStage": 1,
+      "progressPct": 0,
+      "completedStages": 0,
+      "currentStageName": "Requirement Analysis",
+      "milestones": [],
+      "blockers": [],
+      "nextActions": [],
+      "currentMilestones": [],
+      "currentBlockers": [],
+      "currentNextActions": []
     },
     {
       "cat": "VDelibot",
@@ -187,7 +257,19 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": null
+      "statusLabel": null,
+      "currentStage": 2,
+      "progressPct": 10,
+      "completedStages": 1,
+      "currentStageName": "Proposal",
+      "milestones": [],
+      "blockers": [],
+      "nextActions": [
+        "Re-iterate as per directions/discussion/approvals"
+      ],
+      "currentMilestones": [],
+      "currentBlockers": [],
+      "currentNextActions": []
     },
     {
       "cat": "Edge",
@@ -198,7 +280,17 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": null
+      "statusLabel": null,
+      "currentStage": 2,
+      "progressPct": 7,
+      "completedStages": 0,
+      "currentStageName": "Proposal",
+      "milestones": [],
+      "blockers": [],
+      "nextActions": [],
+      "currentMilestones": [],
+      "currentBlockers": [],
+      "currentNextActions": []
     },
     {
       "cat": "Edge",
@@ -209,7 +301,17 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": null
+      "statusLabel": null,
+      "currentStage": 1,
+      "progressPct": 0,
+      "completedStages": 0,
+      "currentStageName": "Requirement Analysis",
+      "milestones": [],
+      "blockers": [],
+      "nextActions": [],
+      "currentMilestones": [],
+      "currentBlockers": [],
+      "currentNextActions": []
     },
     {
       "cat": "Sensor",
@@ -220,7 +322,26 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": null
+      "statusLabel": null,
+      "currentStage": 10,
+      "progressPct": 20,
+      "completedStages": 2,
+      "currentStageName": "Integration, Verification & Validation",
+      "milestones": [],
+      "blockers": [
+        "Waiting for quotes"
+      ],
+      "nextActions": [
+        "Approval",
+        "Procurement"
+      ],
+      "currentMilestones": [],
+      "currentBlockers": [
+        "Waiting for quotes"
+      ],
+      "currentNextActions": [
+        "Procurement"
+      ]
     },
     {
       "cat": "Sensor",
@@ -231,7 +352,21 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": null
+      "statusLabel": null,
+      "currentStage": 6,
+      "progressPct": 30,
+      "completedStages": 3,
+      "currentStageName": "Project Planning",
+      "milestones": [],
+      "blockers": [],
+      "nextActions": [
+        "Approval",
+        "Any changes if required",
+        "To decide prototyping start date"
+      ],
+      "currentMilestones": [],
+      "currentBlockers": [],
+      "currentNextActions": []
     },
     {
       "cat": "Sensor",
@@ -242,7 +377,21 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": null
+      "statusLabel": null,
+      "currentStage": 6,
+      "progressPct": 30,
+      "completedStages": 3,
+      "currentStageName": "Project Planning",
+      "milestones": [],
+      "blockers": [],
+      "nextActions": [
+        "Approval",
+        "Any changes if required",
+        "To decide prototyping start date"
+      ],
+      "currentMilestones": [],
+      "currentBlockers": [],
+      "currentNextActions": []
     },
     {
       "cat": "Drone",
@@ -253,7 +402,17 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": null
+      "statusLabel": null,
+      "currentStage": 3,
+      "progressPct": 20,
+      "completedStages": 2,
+      "currentStageName": "Commercial Finalization",
+      "milestones": [],
+      "blockers": [],
+      "nextActions": [],
+      "currentMilestones": [],
+      "currentBlockers": [],
+      "currentNextActions": []
     },
     {
       "cat": "Drone",
@@ -264,206 +423,296 @@
       "stage": 1,
       "plannedStart": null,
       "plannedEnd": null,
-      "statusLabel": null
+      "statusLabel": null,
+      "currentStage": 2,
+      "progressPct": 7,
+      "completedStages": 0,
+      "currentStageName": "Proposal",
+      "milestones": [],
+      "blockers": [],
+      "nextActions": [],
+      "currentMilestones": [],
+      "currentBlockers": [],
+      "currentNextActions": []
     }
   ],
   "engineering": {
     "SEN-001": {
       "1": {
+        "stage": 1,
         "plannedStart": "1-Aug-2026",
         "dueDate": "3-Aug-2026",
         "completedDate": "3-Aug-2026",
         "status": "🟢 Completed",
         "milestone": null,
         "blocker": null,
-        "nextStep": "Approval"
+        "nextStep": "Approval",
+        "completedCount": 2,
+        "totalCount": 2,
+        "completionRatio": 1
       },
       "2": {
+        "stage": 2,
         "plannedStart": "3-Aug-2026",
         "dueDate": "3-Aug-2026",
         "completedDate": "3-Aug-2026",
         "status": "🟢 Completed",
         "milestone": null,
         "blocker": null,
-        "nextStep": "Approval"
+        "nextStep": "Approval",
+        "completedCount": 1,
+        "totalCount": 1,
+        "completionRatio": 1
       },
       "10": {
+        "stage": 10,
         "plannedStart": "27-Jul-2026",
         "dueDate": "30-Aug-2026",
         "completedDate": null,
         "status": "🟢 On Track",
         "milestone": null,
         "blocker": "Waiting for quotes",
-        "nextStep": "Procurement"
+        "nextStep": "Procurement",
+        "completedCount": 0,
+        "totalCount": 1,
+        "completionRatio": 0
       }
     },
     "BAN-001": {
       "1": {
+        "stage": 1,
         "plannedStart": "11-Jul-2026",
         "dueDate": "31-Jul-2026",
         "completedDate": "31-Jul-2026",
         "status": "🟢 Completed",
         "milestone": null,
         "blocker": null,
-        "nextStep": "Approval"
+        "nextStep": "Approval",
+        "completedCount": 3,
+        "totalCount": 3,
+        "completionRatio": 1
       },
       "2": {
+        "stage": 2,
         "plannedStart": "6-Jul-2026",
         "dueDate": "31-Jul-2026",
         "completedDate": "31-Jul-2026",
         "status": "🟢 Completed",
         "milestone": null,
         "blocker": null,
-        "nextStep": "Any changes if required"
+        "nextStep": "Any changes if required",
+        "completedCount": 1,
+        "totalCount": 1,
+        "completionRatio": 1
       },
       "5": {
+        "stage": 5,
         "plannedStart": "31-Jul-2026",
         "dueDate": "31-Jul-2026",
         "completedDate": "31-Jul-2026",
         "status": "🟢 Completed",
         "milestone": null,
         "blocker": null,
-        "nextStep": "To decide prototyping start date"
+        "nextStep": "To decide prototyping start date",
+        "completedCount": 1,
+        "totalCount": 1,
+        "completionRatio": 1
       }
     },
     "SOS-001": {
       "1": {
+        "stage": 1,
         "plannedStart": "11-Jul-2026",
         "dueDate": "31-Aug-2026",
         "completedDate": "31-Aug-2026",
         "status": "🟢 Completed",
         "milestone": null,
         "blocker": null,
-        "nextStep": "Approval"
+        "nextStep": "Approval",
+        "completedCount": 3,
+        "totalCount": 3,
+        "completionRatio": 1
       },
       "2": {
+        "stage": 2,
         "plannedStart": "28-Jul-2026",
         "dueDate": "29-Jul-2026",
         "completedDate": "29-Jul-2026",
         "status": "🟢 Completed",
         "milestone": null,
         "blocker": null,
-        "nextStep": "Any changes if required"
+        "nextStep": "Any changes if required",
+        "completedCount": 1,
+        "totalCount": 1,
+        "completionRatio": 1
       },
       "5": {
+        "stage": 5,
         "plannedStart": "31-Jul-2026",
         "dueDate": "31-Jul-2026",
         "completedDate": "31-Jul-2026",
         "status": "🟢 Completed",
         "milestone": null,
         "blocker": null,
-        "nextStep": "To decide prototyping start date"
+        "nextStep": "To decide prototyping start date",
+        "completedCount": 1,
+        "totalCount": 1,
+        "completionRatio": 1
       }
     },
     "DRN-001": {
       "1": {
+        "stage": 1,
         "plannedStart": "6-Jul-2026",
         "dueDate": "24-Jul-2026",
         "completedDate": "24-Jul-2026",
         "status": "🟢 Completed",
         "milestone": null,
         "blocker": null,
-        "nextStep": null
+        "nextStep": null,
+        "completedCount": 2,
+        "totalCount": 2,
+        "completionRatio": 1
       },
       "2": {
+        "stage": 2,
         "plannedStart": "6-Jul-2026",
         "dueDate": "9-Jul-2026",
         "completedDate": "9-Jul-2026",
         "status": "🟢 Completed",
         "milestone": null,
         "blocker": null,
-        "nextStep": null
+        "nextStep": null,
+        "completedCount": 1,
+        "totalCount": 1,
+        "completionRatio": 1
       }
     },
     "DRN-002": {
       "1": {
+        "stage": 1,
         "plannedStart": "2-Jul-2026",
         "dueDate": "7-Aug-2026",
         "completedDate": null,
         "status": "🟢 On Track",
         "milestone": null,
         "blocker": null,
-        "nextStep": null
+        "nextStep": null,
+        "completedCount": 2,
+        "totalCount": 3,
+        "completionRatio": 0.6666666666666666
       },
       "2": {
+        "stage": 2,
         "plannedStart": "27-Jul-2026",
         "dueDate": "10-Aug-2026",
         "completedDate": null,
         "status": "🟠 Due Soon",
         "milestone": null,
         "blocker": null,
-        "nextStep": null
+        "nextStep": null,
+        "completedCount": 0,
+        "totalCount": 1,
+        "completionRatio": 0
       }
     },
     "CAM-004": {
       "1": {
+        "stage": 1,
         "plannedStart": null,
         "dueDate": null,
         "completedDate": null,
         "status": null,
         "milestone": null,
         "blocker": null,
-        "nextStep": null
+        "nextStep": null,
+        "completedCount": 0,
+        "totalCount": 3,
+        "completionRatio": 0
       }
     },
     "CAM-005": {
       "1": {
+        "stage": 1,
         "plannedStart": null,
         "dueDate": null,
         "completedDate": null,
         "status": "In Revision",
         "milestone": null,
         "blocker": null,
-        "nextStep": null
+        "nextStep": null,
+        "completedCount": 0,
+        "totalCount": 3,
+        "completionRatio": 0
       },
       "2": {
+        "stage": 2,
         "plannedStart": null,
         "dueDate": null,
         "completedDate": null,
         "status": "Completed",
         "milestone": null,
         "blocker": null,
-        "nextStep": null
+        "nextStep": null,
+        "completedCount": 1,
+        "totalCount": 1,
+        "completionRatio": 1
       },
       "5": {
+        "stage": 5,
         "plannedStart": null,
         "dueDate": null,
         "completedDate": null,
         "status": "Completed",
         "milestone": null,
         "blocker": null,
-        "nextStep": null
+        "nextStep": null,
+        "completedCount": 1,
+        "totalCount": 1,
+        "completionRatio": 1
       }
     },
     "VDB-001": {
       "1": {
+        "stage": 1,
         "plannedStart": "16-Jul-2026",
         "dueDate": "4-Aug-2026",
         "completedDate": "4-Aug-2026",
         "status": "🟢 Completed",
         "milestone": null,
         "blocker": null,
-        "nextStep": "Re-iterate as per directions/discussion/approvals"
+        "nextStep": "Re-iterate as per directions/discussion/approvals",
+        "completedCount": 3,
+        "totalCount": 3,
+        "completionRatio": 1
       }
     },
     "EDG-001": {
       "1": {
+        "stage": 1,
         "plannedStart": null,
         "dueDate": null,
         "completedDate": null,
         "status": "In progress",
         "milestone": null,
         "blocker": null,
-        "nextStep": null
+        "nextStep": null,
+        "completedCount": 2,
+        "totalCount": 3,
+        "completionRatio": 0.6666666666666666
       },
       "2": {
+        "stage": 2,
         "plannedStart": null,
         "dueDate": null,
         "completedDate": null,
         "status": "In progress",
         "milestone": null,
         "blocker": null,
-        "nextStep": null
+        "nextStep": null,
+        "completedCount": 0,
+        "totalCount": 1,
+        "completionRatio": 0
       }
     }
   },
@@ -471,7 +720,7 @@
     "SEN-001": [
       {
         "stage": 1,
-        "document": "MRD",
+        "document": "Parking_Sensor_MRD",
         "plannedStart": "1-Aug-2026",
         "dueDate": "3-Aug-2026",
         "completedDate": "3-Aug-2026",
@@ -480,7 +729,7 @@
       },
       {
         "stage": 1,
-        "document": "PRD",
+        "document": "Parking_Lot_Sensor_PRD.docx",
         "plannedStart": "3-Aug-2026",
         "dueDate": "3-Aug-2026",
         "completedDate": "3-Aug-2026",
@@ -489,7 +738,7 @@
       },
       {
         "stage": 2,
-        "document": "Proposal Presentation (PPT)",
+        "document": "Parking Lot Sensor - Product Proposal",
         "plannedStart": "3-Aug-2026",
         "dueDate": "3-Aug-2026",
         "completedDate": "3-Aug-2026",
@@ -498,7 +747,7 @@
       },
       {
         "stage": 10,
-        "document": "• Verification Plan\n• Validation Plan\n• Test Cases\n• Test Reports\n• Defect Log\n• Regression Test Report\n• Requirements Traceability Matrix (RTM)\n• Customer Acceptance Test (CAT/UAT) Report\n• Final Validation Report",
+        "document": null,
         "plannedStart": "27-Jul-2026",
         "dueDate": "30-Aug-2026",
         "completedDate": null,
@@ -509,7 +758,7 @@
     "BAN-001": [
       {
         "stage": 1,
-        "document": "MRD",
+        "document": "Smart band Market survey",
         "plannedStart": "6-Jul-2026",
         "dueDate": "30-Jul-2026",
         "completedDate": "29-Jul-2026",
@@ -518,7 +767,7 @@
       },
       {
         "stage": 1,
-        "document": "PRD",
+        "document": "ZMD_Safety_Band_PRD.docx",
         "plannedStart": "11-Jul-2026",
         "dueDate": "30-Jul-2026",
         "completedDate": "30-Jul-2026",
@@ -527,7 +776,7 @@
       },
       {
         "stage": 1,
-        "document": "PRD Matrix",
+        "document": "Smart Safety Band - Sensors and Components",
         "plannedStart": "31-Jul-2026",
         "dueDate": "31-Jul-2026",
         "completedDate": "31-Jul-2026",
@@ -536,7 +785,7 @@
       },
       {
         "stage": 2,
-        "document": "Proposal Presentation (PPT)",
+        "document": "ZMD_Safety_Band_Product_Proposal.pptx",
         "plannedStart": "6-Jul-2026",
         "dueDate": "31-Jul-2026",
         "completedDate": "31-Jul-2026",
@@ -545,7 +794,7 @@
       },
       {
         "stage": 5,
-        "document": "• Kickoff Presentation\n• Meeting Minutes (MoM)\n• RACI Matrix",
+        "document": "MOM_Safety_Band_SOS_Device.docx",
         "plannedStart": "31-Jul-2026",
         "dueDate": "31-Jul-2026",
         "completedDate": "31-Jul-2026",
@@ -556,7 +805,7 @@
     "SOS-001": [
       {
         "stage": 1,
-        "document": "MRD",
+        "document": "SOS device Market survey",
         "plannedStart": "6-Jul-2026",
         "dueDate": "30-Jul-2026",
         "completedDate": "29-Jul-2026",
@@ -565,7 +814,7 @@
       },
       {
         "stage": 1,
-        "document": "PRD",
+        "document": "ZMD_SOS_Device_PRD.docx",
         "plannedStart": "11-Jul-2026",
         "dueDate": "30-Jul-2026",
         "completedDate": "30-Jul-2026",
@@ -574,7 +823,7 @@
       },
       {
         "stage": 1,
-        "document": "PRD Matrix",
+        "document": "Smart Safety Band - Sensors and Components",
         "plannedStart": "3-Aug-2026",
         "dueDate": "31-Aug-2026",
         "completedDate": "31-Aug-2026",
@@ -583,7 +832,7 @@
       },
       {
         "stage": 2,
-        "document": "Proposal Presentation (PPT)",
+        "document": "SOS Device_Product_Proposal",
         "plannedStart": "28-Jul-2026",
         "dueDate": "29-Jul-2026",
         "completedDate": "29-Jul-2026",
@@ -592,7 +841,7 @@
       },
       {
         "stage": 5,
-        "document": "• Kickoff Presentation\n• Meeting Minutes (MoM)\n• RACI Matrix",
+        "document": "MOM_Safety_Band_SOS_Device.docx",
         "plannedStart": "31-Jul-2026",
         "dueDate": "31-Jul-2026",
         "completedDate": "31-Jul-2026",
@@ -603,7 +852,7 @@
     "DRN-001": [
       {
         "stage": 1,
-        "document": "MRD",
+        "document": "Smart_city-MRD",
         "plannedStart": "6-Jul-2026",
         "dueDate": "20-Jul-2026",
         "completedDate": "20-Jul-2026",
@@ -612,7 +861,7 @@
       },
       {
         "stage": 1,
-        "document": "PRD",
+        "document": "Smart_City- PRD",
         "plannedStart": "6-Jul-2026",
         "dueDate": "24-Jul-2026",
         "completedDate": "24-Jul-2026",
@@ -621,7 +870,7 @@
       },
       {
         "stage": 2,
-        "document": "Proposal Presentation (PPT)",
+        "document": "Smart City - Proposal",
         "plannedStart": "6-Jul-2026",
         "dueDate": "9-Jul-2026",
         "completedDate": "9-Jul-2026",
@@ -632,7 +881,7 @@
     "DRN-002": [
       {
         "stage": 1,
-        "document": "MRD",
+        "document": "Drone - MRD",
         "plannedStart": "22-Jun-2026",
         "dueDate": "14-Jul-2026",
         "completedDate": "14-Jul-2026",
@@ -641,7 +890,7 @@
       },
       {
         "stage": 1,
-        "document": "PRD",
+        "document": "PRD_V2",
         "plannedStart": "2-Jul-2026",
         "dueDate": "7-Aug-2026",
         "completedDate": "7-Aug-2026",
@@ -650,7 +899,7 @@
       },
       {
         "stage": 1,
-        "document": "PRD Matrix",
+        "document": null,
         "plannedStart": "2-Jul-2026",
         "dueDate": "15-Aug-2026",
         "completedDate": null,
@@ -659,7 +908,7 @@
       },
       {
         "stage": 2,
-        "document": "Proposal Presentation (PPT)",
+        "document": "DRONE- PROPOSAL",
         "plannedStart": "27-Jul-2026",
         "dueDate": "10-Aug-2026",
         "completedDate": null,
@@ -670,7 +919,7 @@
     "CAM-004": [
       {
         "stage": 1,
-        "document": "MRD",
+        "document": "Link",
         "plannedStart": null,
         "dueDate": null,
         "completedDate": null,
@@ -679,7 +928,7 @@
       },
       {
         "stage": 1,
-        "document": "PRD",
+        "document": "Link",
         "plannedStart": null,
         "dueDate": null,
         "completedDate": null,
@@ -688,7 +937,7 @@
       },
       {
         "stage": 1,
-        "document": "Market Reaserch Our VS Existing",
+        "document": "Link",
         "plannedStart": null,
         "dueDate": null,
         "completedDate": null,
@@ -699,7 +948,7 @@
     "CAM-005": [
       {
         "stage": 1,
-        "document": "MRD",
+        "document": null,
         "plannedStart": null,
         "dueDate": null,
         "completedDate": null,
@@ -708,7 +957,7 @@
       },
       {
         "stage": 1,
-        "document": "PRD",
+        "document": "Link",
         "plannedStart": null,
         "dueDate": null,
         "completedDate": null,
@@ -717,7 +966,7 @@
       },
       {
         "stage": 1,
-        "document": "Market Reaserch Our VS Existing",
+        "document": null,
         "plannedStart": null,
         "dueDate": null,
         "completedDate": null,
@@ -726,7 +975,7 @@
       },
       {
         "stage": 2,
-        "document": "Proposal Presentation (PPT)",
+        "document": null,
         "plannedStart": null,
         "dueDate": null,
         "completedDate": null,
@@ -735,7 +984,7 @@
       },
       {
         "stage": 5,
-        "document": "• Kickoff Presentation\n• Meeting Minutes (MoM)\n• RACI Matrix",
+        "document": null,
         "plannedStart": null,
         "dueDate": null,
         "completedDate": null,
@@ -746,7 +995,7 @@
     "VDB-001": [
       {
         "stage": 1,
-        "document": "MRD",
+        "document": "V-DeliBot MRD V1.1",
         "plannedStart": "16-Jul-2026",
         "dueDate": "31-Jul-2026",
         "completedDate": "31-Jul-2026",
@@ -755,7 +1004,7 @@
       },
       {
         "stage": 1,
-        "document": "PRD",
+        "document": "V-DeliBot PRD V1.1",
         "plannedStart": "28-Jul-2026",
         "dueDate": "4-Aug-2026",
         "completedDate": "4-Aug-2026",
@@ -764,7 +1013,7 @@
       },
       {
         "stage": 1,
-        "document": "PRD Matrix",
+        "document": null,
         "plannedStart": "28-Jul-2026",
         "dueDate": "4-Aug-2026",
         "completedDate": "4-Aug-2026",
@@ -775,7 +1024,7 @@
     "EDG-001": [
       {
         "stage": 1,
-        "document": "MRD",
+        "document": null,
         "plannedStart": null,
         "dueDate": null,
         "completedDate": null,
@@ -784,7 +1033,7 @@
       },
       {
         "stage": 1,
-        "document": "PRD",
+        "document": null,
         "plannedStart": null,
         "dueDate": null,
         "completedDate": null,
@@ -793,7 +1042,7 @@
       },
       {
         "stage": 1,
-        "document": "PRD Matrix",
+        "document": null,
         "plannedStart": null,
         "dueDate": null,
         "completedDate": null,
@@ -802,7 +1051,7 @@
       },
       {
         "stage": 2,
-        "document": "Proposal Presentation (PPT)",
+        "document": null,
         "plannedStart": null,
         "dueDate": null,
         "completedDate": null,
