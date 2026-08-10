@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-10T06:27:50.175Z",
+  "generatedAt": "2026-08-10T06:49:37.082Z",
   "stages": [
     "Requirement Analysis",
     "Proposal",
@@ -324,8 +324,8 @@
       "plannedEnd": null,
       "statusLabel": null,
       "currentStage": 10,
-      "progressPct": 20,
-      "completedStages": 2,
+      "progressPct": 30,
+      "completedStages": 3,
       "currentStageName": "Integration, Verification & Validation",
       "milestones": [],
       "blockers": [
@@ -333,6 +333,7 @@
       ],
       "nextActions": [
         "Approval",
+        "Blocker rectification",
         "Procurement"
       ],
       "currentMilestones": [],
@@ -424,13 +425,15 @@
       "plannedStart": null,
       "plannedEnd": null,
       "statusLabel": null,
-      "currentStage": 1,
-      "progressPct": 17,
-      "completedStages": 1,
-      "currentStageName": "Requirement Analysis",
+      "currentStage": 3,
+      "progressPct": 20,
+      "completedStages": 2,
+      "currentStageName": "Commercial Finalization",
       "milestones": [],
       "blockers": [],
-      "nextActions": [],
+      "nextActions": [
+        "Allocating tech team"
+      ],
       "currentMilestones": [],
       "currentBlockers": [],
       "currentNextActions": []
@@ -460,6 +463,19 @@
         "milestone": null,
         "blocker": null,
         "nextStep": "Approval",
+        "completedCount": 1,
+        "totalCount": 1,
+        "completionRatio": 1
+      },
+      "5": {
+        "stage": 5,
+        "plannedStart": "8-Aug-2026",
+        "dueDate": "10-Aug-2026",
+        "completedDate": "10-Aug-2026",
+        "status": "Completed",
+        "milestone": null,
+        "blocker": null,
+        "nextStep": "Blocker rectification",
         "completedCount": 1,
         "totalCount": 1,
         "completionRatio": 1
@@ -645,14 +661,14 @@
         "stage": 1,
         "plannedStart": "2-Jul-2026",
         "dueDate": "7-Aug-2026",
-        "completedDate": null,
-        "status": "🟢 On Track",
+        "completedDate": "7-Aug-2026",
+        "status": "🟢 Completed",
         "milestone": null,
         "blocker": null,
-        "nextStep": null,
-        "completedCount": 2,
+        "nextStep": "Allocating tech team",
+        "completedCount": 3,
         "totalCount": 3,
-        "completionRatio": 0.6666666666666666
+        "completionRatio": 1
       },
       "2": {
         "stage": 2,
@@ -803,6 +819,15 @@
         "plannedStart": "3-Aug-2026",
         "dueDate": "3-Aug-2026",
         "completedDate": "3-Aug-2026",
+        "status": "Completed",
+        "link": null
+      },
+      {
+        "stage": 5,
+        "document": "Parking_Sensor_Project_Status",
+        "plannedStart": "8-Aug-2026",
+        "dueDate": "10-Aug-2026",
+        "completedDate": "10-Aug-2026",
         "status": "Completed",
         "link": null
       },
@@ -996,11 +1021,11 @@
       },
       {
         "stage": 1,
-        "document": null,
+        "document": "Tech Spec",
         "plannedStart": "2-Jul-2026",
-        "dueDate": "15-Aug-2026",
-        "completedDate": null,
-        "status": "🟢 On Track",
+        "dueDate": "10-Aug-2026",
+        "completedDate": "10-Aug-2026",
+        "status": "🟢 Completed",
         "link": null
       },
       {
