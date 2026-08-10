@@ -1,127 +1,301 @@
 /**
- * PDM & PM tracker → GitHub Pages publisher
- * -----------------------------------------
- * Bind to the "PDM & PM" Google Sheet (Extensions > Apps Script).
+ * PDM & PM Tracker → GitHub Pages Publisher
+ * ==========================================
  *
- * READS:
- *  - "Project details" — master list of variants: Category, Name, Project ID,
- *    Stage/Status (free text), PDM, PM, Start/End Date. This decides each
- *    variant's overall category and CURRENT stage number.
- *  - "Stages/documents" — the canonical Stage | Activity | Document | Owner
- *    template (11 stages, one row per document). Used to build the dashboard's
- *    stage list and per-stage document checklist, so the sheet — not the
- *    HTML — is the single source of truth for both.
- *  - The five per-owner tabs (Sensor-Durga, Drone-Bharath, Praddumna- Camera,
- *    Delivery bot-Swapnil, Server-Tarun) — each repeats the SAME Stage|
- *    Activity|Document|Owner template in columns A-D, then has one 8-column
- *    block per variant to the right:
- *      Planned Start | Due Date | Completion date | Status | Key milestones |
- *      Blocker | Immediate next step | Documents
- *    row-aligned to the template, with the variant's "Name (CODE)" as a
- *    merged header directly above the column labels. One row = one specific
- *    document deliverable for that variant.
+ * Google Sheet → parsed project data → data.json → GitHub Pages
  *
- * BUILDS data.json with:
- *   stages       — array of stage names (from Stages/documents)
- *   stageDocs    — {stageNum: [documentName, ...]} (from Stages/documents)
- *   products     — one entry per variant (from Project details)
- *   engineering  — engineering[id][stageNum] = rolled-up {plannedStart,
- *                  dueDate, completedDate, status, milestone, blocker,
- *                  nextStep} — aggregated across that stage's document rows
- *   documents    — documents[id] = [{stage, document, plannedStart, dueDate,
- *                  completedDate, status, link}, ...] — one entry per real
- *                  document row, for the per-document checklist detail
+ * IMPORTANT:
+ * 1. Keep the GitHub token in Apps Script > Project Settings > Script Properties.
+ * 2. Run setup() once.
+ * 3. Run Dashboard > Preview data first.
+ * 4. Then Dashboard > Publish now.
  *
- * ONE-TIME SETUP
- * 1. Paste this whole file in as Code.gs (Extensions > Apps Script).
- * 2. Project Settings > Script Properties > Add script property, then SAVE:
- *      GITHUB_TOKEN, GITHUB_OWNER, GITHUB_REPO, GITHUB_BRANCH (see bottom).
- * 3. Run setup() once from the editor toolbar, approve the permissions prompt.
- * 4. Reload the Sheet — a "Dashboard" menu appears.
- * 5. Dashboard ▸ Preview data (no publish) FIRST — this is the fast way to
- *    see if the owner-tab parsing lined up with your actual columns before
- *    anything gets published. Read the warnings carefully.
- * 6. Dashboard ▸ Publish now.
- *
- * IMPORTANT CAVEAT: the owner-tab block parser below was written from two
- * screenshots (Sensor-Durga tab), not by reading your other four tabs
- * directly. If Drone-Bharath / Praddumna- Camera / Delivery bot-Swapnil /
- * Server-Tarun use a different column layout, Preview data's warnings will
- * say so — report them back and the parser gets adjusted, rather than
- * silently publishing wrong data.
+ * Script Properties:
+ *   GITHUB_TOKEN
+ *   GITHUB_OWNER
+ *   GITHUB_REPO
+ *   GITHUB_BRANCH
+ *   GITHUB_PATH (optional; defaults to data.json)
  */
 
 const PROJECT_SHEET_NAMES = ['Project details', 'Products'];
 const TEMPLATE_SHEET_NAMES = ['Stages/documents', 'Stages / documents'];
-const OWNER_SHEET_NAMES = ['Sensor-Durga', 'Drone-Bharath', 'Praddumna- Camera', 'Delivery bot-Swapnil', 'Server-Tarun'];
+const OWNER_SHEET_NAMES = [
+  'Sensor-Durga',
+  'Drone-Bharath',
+  'Praddumna- Camera',
+  'Delivery bot-Swapnil',
+  'Server-Tarun'
+];
+
+const SHEET_DASHBOARD_TAB = 'Live Dashboard';
+const GITHUB_API_VERSION = '2022-11-28';
+
+const HARDCODED_STAGES = [
+  'Requirement Analysis',
+  'Proposal',
+  'Commercial Finalization',
+  'Statement of Work (SOW)',
+  'Project Kickoff',
+  'Project Planning',
+  'Detailed Design',
+  'Critical Design Review (CDR)',
+  'Procurement & Development',
+  'Integration, Verification & Validation'
+];
+
+const HARDCODED_STAGE_DOCS = {
+  1: ['MRD', 'PRD', 'PRD Matrix'],
+  2: [
+    'Proposal Presentation (PPT)',
+    'NDA',
+    'Quotation (Price Breakup, Commercial Terms, Payment Schedule, Delivery Schedule)'
+  ],
+  3: [
+    'Final SOW (Scope Matrix, Deliverables List, Exclusions List, Assumptions, Dependencies, Acceptance Criteria)'
+  ],
+  4: ['Kickoff Presentation', 'Meeting Minutes (MoM)', 'RACI Matrix'],
+  5: [
+    'Work Breakdown Structure (WBS)',
+    'PDM Document',
+    'Hardware Architecture',
+    'Software Architecture',
+    'Block Diagram',
+    'Data Flow Diagram (DFD)',
+    'Interface Control Document (ICD)',
+    'Milestone Plan',
+    'Resource Plan',
+    'Budget Tracker',
+    'Procurement Plan',
+    'Risk Register'
+  ],
+  6: [
+    'Schematics',
+    'PCB Layout',
+    'Bill of Materials (BOM)',
+    'PCB Stack-up',
+    'Simulation Reports',
+    'Software Design Document (SDD)',
+    'API Specification',
+    'Database Design',
+    'UI Mockups',
+    'CAD Models',
+    'Mechanical Drawings',
+    'Thermal Analysis Report'
+  ],
+  7: [
+    'CDR Package',
+    'Design Review Presentation',
+    'Simulation Results',
+    'Review Minutes',
+    'Risk Closure Report',
+    'Manufacturing Readiness Report',
+    'Design Freeze Approval'
+  ],
+  8: [
+    'Approved Vendor List (AVL)',
+    'RFQ',
+    'Purchase Request (PR)',
+    'Purchase Order (PO)',
+    'Delivery Tracker',
+    'Incoming Inspection Report',
+    'PCB Assembly Report',
+    'Bring-up Report',
+    'Debug Logs',
+    'Source Code Repository',
+    'Code Review Report',
+    'Unit Test Report',
+    'Dataset',
+    'AI Training Report',
+    'Sprint Board',
+    'Bug Tracker',
+    'Version Control Log'
+  ],
+  9: [
+    'Verification Plan',
+    'Validation Plan',
+    'Test Cases',
+    'Test Reports',
+    'Defect Log',
+    'Regression Test Report',
+    'Requirements Traceability Matrix (RTM)',
+    'Customer Acceptance Test (CAT/UAT) Report',
+    'Final Validation Report'
+  ],
+  10: []
+};
 
 const BLOCK_FIELD_CANDIDATES = {
   plannedStart: ['planned start'],
   dueDate: ['due date'],
   completedDate: ['completion date', 'completed date'],
   status: ['status'],
-  milestone: ['key milestone', 'milestone'],
+  milestone: ['key milestones', 'key milestone', 'milestones', 'milestone'],
   blocker: ['blocker'],
-  nextStep: ['immediate next step', 'next step'],
-  document: ['document']
+  nextStep: ['immediate next step', 'next action', 'next step'],
+  document: ['documents', 'document']
 };
+
+
+/* ============================================================
+   MENU / SETUP
+   ============================================================ */
 
 function setup() {
   onOpen();
-  SpreadsheetApp.getUi().alert('Menu installed. Set Script Properties (see comment block at top of Code.gs), then Dashboard \u25b8 Preview data, then Dashboard \u25b8 Publish now.');
+  SpreadsheetApp.getUi().alert(
+    'Setup complete',
+    'Set GitHub Script Properties, then use Dashboard → Preview data. ' +
+    'After checking the warnings, use Dashboard → Publish now.',
+    SpreadsheetApp.getUi().ButtonSet.OK
+  );
 }
 
 function onOpen() {
-  SpreadsheetApp.getUi().createMenu('Dashboard')
+  SpreadsheetApp.getUi()
+    .createMenu('Dashboard')
     .addItem('Preview data (no publish)', 'previewData')
     .addItem('Publish now', 'publishToGithubUI')
-    .addItem('Enable auto-publish (~2 min after edits)', 'enableAutoPublish')
+    .addItem('Rebuild Live Dashboard only', 'rebuildSheetDashboardUI')
+    .addSeparator()
+    .addItem('Test GitHub connection', 'testGithubConnection')
+    .addItem('Enable auto-publish (~2 min)', 'enableAutoPublish')
     .addItem('Disable auto-publish', 'disableAutoPublish')
     .addToUi();
 }
 
-function str_(v) { return (v === null || v === undefined) ? '' : String(v).trim(); }
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+
+function str_(v) {
+  return (v === null || v === undefined) ? '' : String(v).trim();
+}
+
+function norm_(v) {
+  return str_(v).toLowerCase().replace(/\s+/g, ' ').trim();
+}
+
+function normName_(v) {
+  return norm_(v).replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
 function dateStr_(v) {
   if (!v) return null;
   if (Object.prototype.toString.call(v) === '[object Date]' && !isNaN(v)) {
-    return Utilities.formatDate(v, Session.getScriptTimeZone() || 'Etc/UTC', 'd-MMM-yyyy');
+    return Utilities.formatDate(
+      v,
+      Session.getScriptTimeZone() || 'Asia/Kolkata',
+      'd-MMM-yyyy'
+    );
   }
   return str_(v) || null;
 }
+
 function findSheet_(ss, names) {
-  for (const n of names) { const sh = ss.getSheetByName(n); if (sh) return sh; }
+  for (const name of names) {
+    const exact = ss.getSheetByName(name);
+    if (exact) return exact;
+  }
+
+  const wanted = names.map(n => n.trim().toLowerCase());
+
+  for (const sh of ss.getSheets()) {
+    if (wanted.indexOf(sh.getName().trim().toLowerCase()) !== -1) {
+      return sh;
+    }
+  }
+
   return null;
 }
+
 function findCol_(headerRow, candidates) {
-  const norm = headerRow.map(h => str_(h).toLowerCase());
-  for (const cand of candidates) {
-    const idx = norm.findIndex(h => h.includes(cand));
+  const headers = headerRow.map(h => norm_(h));
+
+  for (const candidate of candidates) {
+    const idx = headers.findIndex(h => h.includes(norm_(candidate)));
     if (idx !== -1) return idx;
   }
+
   return -1;
 }
-function normDoc_(s) { return str_(s).toLowerCase(); }
-function normName_(s) { return str_(s).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(); }
 
-/**
- * Parses the Stage|Activity|Document|Owner template starting in column A of
- * the given sheet. Returns {templateRows: [{rowIndex(0-based sheet row),
- * stage, activity, document}], headerRowIdx}.
- * Stage and Activity are forward-filled down blank cells (matches how the
- * sheet groups multiple document rows under one stage/activity).
- */
+function uniqueStrings_(values) {
+  return Array.from(new Set(
+    values.map(str_).filter(Boolean)
+  ));
+}
+
+function isCompleted_(entry) {
+  return !!entry.completedDate ||
+    /completed|complete|closed|approved/i.test(str_(entry.status));
+}
+
+
+/* ============================================================
+   STAGE / DOCUMENT TEMPLATE
+   ============================================================ */
+
+function hasBlockSubHeaders_(row) {
+  if (!row) return false;
+
+  const slice = row.slice(4);
+
+  return Object.keys(BLOCK_FIELD_CANDIDATES).some(field =>
+    findCol_(slice, BLOCK_FIELD_CANDIDATES[field]) !== -1
+  );
+}
+
 function parseTemplate_(values) {
   let headerRowIdx = -1;
+
   for (let i = 0; i < values.length; i++) {
-    if (str_(values[i][0]).toLowerCase() === 'stage') { headerRowIdx = i; break; }
+    const first = norm_(values[i][0]);
+    if (first === 'stage' || first === 'process') {
+      headerRowIdx = i;
+      break;
+    }
   }
-  if (headerRowIdx === -1) return { templateRows: [], headerRowIdx: -1 };
+
+  if (headerRowIdx === -1) {
+    return {
+      templateRows: [],
+      headerRowIdx: -1,
+      subHeaderRowIdx: -1,
+      variantHeaderRowIdx: -1
+    };
+  }
+
+  let subHeaderRowIdx;
+  let variantHeaderRowIdx;
+  let dataStartRow;
+
+  if (hasBlockSubHeaders_(values[headerRowIdx])) {
+    subHeaderRowIdx = headerRowIdx;
+    variantHeaderRowIdx = headerRowIdx - 1;
+    dataStartRow = headerRowIdx + 1;
+  } else if (
+    headerRowIdx + 1 < values.length &&
+    hasBlockSubHeaders_(values[headerRowIdx + 1])
+  ) {
+    subHeaderRowIdx = headerRowIdx + 1;
+    variantHeaderRowIdx = headerRowIdx;
+    dataStartRow = headerRowIdx + 2;
+  } else {
+    subHeaderRowIdx = headerRowIdx;
+    variantHeaderRowIdx = headerRowIdx - 1;
+    dataStartRow = headerRowIdx + 1;
+  }
 
   const templateRows = [];
-  let lastStage = null, lastActivity = '';
+  let lastStage = null;
+  let lastActivity = '';
   let blankStreak = 0;
-  for (let i = headerRowIdx + 1; i < values.length; i++) {
+
+  for (let i = dataStartRow; i < values.length; i++) {
     const row = values[i];
+
     const stageCell = str_(row[0]);
     const activityCell = str_(row[1]);
     const docCell = str_(row[2]);
@@ -129,129 +303,226 @@ function parseTemplate_(values) {
 
     if (!stageCell && !activityCell && !docCell && !ownerCell) {
       blankStreak++;
-      if (blankStreak >= 3) break; // end of template
+      if (blankStreak >= 3) break;
       continue;
     }
+
     blankStreak = 0;
 
-    const m = stageCell.match(/^stage\s*(\d+)$/i);
-    if (m) lastStage = parseInt(m[1], 10);
+    const match = stageCell.match(/^stage\s*(\d+)$/i);
+    if (match) lastStage = parseInt(match[1], 10);
+
     if (activityCell) lastActivity = activityCell;
 
-    if (!docCell) continue; // a row with a stage/activity label but no document isn't a checklist item
-    templateRows.push({ rowIndex: i, stage: lastStage, activity: lastActivity, document: docCell });
-  }
-  return { templateRows, headerRowIdx };
-}
+    if (!docCell) continue;
 
-/** Reads Stages/documents to build the canonical stages[] list and stageDocs{} checklist. */
-// Hardcoded fallback — the definitive 10-stage list you confirmed directly
-// (not guessed from a screenshot this time). Used whenever the "Stages/documents"
-// tab can't be found under any of the names above, so stage-name matching
-// (e.g. "Procurement & Development" -> stage 9) still works instead of
-// silently defaulting everything to stage 1.
-const HARDCODED_STAGES = [
-  'Requirement Analysis','Proposal','Commercial Finalization','Statement of Work (SOW)','Project Kickoff',
-  'Project Planning','Detailed Design','Critical Design Review (CDR)',
-  'Procurement & Development','Integration, Verification & Validation'
-];
-const HARDCODED_STAGE_DOCS = {
-  1: ["MRD","PRD","PRD Matrix"],
-  2: ["Proposal Presentation (PPT)","NDA","Quotation (Price Breakup, Commercial Terms, Payment Schedule, Delivery Schedule)"],
-  3: ["Final SOW (Scope Matrix, Deliverables List, Exclusions List, Assumptions, Dependencies, Acceptance Criteria)"],
-  4: ["Kickoff Presentation","Meeting Minutes (MoM)","RACI Matrix"],
-  5: ["Work Breakdown Structure (WBS)","PDM Document","Hardware Architecture","Software Architecture","Block Diagram","Data Flow Diagram (DFD)","Interface Control Document (ICD)","Milestone Plan","Resource Plan","Budget Tracker","Procurement Plan","Risk Register"],
-  6: ["Schematics","PCB Layout","Bill of Materials (BOM)","PCB Stack-up","Simulation Reports","Software Design Document (SDD)","API Specification","Database Design","UI Mockups","CAD Models","Mechanical Drawings","Thermal Analysis Report"],
-  7: ["CDR Package","Design Review Presentation","Simulation Results","Review Minutes","Risk Closure Report","Manufacturing Readiness Report","Design Freeze Approval"],
-  8: ["Approved Vendor List (AVL)","RFQ","Purchase Request (PR)","Purchase Order (PO)","Delivery Tracker","Incoming Inspection Report","PCB Assembly Report","Bring-up Report","Debug Logs","Source Code Repository","Code Review Report","Unit Test Report","Dataset","AI Training Report","Sprint Board","Bug Tracker","Version Control Log"],
-  9: ["Verification Plan","Validation Plan","Test Cases","Test Reports","Defect Log","Regression Test Report","Requirements Traceability Matrix (RTM)","Customer Acceptance Test (CAT/UAT) Report","Final Validation Report"],
-  10: []
-};
+    templateRows.push({
+      rowIndex: i,
+      stage: lastStage,
+      activity: lastActivity,
+      document: docCell
+    });
+  }
+
+  return {
+    templateRows,
+    headerRowIdx,
+    subHeaderRowIdx,
+    variantHeaderRowIdx
+  };
+}
 
 function readStagesAndDocs_(ss, warnings) {
   const sh = findSheet_(ss, TEMPLATE_SHEET_NAMES);
+
   if (!sh) {
-    const actual = ss.getSheets().map(s => s.getName()).join(', ');
-    warnings.push(`No tab named "Stages/documents" found (tried: ${TEMPLATE_SHEET_NAMES.join(', ')}) — using a hardcoded fallback stage list instead so status matching still works. Actual tabs in this spreadsheet: ${actual}. If one of those is meant to be the Stages/documents tab, tell me its exact name and I'll add it.`);
-    return { stages: HARDCODED_STAGES.slice(), stageDocs: HARDCODED_STAGE_DOCS };
+    warnings.push(
+      'No Stages/documents tab found. Using the 10-stage fallback.'
+    );
+    return {
+      stages: HARDCODED_STAGES.slice(),
+      stageDocs: HARDCODED_STAGE_DOCS
+    };
   }
-  const { templateRows } = parseTemplate_(sh.getDataRange().getValues());
-  if (!templateRows.length) {
-    warnings.push(`"${sh.getName()}" tab was found but no rows parsed from it (expected a header row with "Stage" in column A, then Stage/Activity/Document/Owner rows below) — using the hardcoded fallback stage list instead.`);
-    return { stages: HARDCODED_STAGES.slice(), stageDocs: HARDCODED_STAGE_DOCS };
+
+  const values = sh.getDataRange().getValues();
+  const parsed = parseTemplate_(values);
+
+  if (!parsed.templateRows.length) {
+    warnings.push(
+      '"' + sh.getName() +
+      '" was found but no Stage/Document rows were parsed. ' +
+      'Using the 10-stage fallback.'
+    );
+
+    return {
+      stages: HARDCODED_STAGES.slice(),
+      stageDocs: HARDCODED_STAGE_DOCS
+    };
   }
+
   const stages = [];
   const stageDocs = {};
-  templateRows.forEach(r => {
+
+  parsed.templateRows.forEach(r => {
     if (!r.stage) return;
-    if (!stages[r.stage - 1] && r.activity) stages[r.stage - 1] = r.activity;
+
+    if (!stages[r.stage - 1] && r.activity) {
+      stages[r.stage - 1] = r.activity;
+    }
+
     if (!stageDocs[r.stage]) stageDocs[r.stage] = [];
     stageDocs[r.stage].push(r.document);
   });
-  // fill any stage-name gaps (a stage with docs but no activity text recorded on its first row)
-  for (let i = 0; i < stages.length; i++) if (!stages[i]) stages[i] = `Stage ${i+1}`;
-  return { stages: stages.filter(Boolean), stageDocs };
+
+  if (!stages.filter(Boolean).length) {
+    warnings.push(
+      '"' + sh.getName() +
+      '" contains rows but no recognizable Stage N labels. ' +
+      'Using the 10-stage fallback.'
+    );
+
+    return {
+      stages: HARDCODED_STAGES.slice(),
+      stageDocs: HARDCODED_STAGE_DOCS
+    };
+  }
+
+  for (let i = 0; i < HARDCODED_STAGES.length; i++) {
+    if (!stages[i]) stages[i] = HARDCODED_STAGES[i];
+  }
+
+  return {
+    stages: stages.slice(0, 10),
+    stageDocs
+  };
 }
 
-/** Extracts "SOS-1" from "SOS Band (SOS-1)"; returns {name, code}. */
-function parseVariantHeader_(raw) {
-  const s = str_(raw);
-  const m = s.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
-  if (m) return { name: m[1].trim(), code: m[2].trim() };
-  return { name: s, code: s };
-}
+
+/* ============================================================
+   VARIANT HEADER PARSING
+   ============================================================ */
 
 /**
- * Parses one owner tab: its own Stage|Activity|Document|Owner template (cols
- * A-D) for row alignment, then every 8-column variant block to the right.
- * Returns an array of {name, code, entries: [{stage, document, plannedStart,
- * dueDate, completedDate, status, milestone, blocker, nextStep, link}, ...]}
- * — one per variant block found. name/code come straight off the block's
- * own "Name (CODE)" header; resolving that to a Project details id happens
- * in buildPayload_ (by name first, since owner-tab codes like SEN-1/BAN-1/
- * SOS-1 don't match Project details' SEN-001..SEN-004 numbering).
+ * Handles:
+ *   "SOS Band (SOS-1)"
+ *   "Dual Lens IP Camera (ZMD-DLD-AI (CAM-001))"
+ *
+ * The OLD parser stopped at the first ")" and therefore failed on
+ * nested parentheses. This parser uses the LAST "(...)" pair.
  */
+function parseVariantHeader_(raw) {
+  const s = str_(raw);
+
+  const lastOpen = s.lastIndexOf('(');
+  const lastClose = s.lastIndexOf(')');
+
+  if (
+    lastOpen > 0 &&
+    lastClose > lastOpen
+  ) {
+    return {
+      name: s.substring(0, lastOpen).trim(),
+      code: s.substring(lastOpen + 1, lastClose).trim()
+    };
+  }
+
+  return {
+    name: s,
+    code: s
+  };
+}
+
+
+/* ============================================================
+   OWNER TAB PARSING
+   ============================================================ */
+
 function parseOwnerTab_(sheet, warnings) {
   const values = sheet.getDataRange().getValues();
-  const { templateRows, headerRowIdx } = parseTemplate_(values);
-  if (!templateRows.length) {
-    warnings.push(`Tab "${sheet.getName()}": couldn't find the Stage/Activity/Document/Owner template in columns A-D (expected a header row with "Stage" in column A).`);
+  const parsed = parseTemplate_(values);
+
+  if (!parsed.templateRows.length) {
+    warnings.push(
+      'Tab "' + sheet.getName() +
+      '": could not find Stage/Activity/Document/Owner template.'
+    );
     return [];
   }
-  const variantHeaderRow = values[headerRowIdx - 1] || [];
-  const subHeaderRow = values[headerRowIdx] || [];
 
-  // Find each variant block's starting column: any non-empty cell in the row
-  // ABOVE the Stage/Activity/Document/Owner header, at column E (index 4) or later.
+  const variantHeaderRow =
+    values[parsed.variantHeaderRowIdx] || [];
+
+  const subHeaderRow =
+    values[parsed.subHeaderRowIdx] || [];
+
   const blockStarts = [];
+
   for (let c = 4; c < variantHeaderRow.length; c++) {
-    if (str_(variantHeaderRow[c])) blockStarts.push(c);
+    if (str_(variantHeaderRow[c])) {
+      blockStarts.push(c);
+    }
   }
+
   if (!blockStarts.length) {
-    warnings.push(`Tab "${sheet.getName()}": no variant blocks found (expected a merged "Name (CODE)" header in row ${headerRowIdx} above the Stage/Activity/Document/Owner row, starting at column E).`);
+    warnings.push(
+      'Tab "' + sheet.getName() +
+      '": no variant blocks found from column E onward.'
+    );
     return [];
   }
 
   const blocks = [];
-  blockStarts.forEach((startCol, bi) => {
-    const endCol = (bi + 1 < blockStarts.length) ? blockStarts[bi + 1] : Math.min(startCol + 10, subHeaderRow.length);
-    const { name, code } = parseVariantHeader_(variantHeaderRow[startCol]);
 
-    // locate each field within [startCol, endCol) by header text
-    const localHeaders = subHeaderRow.slice(startCol, endCol);
+  blockStarts.forEach((startCol, blockIndex) => {
+    const endCol =
+      blockIndex + 1 < blockStarts.length
+        ? blockStarts[blockIndex + 1]
+        : Math.min(startCol + 10, subHeaderRow.length);
+
+    const variant =
+      parseVariantHeader_(variantHeaderRow[startCol]);
+
+    const localHeaders =
+      subHeaderRow.slice(startCol, endCol);
+
     const fieldCol = {};
+
     Object.keys(BLOCK_FIELD_CANDIDATES).forEach(field => {
-      const idx = findCol_(localHeaders, BLOCK_FIELD_CANDIDATES[field]);
-      if (idx !== -1) fieldCol[field] = startCol + idx;
+      const localIndex =
+        findCol_(
+          localHeaders,
+          BLOCK_FIELD_CANDIDATES[field]
+        );
+
+      if (localIndex !== -1) {
+        fieldCol[field] =
+          startCol + localIndex;
+      }
     });
-    if (Object.keys(fieldCol).length < 4) {
-      warnings.push(`Tab "${sheet.getName()}", block "${str_(variantHeaderRow[startCol])}": only recognized ${Object.keys(fieldCol).length}/8 expected columns (Planned Start/Due Date/Completion date/Status/Key milestones/Blocker/Immediate next step/Documents) — check for renamed headers.`);
+
+    const recognized =
+      Object.keys(fieldCol).length;
+
+    if (recognized < 4) {
+      warnings.push(
+        'Tab "' + sheet.getName() +
+        '", block "' + variantHeaderRow[startCol] +
+        '": only ' + recognized +
+        '/8 tracker columns were recognized.'
+      );
     }
 
     const entries = [];
-    templateRows.forEach(t => {
+
+    parsed.templateRows.forEach(t => {
       const row = values[t.rowIndex];
-      const get = (f) => fieldCol[f] !== undefined ? row[fieldCol[f]] : '';
+
+      const get = field =>
+        fieldCol[field] !== undefined
+          ? row[fieldCol[field]]
+          : '';
+
       const plannedStart = dateStr_(get('plannedStart'));
       const dueDate = dateStr_(get('dueDate'));
       const completedDate = dateStr_(get('completedDate'));
@@ -259,256 +530,1672 @@ function parseOwnerTab_(sheet, warnings) {
       const milestone = str_(get('milestone')) || null;
       const blocker = str_(get('blocker')) || null;
       const nextStep = str_(get('nextStep')) || null;
-      const docCell = fieldCol.document !== undefined ? row[fieldCol.document] : '';
-      const document = str_(docCell) || null;
+      const document = str_(get('document')) || null;
+
       let link = null;
+
       try {
         if (fieldCol.document !== undefined) {
-          const rich = sheet.getRange(t.rowIndex + 1, fieldCol.document + 1).getRichTextValue();
+          const rich =
+            sheet
+              .getRange(
+                t.rowIndex + 1,
+                fieldCol.document + 1
+              )
+              .getRichTextValue();
+
           if (rich) link = rich.getLinkUrl();
         }
-      } catch (e) { /* no rich text / no link — fine */ }
+      } catch (e) {}
 
-      if (!plannedStart && !dueDate && !completedDate && !status && !milestone && !blocker && !nextStep && !document) return; // nothing filled in for this doc row
+      if (
+        !plannedStart &&
+        !dueDate &&
+        !completedDate &&
+        !status &&
+        !milestone &&
+        !blocker &&
+        !nextStep &&
+        !document
+      ) {
+        return;
+      }
 
       entries.push({
-        stage: t.stage, document: t.document,
-        plannedStart, dueDate, completedDate, status, milestone, blocker, nextStep, document_text: document, link
+        rawStage: t.stage,
+        activity: t.activity,
+        document,
+        plannedStart,
+        dueDate,
+        completedDate,
+        status,
+        milestone,
+        blocker,
+        nextStep,
+        link
       });
     });
 
-    if (entries.length) blocks.push({ name, code, entries });
+    if (entries.length) {
+      blocks.push({
+        name: variant.name,
+        code: variant.code,
+        entries
+      });
+    }
   });
+
   return blocks;
 }
 
-/** Rolls up a variant's per-document rows into one summary record per stage. */
-function rollupByStage_(entries) {
-  const byStage = {};
-  entries.forEach(e => {
-    if (!e.stage) return;
-    if (!byStage[e.stage]) byStage[e.stage] = [];
-    byStage[e.stage].push(e);
+
+/* ============================================================
+   STAGE NORMALIZATION
+   ============================================================ */
+
+/**
+ * Some owner tabs currently contain a wrong stage number beside a
+ * document group. For example, the data currently published has
+ * verification documents under stage 10 even though the canonical
+ * 10-stage model puts verification under stage 9.
+ *
+ * The document name is therefore used as the strongest signal.
+ */
+function resolveEntryStage_(entry, stages, stageDocs) {
+  const raw = str_(entry.document);
+
+  if (!raw) {
+    return entry.rawStage || 1;
+  }
+
+  const text = norm_(raw);
+  let bestStage = null;
+  let bestScore = 0;
+
+  Object.keys(stageDocs).forEach(stageKey => {
+    const stageNum = Number(stageKey);
+
+    (stageDocs[stageNum] || []).forEach(docName => {
+      const docNorm = norm_(docName);
+
+      if (!docNorm) return;
+
+      let score = 0;
+
+      if (text === docNorm) {
+        score = 100;
+      } else if (text.includes(docNorm)) {
+        score = 80 + Math.min(docNorm.length / 100, 0.9);
+      } else if (docNorm.includes(text) && text.length >= 8) {
+        score = 60 + Math.min(text.length / 100, 0.9);
+      }
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestStage = stageNum;
+      }
+    });
   });
+
+  return bestStage || entry.rawStage || 1;
+}
+
+
+/* ============================================================
+   ENGINEERING ROLLUP
+   ============================================================ */
+
+function rollupByStage_(entries, stages, stageDocs) {
+  const byStage = {};
+
+  entries.forEach(entry => {
+    const stage =
+      resolveEntryStage_(
+        entry,
+        stages,
+        stageDocs
+      );
+
+    if (!byStage[stage]) {
+      byStage[stage] = [];
+    }
+
+    byStage[stage].push({
+      ...entry,
+      stage
+    });
+  });
+
   const out = {};
+
   Object.keys(byStage).forEach(stageNum => {
     const rows = byStage[stageNum];
-    const dates = arr => rows.map(r=>r[arr]).filter(Boolean);
-    const allCompleted = rows.length > 0 && rows.every(r => /complet/i.test(r.status||'') || r.completedDate);
-    const inProgressRow = rows.find(r => r.status && !/complet/i.test(r.status)) || rows.find(r => !r.completedDate) || rows[0];
+
+    const completedCount =
+      rows.filter(isCompleted_).length;
+
+    const completionRatio =
+      rows.length
+        ? completedCount / rows.length
+        : 0;
+
+    const incompleteRows =
+      rows.filter(r => !isCompleted_(r));
+
+    const activeRow =
+      incompleteRows[0] ||
+      rows[rows.length - 1];
+
     out[stageNum] = {
-      plannedStart: dates('plannedStart').sort()[0] || null,
-      dueDate: dates('dueDate').sort().slice(-1)[0] || null,
-      completedDate: allCompleted ? (dates('completedDate').sort().slice(-1)[0] || null) : null,
-      status: (inProgressRow && inProgressRow.status) || (allCompleted ? 'Completed' : null),
-      milestone: Array.from(new Set(rows.map(r=>r.milestone).filter(Boolean))).join('; ') || null,
-      blocker: Array.from(new Set(rows.map(r=>r.blocker).filter(Boolean))).join('; ') || null,
-      nextStep: (inProgressRow && inProgressRow.nextStep) || Array.from(new Set(rows.map(r=>r.nextStep).filter(Boolean))).join('; ') || null
+      stage: Number(stageNum),
+      plannedStart:
+        rows.map(r => r.plannedStart).filter(Boolean).sort()[0] || null,
+
+      dueDate:
+        rows.map(r => r.dueDate).filter(Boolean).sort().slice(-1)[0] || null,
+
+      completedDate:
+        completionRatio === 1
+          ? rows.map(r => r.completedDate).filter(Boolean).sort().slice(-1)[0] || null
+          : null,
+
+      status:
+        (activeRow && activeRow.status) ||
+        (completionRatio === 1 ? 'Completed' : null),
+
+      milestone:
+        uniqueStrings_(
+          rows.map(r => r.milestone)
+        ).join('; ') || null,
+
+      blocker:
+        uniqueStrings_(
+          rows.map(r => r.blocker)
+        ).join('; ') || null,
+
+      nextStep:
+        uniqueStrings_(
+          rows.map(r => r.nextStep)
+        ).join('; ') || null,
+
+      completedCount,
+      totalCount: rows.length,
+      completionRatio
     };
   });
+
   return out;
 }
+
+
+/* ============================================================
+   PRODUCT SUMMARY
+   ============================================================ */
+
+function calculateProductProgress_(engineering, fallbackStage, totalStages) {
+  const stageNumbers =
+    Object.keys(engineering)
+      .map(Number)
+      .filter(n => n >= 1 && n <= totalStages);
+
+  if (!stageNumbers.length) {
+    return {
+      currentStage: fallbackStage || 1,
+      progressPct: 0,
+      completedStages: 0
+    };
+  }
+
+  let weightedProgress = 0;
+  let completedStages = 0;
+
+  stageNumbers.forEach(stageNum => {
+    const e = engineering[stageNum];
+
+    weightedProgress +=
+      Number(e.completionRatio || 0);
+
+    if (Number(e.completionRatio || 0) >= 1) {
+      completedStages++;
+    }
+  });
+
+  const progressPct =
+    Math.round(
+      (weightedProgress / totalStages) * 100
+    );
+
+  /*
+   * Current stage:
+   * 1. Prefer the highest stage that has actual incomplete work.
+   * 2. If all recorded stages are complete, current = next stage.
+   * 3. If there is no engineering data, use Project Details stage.
+   */
+  const activeStages =
+    stageNumbers.filter(
+      n => Number(
+        engineering[n].completionRatio || 0
+      ) < 1
+    );
+
+  let currentStage;
+
+  if (activeStages.length) {
+    currentStage =
+      Math.max.apply(null, activeStages);
+  } else {
+    const highest =
+      Math.max.apply(null, stageNumbers);
+
+    currentStage =
+      Math.min(
+        highest + 1,
+        totalStages
+      );
+  }
+
+  /*
+   * If Project Details has an explicitly higher stage and there is
+   * no engineering contradiction, retain it.
+   */
+  if (
+    fallbackStage &&
+    !activeStages.length &&
+    fallbackStage > currentStage
+  ) {
+    currentStage = fallbackStage;
+  }
+
+  return {
+    currentStage,
+    progressPct: Math.min(
+      100,
+      Math.max(0, progressPct)
+    ),
+    completedStages
+  };
+}
+
+
+/* ============================================================
+   BUILD PAYLOAD
+   ============================================================ */
 
 function buildPayload_() {
   const ss = SpreadsheetApp.getActive();
   const warnings = [];
 
-  // --- Project details: master variant list ---
-  const projSheet = findSheet_(ss, PROJECT_SHEET_NAMES);
-  if (!projSheet) {
-    const actual = ss.getSheets().map(s => s.getName()).join(', ');
-    throw new Error(`No sheet named "Project details" or "Products" found. Tabs in this spreadsheet: ${actual}`);
-  }
-  const pdValues = projSheet.getDataRange().getValues();
-  let pdHeaderIdx = -1;
-  for (let i = 0; i < pdValues.length; i++) {
-    if (str_(pdValues[i][0]).toLowerCase() === 'category') { pdHeaderIdx = i; break; }
-  }
-  if (pdHeaderIdx === -1) throw new Error(`Could not find the header row in "${projSheet.getName()}" (looking for "Category" in column A).`);
-  const pdHeader = pdValues[pdHeaderIdx];
-  const colCat = findCol_(pdHeader, ['category']);
-  const colName = findCol_(pdHeader, ['product / solution name', 'solution name', 'product name', 'name']);
-  const colId = findCol_(pdHeader, ['project id', 'id']);
-  const colStage = findCol_(pdHeader, ['stage / status', 'stage', 'status']);
-  const colPdm = findCol_(pdHeader, ['product manager', 'pdm']);
-  const colPm = findCol_(pdHeader, ['program manager', 'project manager', 'pm']);
-  const colStart = findCol_(pdHeader, ['start date']);
-  const colEnd = findCol_(pdHeader, ['end date']);
+  const projSheet =
+    findSheet_(
+      ss,
+      PROJECT_SHEET_NAMES
+    );
 
-  const { stages, stageDocs } = readStagesAndDocs_(ss, warnings);
+  if (!projSheet) {
+    throw new Error(
+      'Project details / Products sheet not found.'
+    );
+  }
+
+  const stageData =
+    readStagesAndDocs_(
+      ss,
+      warnings
+    );
+
+  const stages =
+    stageData.stages.length
+      ? stageData.stages
+      : HARDCODED_STAGES;
+
+  const stageDocs =
+    stageData.stageDocs;
+
+  const totalStages =
+    stages.length || 10;
+
+  /* ----------------------------------------------------------
+     PROJECT DETAILS
+     ---------------------------------------------------------- */
+
+  const values =
+    projSheet
+      .getDataRange()
+      .getValues();
+
+  let headerIndex = -1;
+
+  for (let i = 0; i < values.length; i++) {
+    if (norm_(values[i][0]) === 'category') {
+      headerIndex = i;
+      break;
+    }
+  }
+
+  if (headerIndex === -1) {
+    throw new Error(
+      'Could not find Category header in Project details.'
+    );
+  }
+
+  const header = values[headerIndex];
+
+  const colCat =
+    findCol_(header, ['category']);
+
+  const colName =
+    findCol_(
+      header,
+      [
+        'product / solution name',
+        'solution name',
+        'product name',
+        'name'
+      ]
+    );
+
+  const colId =
+    findCol_(
+      header,
+      ['project id', 'id']
+    );
+
+  const colStage =
+    findCol_(
+      header,
+      ['stage / status', 'stage', 'status']
+    );
+
+  const colPdm =
+    findCol_(
+      header,
+      ['product manager', 'pdm']
+    );
+
+  const colPm =
+    findCol_(
+      header,
+      ['program manager', 'project manager', 'pm']
+    );
+
+  const colStart =
+    findCol_(
+      header,
+      ['start date']
+    );
+
+  const colEnd =
+    findCol_(
+      header,
+      ['end date']
+    );
+
   const stageNameToNum = {};
-  stages.forEach((name, idx) => { stageNameToNum[name.toLowerCase()] = idx + 1; });
+
+  stages.forEach((name, index) => {
+    stageNameToNum[norm_(name)] =
+      index + 1;
+  });
 
   function matchStage(text) {
-    const t = str_(text).toLowerCase();
-    if (!t) return { stage: 1, matched: false };
-    if (stageNameToNum[t] !== undefined) return { stage: stageNameToNum[t], matched: true };
-    for (const name in stageNameToNum) {
-      if (t.includes(name) || name.includes(t)) return { stage: stageNameToNum[name], matched: true };
+    const t = norm_(text);
+
+    if (!t) {
+      return {
+        stage: 1,
+        matched: false
+      };
     }
-    return { stage: 1, matched: false };
+
+    if (stageNameToNum[t]) {
+      return {
+        stage: stageNameToNum[t],
+        matched: true
+      };
+    }
+
+    for (const name in stageNameToNum) {
+      if (
+        t.includes(name) ||
+        name.includes(t)
+      ) {
+        return {
+          stage: stageNameToNum[name],
+          matched: true
+        };
+      }
+    }
+
+    return {
+      stage: 1,
+      matched: false
+    };
   }
+
   function extractId(raw) {
     const s = str_(raw);
-    const m = s.match(/\(([^)]+)\)\s*$/);
-    return m ? m[1].trim() : s;
+
+    const lastOpen = s.lastIndexOf('(');
+    const lastClose = s.lastIndexOf(')');
+
+    if (
+      lastOpen !== -1 &&
+      lastClose > lastOpen
+    ) {
+      return s.substring(
+        lastOpen + 1,
+        lastClose
+      ).trim();
+    }
+
+    return s;
   }
 
   const products = [];
-  let lastCat = '';
-  for (let i = pdHeaderIdx + 1; i < pdValues.length; i++) {
-    const row = pdValues[i];
-    const idRaw = colId !== -1 ? row[colId] : '';
-    const nameRaw = colName !== -1 ? row[colName] : '';
+  let lastCategory = '';
+
+  for (
+    let i = headerIndex + 1;
+    i < values.length;
+    i++
+  ) {
+    const row = values[i];
+
+    const idRaw =
+      colId !== -1
+        ? row[colId]
+        : '';
+
+    const nameRaw =
+      colName !== -1
+        ? row[colName]
+        : '';
+
     if (!str_(idRaw) && !str_(nameRaw)) {
-      if (str_(row[0]).toLowerCase() === 'stages') break;
-      const nextBlank = (i + 1 < pdValues.length) && !str_(pdValues[i+1][colId !== -1 ? colId : 0]);
-      if (nextBlank) break;
+      if (norm_(row[0]) === 'stages') break;
       continue;
     }
-    const catCell = colCat !== -1 ? str_(row[colCat]) : '';
-    if (catCell) lastCat = catCell;
-    const statusText = colStage !== -1 ? str_(row[colStage]) : '';
-    const sm = matchStage(statusText);
-    if (statusText && !sm.matched) warnings.push(`Project details row ${i+1}: status "${statusText}" didn't match any stage name — defaulted to stage 1.`);
-    const id = extractId(idRaw);
-    if (!id) warnings.push(`Project details row ${i+1} ("${str_(nameRaw)}"): no Project ID.`);
+
+    const category =
+      colCat !== -1
+        ? str_(row[colCat])
+        : '';
+
+    if (category) {
+      lastCategory = category;
+    }
+
+    const statusText =
+      colStage !== -1
+        ? str_(row[colStage])
+        : '';
+
+    const stageMatch =
+      matchStage(statusText);
+
+    const id =
+      extractId(idRaw);
+
     products.push({
-      cat: lastCat || 'Uncategorized', name: str_(nameRaw) || id, id: id,
-      pdm: colPdm !== -1 ? (str_(row[colPdm]) || null) : null,
-      pm: colPm !== -1 ? (str_(row[colPm]) || null) : null,
-      stage: sm.stage,
-      plannedStart: colStart !== -1 ? dateStr_(row[colStart]) : null,
-      plannedEnd: colEnd !== -1 ? dateStr_(row[colEnd]) : null,
-      statusLabel: statusText || null
+      cat:
+        lastCategory ||
+        'Uncategorized',
+
+      name:
+        str_(nameRaw) ||
+        id,
+
+      id,
+
+      pdm:
+        colPdm !== -1
+          ? str_(row[colPdm]) || null
+          : null,
+
+      pm:
+        colPm !== -1
+          ? str_(row[colPm]) || null
+          : null,
+
+      /*
+       * This is retained as the fallback only.
+       * Actual current stage is calculated from engineering data below.
+       */
+      stage:
+        stageMatch.stage,
+
+      plannedStart:
+        colStart !== -1
+          ? dateStr_(row[colStart])
+          : null,
+
+      plannedEnd:
+        colEnd !== -1
+          ? dateStr_(row[colEnd])
+          : null,
+
+      statusLabel:
+        statusText || null
     });
   }
-  if (!products.length) warnings.push('No product rows were read from Project details at all.');
-  const knownIds = products.map(p => p.id);
-  const nameToId = {};
-  products.forEach(p => { nameToId[normName_(p.name)] = p.id; });
 
-  // --- Owner tabs: per-variant, per-document tracking ---
+  if (!products.length) {
+    warnings.push(
+      'No products were found in Project details.'
+    );
+  }
+
+  /* ----------------------------------------------------------
+     MATCH MAPS
+     ---------------------------------------------------------- */
+
+  const knownIds =
+    products.map(p => p.id);
+
+  const nameToId = {};
+
+  products.forEach(p => {
+    nameToId[normName_(p.name)] =
+      p.id;
+  });
+
+  const prefixToIds = {};
+
+  products.forEach(p => {
+    const match =
+      str_(p.id).match(
+        /^([A-Za-z]+)/
+      );
+
+    if (!match) return;
+
+    const prefix =
+      match[1].toUpperCase();
+
+    if (!prefixToIds[prefix]) {
+      prefixToIds[prefix] = [];
+    }
+
+    prefixToIds[prefix].push(
+      p.id
+    );
+  });
+
+  /* ----------------------------------------------------------
+     OWNER TABS
+     ---------------------------------------------------------- */
+
   const documents = {};
   const engineering = {};
-  let anyOwnerTabFound = false;
+
   OWNER_SHEET_NAMES.forEach(tabName => {
-    const sh = ss.getSheetByName(tabName);
-    if (!sh) { warnings.push(`Owner tab "${tabName}" not found — skipped. (Tabs present: ${ss.getSheets().map(s=>s.getName()).join(', ')})`); return; }
-    anyOwnerTabFound = true;
-    const blocks = parseOwnerTab_(sh, warnings);
+    const sh =
+      findSheet_(
+        ss,
+        [tabName]
+      );
+
+    if (!sh) {
+      warnings.push(
+        'Owner tab "' +
+        tabName +
+        '" was not found.'
+      );
+      return;
+    }
+
+    const blocks =
+      parseOwnerTab_(
+        sh,
+        warnings
+      );
+
     blocks.forEach(block => {
-      // Owner-tab codes (SEN-1, BAN-1, SOS-1, ...) are a different numbering
-      // system than Project details' Project IDs (SEN-001..SEN-004) — match
-      // by the block's NAME against Project details' product name first.
-      let id = nameToId[normName_(block.name)];
-      if (!id && knownIds.indexOf(block.code) !== -1) id = block.code; // exact code match, if it happens to line up
+      let id =
+        nameToId[
+          normName_(block.name)
+        ];
+
+      /*
+       * Exact code match first.
+       */
+      if (
+        !id &&
+        knownIds.indexOf(
+          block.code
+        ) !== -1
+      ) {
+        id = block.code;
+      }
+
+      /*
+       * Prefix fallback.
+       */
       if (!id) {
-        warnings.push(`Tab "${tabName}": block "${block.name} (${block.code})" didn't match any Project details product by name or code — its data won't show up on the dashboard until the name matches exactly, or the code is fixed.`);
+        const prefixMatch =
+          block.code.match(
+            /^([A-Za-z]+)/
+          );
+
+        const prefix =
+          prefixMatch
+            ? prefixMatch[1].toUpperCase()
+            : '';
+
+        const candidates =
+          prefixToIds[prefix] || [];
+
+        if (candidates.length === 1) {
+          id = candidates[0];
+
+          warnings.push(
+            'Tab "' +
+            tabName +
+            '": "' +
+            block.name +
+            ' (' +
+            block.code +
+            ')" matched ' +
+            id +
+            ' by code prefix.'
+          );
+        } else if (
+          candidates.length > 1
+        ) {
+          warnings.push(
+            'Tab "' +
+            tabName +
+            '": "' +
+            block.name +
+            ' (' +
+            block.code +
+            ')" has ambiguous prefix match: ' +
+            candidates.join(', ')
+          );
+        }
+      }
+
+      if (!id) {
+        warnings.push(
+          'Tab "' +
+          tabName +
+          '": "' +
+          block.name +
+          ' (' +
+          block.code +
+          ')" could not be matched to Project details.'
+        );
         return;
       }
-      if (!documents[id]) documents[id] = [];
-      documents[id] = documents[id].concat(block.entries.map(e => ({
-        stage: e.stage, document: e.document, plannedStart: e.plannedStart, dueDate: e.dueDate,
-        completedDate: e.completedDate, status: e.status, link: e.link
-      })));
-      const rollup = rollupByStage_(block.entries);
-      if (!engineering[id]) engineering[id] = {};
-      Object.keys(rollup).forEach(stageNum => { engineering[id][stageNum] = rollup[stageNum]; });
+
+      if (!documents[id]) {
+        documents[id] = [];
+      }
+
+      if (!engineering[id]) {
+        engineering[id] = {};
+      }
+
+      block.entries.forEach(entry => {
+        const stage =
+          resolveEntryStage_(
+            entry,
+            stages,
+            stageDocs
+          );
+
+        documents[id].push({
+          stage,
+          document:
+            entry.document || null,
+          plannedStart:
+            entry.plannedStart || null,
+          dueDate:
+            entry.dueDate || null,
+          completedDate:
+            entry.completedDate || null,
+          status:
+            entry.status || null,
+          link:
+            entry.link || null
+        });
+      });
+
+      const normalizedEntries =
+        block.entries.map(entry => ({
+          ...entry,
+          stage:
+            resolveEntryStage_(
+              entry,
+              stages,
+              stageDocs
+            )
+        }));
+
+      const rollup =
+        rollupByStage_(
+          normalizedEntries,
+          stages,
+          stageDocs
+        );
+
+      Object.keys(rollup).forEach(stageNum => {
+        const newRecord =
+          rollup[stageNum];
+
+        if (!engineering[id][stageNum]) {
+          engineering[id][stageNum] =
+            newRecord;
+          return;
+        }
+
+        /*
+         * If multiple owner tabs contain the same product,
+         * merge the information instead of overwriting it.
+         */
+        const old =
+          engineering[id][stageNum];
+
+        engineering[id][stageNum] = {
+          stage:
+            Number(stageNum),
+
+          plannedStart:
+            old.plannedStart ||
+            newRecord.plannedStart ||
+            null,
+
+          dueDate:
+            newRecord.dueDate ||
+            old.dueDate ||
+            null,
+
+          completedDate:
+            newRecord.completedDate ||
+            old.completedDate ||
+            null,
+
+          status:
+            newRecord.status ||
+            old.status ||
+            null,
+
+          milestone:
+            uniqueStrings_([
+              old.milestone,
+              newRecord.milestone
+            ]).join('; ') || null,
+
+          blocker:
+            uniqueStrings_([
+              old.blocker,
+              newRecord.blocker
+            ]).join('; ') || null,
+
+          nextStep:
+            uniqueStrings_([
+              old.nextStep,
+              newRecord.nextStep
+            ]).join('; ') || null,
+
+          completedCount:
+            Number(old.completedCount || 0) +
+            Number(newRecord.completedCount || 0),
+
+          totalCount:
+            Number(old.totalCount || 0) +
+            Number(newRecord.totalCount || 0),
+
+          completionRatio:
+            (
+              Number(old.totalCount || 0) +
+              Number(newRecord.totalCount || 0)
+            )
+              ? (
+                  Number(old.completedCount || 0) +
+                  Number(newRecord.completedCount || 0)
+                ) /
+                (
+                  Number(old.totalCount || 0) +
+                  Number(newRecord.totalCount || 0)
+                )
+              : 0
+        };
+      });
     });
   });
-  if (!anyOwnerTabFound) warnings.push('None of the expected owner tabs were found — no milestones/blockers/next steps/documents will show for any variant.');
+
+  /* ----------------------------------------------------------
+     CALCULATE ACTUAL CURRENT STAGE + PROGRESS
+     ---------------------------------------------------------- */
+
+  const productById = {};
+
+  products.forEach(p => {
+    productById[p.id] = p;
+  });
+
+  products.forEach(product => {
+    const eng =
+      engineering[product.id] || {};
+
+    const summary =
+      calculateProductProgress_(
+        eng,
+        product.stage,
+        totalStages
+      );
+
+    product.currentStage =
+      summary.currentStage;
+
+    product.progressPct =
+      summary.progressPct;
+
+    product.completedStages =
+      summary.completedStages;
+
+    const current =
+      eng[summary.currentStage] || {};
+
+    product.currentStageName =
+      stages[
+        summary.currentStage - 1
+      ] ||
+      'Stage ' +
+      summary.currentStage;
+
+    product.milestones =
+      uniqueStrings_(
+        Object.keys(eng)
+          .map(n => eng[n].milestone)
+      );
+
+    product.blockers =
+      uniqueStrings_(
+        Object.keys(eng)
+          .map(n => eng[n].blocker)
+      );
+
+    product.nextActions =
+      uniqueStrings_(
+        Object.keys(eng)
+          .map(n => eng[n].nextStep)
+      );
+
+    product.currentMilestones =
+      uniqueStrings_([
+        current.milestone
+      ]);
+
+    product.currentBlockers =
+      uniqueStrings_([
+        current.blocker
+      ]);
+
+    product.currentNextActions =
+      uniqueStrings_([
+        current.nextStep
+      ]);
+  });
+
+  /* ----------------------------------------------------------
+     PAYLOAD
+     ---------------------------------------------------------- */
 
   return {
     payload: {
-      generatedAt: new Date().toISOString(),
-      stages: stages,
-      stageDocs: stageDocs,
-      products: products,
-      engineering: engineering,
-      documents: documents
+      generatedAt:
+        new Date().toISOString(),
+
+      stages,
+
+      stageDocs,
+
+      products,
+
+      engineering,
+
+      documents
     },
-    warnings: warnings
+
+    warnings
   };
 }
 
-function previewData() {
-  const ui = SpreadsheetApp.getUi();
-  try {
-    const { payload, warnings } = buildPayload_();
-    const catCounts = {};
-    payload.products.forEach(p => { catCounts[p.cat] = (catCounts[p.cat]||0) + 1; });
-    const catSummary = Object.keys(catCounts).map(c => `${c}: ${catCounts[c]}`).join('\n');
-    const docCount = Object.keys(payload.documents).reduce((n,id)=>n+payload.documents[id].length,0);
-    const withoutDocs = payload.products.filter(p => !payload.documents[p.id]).map(p => p.id);
-    let msg = `Read ${payload.products.length} products across ${Object.keys(catCounts).length} categories:\n${catSummary}\n\n`
-      + `${payload.stages.length} stages, ${Object.keys(payload.stageDocs).length} stages with documents defined.\n`
-      + `${docCount} document rows read across ${Object.keys(payload.documents).length} variants.`;
-    if (withoutDocs.length) msg += `\n\nVariants with NO document rows at all: ${withoutDocs.join(', ')}`;
-    if (warnings.length) msg += `\n\n\u26a0 ${warnings.length} warning(s):\n- ` + warnings.slice(0,10).join('\n- ');
-    Logger.log(JSON.stringify({ payload, warnings }, null, 2));
-    ui.alert('Preview (nothing published)', msg, ui.ButtonSet.OK);
-  } catch (e) {
-    Logger.log('Preview failed: ' + e.stack);
-    ui.alert('Preview failed', e.message, ui.ButtonSet.OK);
+
+/* ============================================================
+   LIVE DASHBOARD SHEET
+   ============================================================ */
+
+function writeSheetDashboard_(payload) {
+  const ss =
+    SpreadsheetApp.getActive();
+
+  let sh =
+    ss.getSheetByName(
+      SHEET_DASHBOARD_TAB
+    );
+
+  if (!sh) {
+    sh =
+      ss.insertSheet(
+        SHEET_DASHBOARD_TAB
+      );
   }
+
+  sh.clear();
+
+  const headers = [
+    'Category',
+    'Variant',
+    'Project ID',
+    'PDM',
+    'PM',
+    'Current Stage',
+    'Progress %',
+    'Completed Stages',
+    'Stage Name',
+    'Planned Start',
+    'Due Date',
+    'Completed Date',
+    'Status',
+    'Key Milestones',
+    'Blocker',
+    'Immediate Next Action'
+  ];
+
+  const rows = [];
+
+  payload.products.forEach(p => {
+    const eng =
+      payload.engineering[p.id] || {};
+
+    const stageNumbers =
+      Object.keys(eng)
+        .map(Number)
+        .sort((a, b) => a - b);
+
+    /*
+     * Always show all stages with data, plus current stage.
+     */
+    const stageSet =
+      new Set(stageNumbers);
+
+    stageSet.add(
+      p.currentStage
+    );
+
+    Array.from(stageSet)
+      .sort((a, b) => a - b)
+      .forEach(stageNum => {
+        const e =
+          eng[stageNum] || {};
+
+        rows.push([
+          p.cat,
+          p.name,
+          p.id,
+          p.pdm || '',
+          p.pm || '',
+          p.currentStage +
+            ' / ' +
+            payload.stages.length,
+          p.progressPct + '%',
+          p.completedStages,
+          payload.stages[
+            stageNum - 1
+          ] || 'Stage ' + stageNum,
+          e.plannedStart || '',
+          e.dueDate || '',
+          e.completedDate || '',
+          e.status || '',
+          e.milestone || '',
+          e.blocker || '',
+          e.nextStep || ''
+        ]);
+      });
+  });
+
+  sh
+    .getRange(
+      1,
+      1,
+      1,
+      headers.length
+    )
+    .setValues([headers])
+    .setFontWeight('bold')
+    .setBackground('#EEF3FA');
+
+  if (rows.length) {
+    sh
+      .getRange(
+        2,
+        1,
+        rows.length,
+        headers.length
+      )
+      .setValues(rows);
+
+    /*
+     * Highlight blockers.
+     */
+    rows.forEach((row, index) => {
+      if (row[14]) {
+        sh
+          .getRange(
+            index + 2,
+            1,
+            1,
+            headers.length
+          )
+          .setBackground('#FCE8E8');
+      }
+    });
+  }
+
+  sh.setFrozenRows(1);
+  sh.setFrozenColumns(3);
+  sh.autoResizeColumns(
+    1,
+    headers.length
+  );
+
+  return rows.length;
+}
+
+
+/* ============================================================
+   PREVIEW
+   ============================================================ */
+
+function previewData() {
+  const ui =
+    SpreadsheetApp.getUi();
+
+  try {
+    const result =
+      buildPayload_();
+
+    const payload =
+      result.payload;
+
+    const warnings =
+      result.warnings;
+
+    const docCount =
+      Object.keys(
+        payload.documents
+      ).reduce(
+        (n, id) =>
+          n +
+          payload.documents[id].length,
+        0
+      );
+
+    const summary =
+      payload.products
+        .map(p =>
+          p.id +
+          ': Stage ' +
+          p.currentStage +
+          ' — ' +
+          p.progressPct +
+          '%'
+        )
+        .slice(0, 20)
+        .join('\n');
+
+    let message =
+      'Products: ' +
+      payload.products.length +
+      '\n' +
+      'Stages: ' +
+      payload.stages.length +
+      '\n' +
+      'Document rows: ' +
+      docCount +
+      '\n\n' +
+      'Calculated progress:\n' +
+      summary;
+
+    if (warnings.length) {
+      message +=
+        '\n\n⚠ ' +
+        warnings.length +
+        ' warning(s):\n- ' +
+        warnings
+          .slice(0, 12)
+          .join('\n- ');
+    }
+
+    Logger.log(
+      JSON.stringify(
+        result,
+        null,
+        2
+      )
+    );
+
+    ui.alert(
+      'Preview — nothing published',
+      message,
+      ui.ButtonSet.OK
+    );
+
+  } catch (e) {
+    Logger.log(
+      'Preview failed: ' +
+      e.stack
+    );
+
+    ui.alert(
+      'Preview failed',
+      e.message,
+      ui.ButtonSet.OK
+    );
+  }
+}
+
+
+/* ============================================================
+   GITHUB
+   ============================================================ */
+
+function getGithubConfig_() {
+  const props =
+    PropertiesService
+      .getScriptProperties();
+
+  const token =
+    str_(
+      props.getProperty(
+        'GITHUB_TOKEN'
+      )
+    );
+
+  const owner =
+    str_(
+      props.getProperty(
+        'GITHUB_OWNER'
+      )
+    );
+
+  const repo =
+    str_(
+      props.getProperty(
+        'GITHUB_REPO'
+      )
+    );
+
+  const branch =
+    str_(
+      props.getProperty(
+        'GITHUB_BRANCH'
+      )
+    ) || 'main';
+
+  const path =
+    str_(
+      props.getProperty(
+        'GITHUB_PATH'
+      )
+    ) || 'data.json';
+
+  if (!token || !owner || !repo) {
+    throw new Error(
+      'Missing GitHub Script Properties: GITHUB_TOKEN, GITHUB_OWNER and/or GITHUB_REPO.'
+    );
+  }
+
+  return {
+    token,
+    owner,
+    repo,
+    branch,
+    path
+  };
+}
+
+function githubHeaders_(token) {
+  return {
+    Authorization:
+      'Bearer ' + token,
+
+    Accept:
+      'application/vnd.github+json',
+
+    'X-GitHub-Api-Version':
+      GITHUB_API_VERSION
+  };
+}
+
+function encodeGithubPath_(path) {
+  return str_(path)
+    .split('/')
+    .map(part => encodeURIComponent(part))
+    .join('/');
 }
 
 function publishToGithub() {
-  const props = PropertiesService.getScriptProperties();
-  const token = props.getProperty('GITHUB_TOKEN');
-  const owner = props.getProperty('GITHUB_OWNER');
-  const repo = props.getProperty('GITHUB_REPO');
-  const branch = props.getProperty('GITHUB_BRANCH') || 'main';
-  const path = props.getProperty('GITHUB_PATH') || 'data.json';
-  if (!token || !owner || !repo) {
-    throw new Error('GITHUB_TOKEN, GITHUB_OWNER and/or GITHUB_REPO are missing from Script Properties.');
+  const lock =
+    LockService.getScriptLock();
+
+  if (!lock.tryLock(30000)) {
+    throw new Error(
+      'Another publish is already running. Please wait and try again.'
+    );
   }
-  const { payload, warnings } = buildPayload_();
-  const content = Utilities.base64Encode(JSON.stringify(payload, null, 2), Utilities.Charset.UTF_8);
-  const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-  const headers = { Authorization: `Bearer ${token}`, Accept: 'application/vnd.github+json' };
-  let sha = null;
-  const getResp = UrlFetchApp.fetch(`${apiUrl}?ref=${branch}`, { headers, muteHttpExceptions: true });
-  if (getResp.getResponseCode() === 200) sha = JSON.parse(getResp.getContentText()).sha;
-  else if (getResp.getResponseCode() !== 404) throw new Error(`GitHub GET failed (${getResp.getResponseCode()}): ${getResp.getContentText()}`);
-  const body = { message: `Publish dashboard data \u2014 ${new Date().toISOString()}`, content, branch };
-  if (sha) body.sha = sha;
-  const putResp = UrlFetchApp.fetch(apiUrl, { method: 'put', headers, contentType: 'application/json', payload: JSON.stringify(body), muteHttpExceptions: true });
-  const code = putResp.getResponseCode();
-  if (code !== 200 && code !== 201) throw new Error(`GitHub PUT failed (${code}): ${putResp.getContentText()}`);
-  Logger.log('Published \u2014 %s products, %s doc rows, %s warnings', payload.products.length, Object.keys(payload.documents).reduce((n,id)=>n+payload.documents[id].length,0), warnings.length);
-  return { payload, warnings };
+
+  try {
+    const config =
+      getGithubConfig_();
+
+    const result =
+      buildPayload_();
+
+    const payload =
+      result.payload;
+
+    const warnings =
+      result.warnings;
+
+    /*
+     * Update the Google Sheet dashboard too.
+     */
+    writeSheetDashboard_(
+      payload
+    );
+
+    const json =
+      JSON.stringify(
+        payload,
+        null,
+        2
+      );
+
+    const content =
+      Utilities.base64Encode(
+        json,
+        Utilities.Charset.UTF_8
+      );
+
+    const apiUrl =
+      'https://api.github.com/repos/' +
+      encodeURIComponent(config.owner) +
+      '/' +
+      encodeURIComponent(config.repo) +
+      '/contents/' +
+      encodeGithubPath_(config.path);
+
+    const headers =
+      githubHeaders_(
+        config.token
+      );
+
+    let sha = null;
+
+    const getResp =
+      UrlFetchApp.fetch(
+        apiUrl +
+        '?ref=' +
+        encodeURIComponent(
+          config.branch
+        ),
+        {
+          method: 'get',
+          headers,
+          muteHttpExceptions: true
+        }
+      );
+
+    const getCode =
+      getResp.getResponseCode();
+
+    if (getCode === 200) {
+      const existing =
+        JSON.parse(
+          getResp.getContentText()
+        );
+
+      sha =
+        existing.sha || null;
+
+    } else if (getCode !== 404) {
+      throw new Error(
+        'GitHub GET failed (' +
+        getCode +
+        '): ' +
+        getResp.getContentText()
+      );
+    }
+
+    const body = {
+      message:
+        'Publish dashboard data — ' +
+        new Date().toISOString(),
+
+      content,
+
+      branch:
+        config.branch
+    };
+
+    if (sha) {
+      body.sha = sha;
+    }
+
+    const putResp =
+      UrlFetchApp.fetch(
+        apiUrl,
+        {
+          method: 'put',
+          headers,
+          contentType:
+            'application/json',
+          payload:
+            JSON.stringify(body),
+          muteHttpExceptions: true
+        }
+      );
+
+    const putCode =
+      putResp.getResponseCode();
+
+    if (
+      putCode !== 200 &&
+      putCode !== 201
+    ) {
+      throw new Error(
+        'GitHub PUT failed (' +
+        putCode +
+        '): ' +
+        putResp.getContentText()
+      );
+    }
+
+    Logger.log(
+      'Published %s products, %s document rows, %s warnings.',
+      payload.products.length,
+      Object.keys(payload.documents)
+        .reduce(
+          (n, id) =>
+            n +
+            payload.documents[id].length,
+          0
+        ),
+      warnings.length
+    );
+
+    return result;
+
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 function publishToGithubUI() {
-  const ui = SpreadsheetApp.getUi();
+  const ui =
+    SpreadsheetApp.getUi();
+
   try {
-    const { payload, warnings } = publishToGithub();
-    const docCount = Object.keys(payload.documents).reduce((n,id)=>n+payload.documents[id].length,0);
-    let msg = `Published ${payload.products.length} products and ${docCount} document rows to GitHub.`;
-    if (warnings.length) msg += `\n\n\u26a0 ${warnings.length} warning(s) \u2014 see Executions log for the full list:\n- ` + warnings.slice(0,5).join('\n- ');
-    ui.alert('Publish succeeded', msg, ui.ButtonSet.OK);
+    const result =
+      publishToGithub();
+
+    const payload =
+      result.payload;
+
+    const warnings =
+      result.warnings;
+
+    const docCount =
+      Object.keys(
+        payload.documents
+      ).reduce(
+        (n, id) =>
+          n +
+          payload.documents[id].length,
+        0
+      );
+
+    let msg =
+      'Published successfully.\n\n' +
+      'Products: ' +
+      payload.products.length +
+      '\n' +
+      'Document rows: ' +
+      docCount +
+      '\n' +
+      'Live Dashboard updated.';
+
+    if (warnings.length) {
+      msg +=
+        '\n\n⚠ ' +
+        warnings.length +
+        ' warning(s):\n- ' +
+        warnings
+          .slice(0, 8)
+          .join('\n- ') +
+        '\n\nSee Apps Script → Executions for the full log.';
+    }
+
+    ui.alert(
+      'Publish succeeded',
+      msg,
+      ui.ButtonSet.OK
+    );
+
   } catch (e) {
-    Logger.log('Publish failed: ' + e.stack);
-    ui.alert('Publish failed', e.message, ui.ButtonSet.OK);
+    Logger.log(
+      'Publish failed: ' +
+      e.stack
+    );
+
+    ui.alert(
+      'Publish failed',
+      e.message,
+      ui.ButtonSet.OK
+    );
   }
 }
 
-function onEditDebounced_(e) {
-  ScriptApp.getProjectTriggers().forEach(t => { if (t.getHandlerFunction() === 'publishToGithub') ScriptApp.deleteTrigger(t); });
-  ScriptApp.newTrigger('publishToGithub').timeBased().after(2 * 60 * 1000).create();
+
+/* ============================================================
+   LIVE SHEET ONLY
+   ============================================================ */
+
+function rebuildSheetDashboardUI() {
+  const ui =
+    SpreadsheetApp.getUi();
+
+  try {
+    const result =
+      buildPayload_();
+
+    const count =
+      writeSheetDashboard_(
+        result.payload
+      );
+
+    let msg =
+      'Wrote ' +
+      count +
+      ' rows to "' +
+      SHEET_DASHBOARD_TAB +
+      '".\n\nGitHub was not changed.';
+
+    if (result.warnings.length) {
+      msg +=
+        '\n\n⚠ ' +
+        result.warnings.length +
+        ' warning(s):\n- ' +
+        result.warnings
+          .slice(0, 8)
+          .join('\n- ');
+    }
+
+    ui.alert(
+      'Live Dashboard rebuilt',
+      msg,
+      ui.ButtonSet.OK
+    );
+
+  } catch (e) {
+    ui.alert(
+      'Rebuild failed',
+      e.message,
+      ui.ButtonSet.OK
+    );
+  }
 }
+
+
+/* ============================================================
+   AUTO PUBLISH
+   ============================================================ */
+
+function onEditDebounced_() {
+  ScriptApp
+    .getProjectTriggers()
+    .forEach(trigger => {
+      if (
+        trigger.getHandlerFunction() ===
+        'publishToGithub'
+      ) {
+        ScriptApp.deleteTrigger(
+          trigger
+        );
+      }
+    });
+
+  ScriptApp
+    .newTrigger(
+      'publishToGithub'
+    )
+    .timeBased()
+    .after(
+      2 * 60 * 1000
+    )
+    .create();
+}
+
 function enableAutoPublish() {
-  disableAutoPublish();
-  ScriptApp.newTrigger('onEditDebounced_').forSpreadsheet(SpreadsheetApp.getActive()).onEdit().create();
-  SpreadsheetApp.getUi().alert('Auto-publish enabled \u2014 edits will publish to GitHub ~2 minutes later.');
+  disableAutoPublish(false);
+
+  ScriptApp
+    .newTrigger(
+      'onEditDebounced_'
+    )
+    .forSpreadsheet(
+      SpreadsheetApp.getActive()
+    )
+    .onEdit()
+    .create();
+
+  SpreadsheetApp
+    .getUi()
+    .alert(
+      'Auto-publish enabled',
+      'Edits will publish approximately 2 minutes after the last edit.',
+      SpreadsheetApp.getUi().ButtonSet.OK
+    );
 }
-function disableAutoPublish() {
-  ScriptApp.getProjectTriggers().forEach(t => {
-    const fn = t.getHandlerFunction();
-    if (fn === 'publishToGithub' || fn === 'onEditDebounced_') ScriptApp.deleteTrigger(t);
-  });
-  SpreadsheetApp.getUi().alert('Auto-publish disabled. Use "Publish now" manually.');
+
+function disableAutoPublish(showAlert) {
+  ScriptApp
+    .getProjectTriggers()
+    .forEach(trigger => {
+      const fn =
+        trigger.getHandlerFunction();
+
+      if (
+        fn === 'publishToGithub' ||
+        fn === 'onEditDebounced_'
+      ) {
+        ScriptApp.deleteTrigger(
+          trigger
+        );
+      }
+    });
+
+  if (showAlert !== false) {
+    SpreadsheetApp
+      .getUi()
+      .alert(
+        'Auto-publish disabled',
+        'Use Dashboard → Publish now when you want to publish manually.',
+        SpreadsheetApp.getUi().ButtonSet.OK
+      );
+  }
 }
-function testBuildPayload() { Logger.log(JSON.stringify(buildPayload_(), null, 2)); }
+
+
+/* ============================================================
+   TEST
+   ============================================================ */
+
+function testBuildPayload() {
+  const result =
+    buildPayload_();
+
+  Logger.log(
+    JSON.stringify(
+      result,
+      null,
+      2
+    )
+  );
+}
+
+function testGithubConnection() {
+  const config =
+    getGithubConfig_();
+
+  const url =
+    'https://api.github.com/repos/' +
+    encodeURIComponent(config.owner) +
+    '/' +
+    encodeURIComponent(config.repo);
+
+  const response =
+    UrlFetchApp.fetch(
+      url,
+      {
+        method: 'get',
+        headers:
+          githubHeaders_(
+            config.token
+          ),
+        muteHttpExceptions: true
+      }
+    );
+
+  const code =
+    response.getResponseCode();
+
+  if (code !== 200) {
+    throw new Error(
+      'GitHub connection failed (' +
+      code +
+      '): ' +
+      response.getContentText()
+    );
+  }
+
+  const data =
+    JSON.parse(
+      response.getContentText()
+    );
+
+  SpreadsheetApp
+    .getUi()
+    .alert(
+      'GitHub connection successful',
+      'Repository: ' +
+      data.full_name +
+      '\nConfigured branch: ' +
+      config.branch,
+      SpreadsheetApp.getUi().ButtonSet.OK
+    );
+}
