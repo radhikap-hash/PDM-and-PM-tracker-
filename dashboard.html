@@ -572,6 +572,22 @@ async function loadData(manual){
     const j = await res.json();
     if(!Array.isArray(j.products)) throw new Error('malformed data.json');
     DATA = j;
+
+    // ── FIX: use the *calculated* current stage from the Apps Script
+    // (currentStage/progressPct), not the raw fallback "stage" field.
+    // "stage" comes straight from the empty "Stage / Status" column in
+    // the Project details sheet and defaults to 1 for every product,
+    // which made every card show "Stage 1/10 — 10%" regardless of
+    // actual progress. Every render function below reads d.stage, so
+    // overriding it here (right after data lands) fixes cards, category
+    // averages, the stage timeline highlighting, and the stuck-day calc
+    // all at once.
+    DATA.products.forEach(p => {
+      if (typeof p.currentStage === 'number' && p.currentStage >= 1) {
+        p.stage = p.currentStage;
+      }
+    });
+
     STAGES = (Array.isArray(j.stages) && j.stages.length) ? j.stages : STAGES_FALLBACK;
     TOTAL_STAGES = STAGES.length;
     const when = j.generatedAt ? new Date(j.generatedAt).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}) : 'unknown time';
