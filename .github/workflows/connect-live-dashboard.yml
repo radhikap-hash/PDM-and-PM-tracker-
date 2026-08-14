@@ -1,9 +1,9 @@
 name: Connect dashboard to live Apps Script API
 
-on:
+"on":
   push:
-    paths:
-      - '.github/workflows/connect-live-dashboard.yml'
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -12,121 +12,76 @@ jobs:
   connect:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Inject live Google Sheet connector
-        shell: python
-        run: |
+      - name: Inject live connector
+        run: python3 - <<'PY'
           from pathlib import Path
           import re
 
           path = Path('dashboard.html')
           text = path.read_text(encoding='utf-8')
 
-          # Make the dashboard data variables replaceable even if the original
-          # dashboard declared them with const.
           for name in ('DATA', 'STAGES', 'TOTAL_STAGES'):
               text = re.sub(r'\bconst\s+' + name + r'\b', 'let ' + name, text, count=1)
 
-          # Remove a previous copy of this connector, if this workflow is ever
-          # re-run, then inject one copy immediately before </body>.
-          marker_start = '<!-- LIVE GOOGLE SHEET CONNECTOR START -->'
-          marker_end = '<!-- LIVE GOOGLE SHEET CONNECTOR END -->'
-          if marker_start in text and marker_end in text:
-              a = text.index(marker_start)
-              b = text.index(marker_end, a) + len(marker_end)
+          start = '<!-- LIVE GOOGLE SHEET CONNECTOR START -->'
+          end = '<!-- LIVE GOOGLE SHEET CONNECTOR END -->'
+          if start in text and end in text:
+              a = text.index(start)
+              b = text.index(end, a) + len(end)
               text = text[:a] + text[b:]
 
-          connector = r'''<!-- LIVE GOOGLE SHEET CONNECTOR START -->
-<script>
-(function(){
-  const LIVE_API_URL = 'https://script.google.com/macros/s/AKfycby2rAwDYj8bzK5Vgyn2PniZBmuOMoarqR6IRttoESPtR6CTDbvgR3fLWeXwWIXvaDeA/exec';
-  let liveLoading = false;
+          connector = '''<!-- LIVE GOOGLE SHEET CONNECTOR START -->
+          <script>
+          (function(){
+            const LIVE_API_URL = 'https://script.google.com/macros/s/AKfycby2rAwDYj8bzK5Vgyn2PniZBmuOMoarqR6IRttoESPtR6CTDbvgR3fLWeXwWIXvaDeA/exec';
+            async function refreshLive(){
+              try{
+                const response = await fetch(LIVE_API_URL + '?t=' + Date.now(), {cache:'no-store'});
+                if(!response.ok) throw new Error('HTTP ' + response.status);
+                const live = await response.json();
+                if(!live || !Array.isArray(live.products)) throw new Error('Invalid API response');
+                DATA = live;
+                STAGES = Array.isArray(live.stages) ? live.stages : [];
+                TOTAL_STAGES = STAGES.length;
+                if(typeof rebuildTemplates === 'function') rebuildTemplates();
+                if(typeof renderRollup === 'function') renderRollup();
+                if(typeof renderCatStrip === 'function') renderCatStrip();
+                if(typeof renderVariants === 'function') renderVariants();
+                if(typeof renderDetail === 'function') renderDetail();
+                const note = document.getElementById('syncNote');
+                if(note) note.textContent = 'Live — Google Sheet synced ' + (live.generatedAt ? new Date(live.generatedAt).toLocaleString('en-IN') : 'just now');
+                console.log('PDM-PM live sync successful', live.products.length, 'projects');
+              }catch(error){
+                console.error('PDM-PM live sync failed', error);
+                const note = document.getElementById('syncNote');
+                if(note) note.textContent = 'Live sync unavailable — showing last loaded data';
+              }
+            }
+            window.refreshPdmPmDashboard = refreshLive;
+            refreshLive();
+            setInterval(refreshLive, 5 * 60 * 1000);
+          })();
+          </script>
+          <!-- LIVE GOOGLE SHEET CONNECTOR END -->'''
 
-  async function refreshFromGoogleSheet(){
-    if(liveLoading) return;
-    liveLoading = true;
-
-    try {
-      const res = await fetch(LIVE_API_URL + '?t=' + Date.now(), {
-        method: 'GET',
-        cache: 'no-store',
-        redirect: 'follow'
-      });
-
-      if(!res.ok) throw new Error('HTTP ' + res.status);
-
-      const live = await res.json();
-      if(!live || !Array.isArray(live.products)) {
-        throw new Error('Invalid Apps Script response: products missing');
-      }
-
-      DATA = live;
-      STAGES = Array.isArray(live.stages) ? live.stages : [];
-      TOTAL_STAGES = STAGES.length;
-
-      if(typeof rebuildTemplates === 'function') rebuildTemplates();
-
-      const cats = typeof currentCats_ === 'function' ? currentCats_() : [];
-      if(typeof selectedCat !== 'undefined' && !cats.includes(selectedCat)){
-        selectedCat = cats.find(c => typeof catProducts === 'function' && catProducts(c).length) || cats[0] || '';
-      }
-
-      if(typeof selectedProduct !== 'undefined' && !live.products.some(p => p.id === selectedProduct)){
-        selectedProduct = null;
-      }
-
-      if(typeof renderRollup === 'function') renderRollup();
-      if(typeof renderCatStrip === 'function') renderCatStrip();
-      if(typeof renderVariants === 'function') renderVariants();
-      if(typeof renderDetail === 'function') renderDetail();
-
-      const note = document.getElementById('syncNote');
-      if(note){
-        const when = live.generatedAt ? new Date(live.generatedAt).toLocaleString('en-IN') : 'just now';
-        note.textContent = 'Live — Google Sheet synced ' + when;
-        note.classList.add('live');
-      }
-
-      console.log('PDM-PM live sync successful:', {
-        projects: live.products.length,
-        stages: STAGES.length,
-        generatedAt: live.generatedAt
-      });
-
-    } catch(err) {
-      console.error('PDM-PM live sync failed:', err);
-      const note = document.getElementById('syncNote');
-      if(note) note.textContent = 'Live sync unavailable — showing last loaded data';
-    } finally {
-      liveLoading = false;
-    }
-  }
-
-  window.refreshPdmPmDashboard = refreshFromGoogleSheet;
-  refreshFromGoogleSheet();
-  window.setInterval(refreshFromGoogleSheet, 5 * 60 * 1000);
-})();
-</script>
-<!-- LIVE GOOGLE SHEET CONNECTOR END -->'''
-
-          insert_at = text.lower().rfind('</body>')
-          if insert_at == -1:
-              insert_at = len(text)
-          text = text[:insert_at] + '\n' + connector + '\n' + text[insert_at:]
-
+          pos = text.lower().rfind('</body>')
+          if pos < 0:
+              pos = len(text)
+          text = text[:pos] + '\n' + connector + '\n' + text[pos:]
           path.write_text(text, encoding='utf-8')
-          print('Live connector injected into dashboard.html')
+          print('Injected live Google Sheet connector into dashboard.html')
+          PY
 
-      - name: Commit dashboard change
-        shell: bash
+      - name: Commit dashboard update
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add dashboard.html
           if git diff --cached --quiet; then
-            echo 'No dashboard change needed.'
+            echo 'No dashboard changes required.'
           else
             git commit -m 'Connect dashboard to live Google Sheet API'
             git push
