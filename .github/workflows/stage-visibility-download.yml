@@ -1,6 +1,10 @@
 name: Add stage visibility and download
 
 on:
+  push:
+    paths:
+      - 'dashboard.html'
+      - '.github/workflows/stage-visibility-download.yml'
   workflow_dispatch:
 
 permissions:
@@ -38,13 +42,11 @@ jobs:
             function hideFutureStages(){
               const rows = Array.from(document.querySelectorAll('.stage-row'));
               if(!rows.length) return;
-
               rows.forEach((row) => {
                 const status = row.querySelector('.stage-status');
                 const future = status && status.classList.contains('upcoming');
                 const detail = row.nextElementSibling && row.nextElementSibling.classList.contains('stage-detail')
                   ? row.nextElementSibling : null;
-
                 row.classList.toggle('live-hidden-stage', !!future);
                 if(detail) detail.classList.toggle('live-hidden-stage', !!future);
               });
@@ -62,29 +64,21 @@ jobs:
                 alert('No live project data is available to download.');
                 return;
               }
-
               const preferred = [
                 'id','projectId','name','projectName','productName','category','client',
                 'owner','pm','pdM','status','progress','progressPct','stage','stageNo',
                 'currentStage','currentStageName','blocker','nextStep','plannedStart',
                 'dueDate','completedDate'
               ];
-
               const keys = [];
               for(const k of preferred){
                 if(products.some(p => Object.prototype.hasOwnProperty.call(p,k))) keys.push(k);
               }
               for(const p of products){
-                for(const k of Object.keys(p)){
-                  if(!keys.includes(k)) keys.push(k);
-                }
+                for(const k of Object.keys(p)) if(!keys.includes(k)) keys.push(k);
               }
-
               const rows = [keys.map(csvEscape).join(',')];
-              for(const p of products){
-                rows.push(keys.map(k => csvEscape(p[k])).join(','));
-              }
-
+              for(const p of products) rows.push(keys.map(k => csvEscape(p[k])).join(','));
               const blob = new Blob(['\ufeff' + rows.join('\r\n')], {type:'text/csv;charset=utf-8;'});
               const url = URL.createObjectURL(blob);
               const a = document.createElement('a');
@@ -99,7 +93,6 @@ jobs:
             function addDownloadButton(){
               const bar = document.querySelector('.topbtns');
               if(!bar || document.getElementById('downloadLiveCSV')) return;
-
               const b = document.createElement('button');
               b.id = 'downloadLiveCSV';
               b.className = 'lib download-btn';
@@ -110,11 +103,7 @@ jobs:
               bar.appendChild(b);
             }
 
-            function apply(){
-              addDownloadButton();
-              hideFutureStages();
-            }
-
+            function apply(){ addDownloadButton(); hideFutureStages(); }
             window.addEventListener('load', apply);
             setInterval(apply, 1000);
           })();
@@ -122,7 +111,6 @@ jobs:
 
           if '</head>' not in s or '</body>' not in s:
               raise SystemExit('dashboard.html does not have expected HTML structure')
-
           s = s.replace('</head>', css + '\n</head>', 1)
           s = s.replace('</body>', js + '\n</body>', 1)
           p.write_text(s, encoding='utf-8')
