@@ -21,4 +21,99 @@ function openProject(id){selectedProject=id;render()}
 function renderDetail(p){const stages=Array.isArray(p.stages)?p.stages:[],blocked=stages.filter(s=>s.status==='Blocked');document.getElementById('detail').className='detail open';document.getElementById('detail').innerHTML=`<div class="dhead"><div><div class="dname">${esc(p.projectId)}</div><div class="sub">Current Stage ${p.currentStage||1}: ${esc(p.currentStageName||'')}</div></div><div><div class="dpct">${p.progress||0}%</div><div class="sub">${p.completedStages||0} / ${p.totalStages||10} stages completed</div></div></div>${blocked.map(s=>`<div class="blocker"><b>Blocked — Stage ${s.stageNumber}: ${esc(s.stageName)}</b><br>${esc(s.blocker||'No blocker description')}</div>`).join('')}${stages.map(s=>stageHtml(s,p.currentStage)).join('')}`}
 function stageHtml(s,current){const st=s.status||'Not Started',cls=st==='Completed'?'done':s.stageNumber===current?'current':'',statusCls=st==='Completed'?'done':s.stageNumber===current?'current':'other',docs=(s.documents||[]).map(d=>`<div class="doc"><span><b>${esc(d.name||'Document')}</b> <span class="muted">${esc(d.status||'')}</span>${d.remarks?'<br>'+esc(d.remarks):''}</span>${d.link?`<a href="${esc(d.link)}" target="_blank" rel="noopener">Open</a>`:''}</div>`).join('');return `<div class="stage" onclick="this.classList.toggle('open')"><div class="stage-head"><div class="num ${cls}">${s.stageNumber}</div><div class="stage-main"><div class="stage-name">${esc(s.stageName)}</div><div class="stage-owner">${esc(s.owner||'Owner not assigned')}</div></div><span class="status ${statusCls}">${esc(st)}</span><span>›</span></div><div class="stage-body"><div class="grid"><div class="field"><b>Planned Start</b><span>${esc(s.plannedStart||'—')}</span></div><div class="field"><b>Due Date</b><span>${esc(s.dueDate||'—')}</span></div><div class="field"><b>Completed Date</b><span>${esc(s.completedDate||'—')}</span></div><div class="field"><b>Key Milestones</b><span>${esc(s.keyMilestones||'—')}</span></div></div>${s.blocker?`<div class="blocker"><b>Blocker</b><br>${esc(s.blocker)}</div>`:''}${s.immediateNextStep?`<div class="next"><b>Immediate Next Step</b><br>${esc(s.immediateNextStep)}</div>`:''}${s.remarks?`<div class="field"><b>Remarks</b><span>${esc(s.remarks)}</span></div>`:''}${docs?`<div class="docs"><b>Documents</b>${docs}</div>`:''}</div></div>`}
 loadData();
-</script></body></html>
+</script>
+<!-- LIVE GOOGLE SHEET CONNECTOR START -->
+<script>
+(function(){
+  const LIVE_API_URL = 'https://script.google.com/macros/s/AKfycby2rAwDYj8bzK5Vgyn2PniZBmuOMoarqR6IRttoESPtR6CTDbvgR3fLWeXwWIXvaDeA/exec';
+
+  function normalizeLiveStageProgress(live){
+    const total = Number(STAGES.length || 10);
+    const engineering = live.engineering || {};
+    const products = Array.isArray(live.products) ? live.products : [];
+
+    products.forEach(function(p){
+      const eng = engineering[p.id] || {};
+      const stageNums = Object.keys(eng)
+        .map(Number)
+        .filter(function(n){ return Number.isFinite(n) && n >= 1 && n <= total; })
+        .sort(function(a,b){ return a-b; });
+
+      if(!stageNums.length){
+        const fallback = Math.max(1, Math.min(total, Number(p.currentStage || p.stage || 1)));
+        p.currentStage = fallback;
+        p.stage = fallback;
+        p.currentStageName = STAGES[fallback - 1] || ('Stage ' + fallback);
+        p.progressPct = Math.round((fallback / total) * 100);
+        return;
+      }
+
+      const active = stageNums.filter(function(n){
+        const e = eng[n] || {};
+        const ratio = Number(e.completionRatio);
+        const totalCount = Number(e.totalCount || 0);
+        const completedCount = Number(e.completedCount || 0);
+        const status = String(e.status || '').trim().toLowerCase();
+        const completed =
+          (totalCount > 0 && completedCount >= totalCount) ||
+          ratio >= 1 ||
+          /completed|complete|closed|approved/.test(status);
+        return !completed;
+      });
+
+      let current;
+      if(active.length){
+        // Highest stage with real tracker data that is not complete.
+        // Empty stages are ignored completely.
+        current = Math.max.apply(null, active);
+      }else{
+        // If every populated stage is complete, advance to the next stage.
+        current = Math.min(Math.max.apply(null, stageNums) + 1, total);
+      }
+
+      p.currentStage = current;
+      p.stage = current;
+      p.currentStageName = STAGES[current - 1] || ('Stage ' + current);
+
+      // Stage 6 in progress = 60%; Stage 5 in progress = 50%.
+      // Empty stages do not affect this calculation.
+      p.progressPct = Math.round((current / total) * 100);
+    });
+  }
+
+  async function refreshLive(){
+    try{
+      const response = await fetch(LIVE_API_URL + '?t=' + Date.now(), {cache:'no-store'});
+      if(!response.ok) throw new Error('HTTP ' + response.status);
+      const live = await response.json();
+      if(!live || !Array.isArray(live.products)) throw new Error('Invalid API response');
+
+      DATA = live;
+      STAGES = Array.isArray(live.stages) ? live.stages : [];
+      TOTAL_STAGES = STAGES.length;
+
+      normalizeLiveStageProgress(live);
+
+      if(typeof rebuildTemplates === 'function') rebuildTemplates();
+      if(typeof renderRollup === 'function') renderRollup();
+      if(typeof renderCatStrip === 'function') renderCatStrip();
+      if(typeof renderVariants === 'function') renderVariants();
+      if(typeof renderDetail === 'function') renderDetail();
+
+      const note = document.getElementById('syncNote');
+      if(note) note.textContent = 'Live — Google Sheet synced ' + (live.generatedAt ? new Date(live.generatedAt).toLocaleString('en-IN') : 'just now');
+      console.log('PDM-PM live sync successful', live.products.length, 'projects');
+    }catch(error){
+      console.error('PDM-PM live sync failed', error);
+      const note = document.getElementById('syncNote');
+      if(note) note.textContent = 'Live sync unavailable — showing last loaded data';
+    }
+  }
+
+  window.refreshPdmPmDashboard = refreshLive;
+  refreshLive();
+  setInterval(refreshLive, 5 * 60 * 1000);
+})();
+</script>
+<!-- LIVE GOOGLE SHEET CONNECTOR END -->
+</body></html>
