@@ -1,1 +1,207 @@
-
+{
+  "success": true,
+  "generatedAt": "2026-08-14T05:30:00.000Z",
+  "data": {
+    "projects": [
+      {
+        "projectId": "SEN-001",
+        "currentStage": 6,
+        "currentStageName": "Project Planning",
+        "progress": 50,
+        "completedStages": 5,
+        "totalStages": 10,
+        "stages": [
+          {
+            "stageNumber": 1,
+            "stageName": "Market Research",
+            "owner": "Owner Name",
+            "plannedStart": "01/08/2026",
+            "dueDate": "05/08/2026",
+            "completedDate": "05/08/2026",
+            "status": "Completed",
+            "keyMilestones": "Market requirements finalized",
+            "blocker": "",
+            "immediateNextStep": "Proceed to proposal",
+            "remarks": "",
+            "documents": [
+              {
+                "name": "MRD",
+                "link": "https://example.com/mrd",
+                "status": "Completed",
+                "remarks": "Approved"
+              }
+            ]
+          },
+          {
+            "stageNumber": 2,
+            "stageName": "Proposal",
+            "owner": "Owner Name",
+            "plannedStart": "06/08/2026",
+            "dueDate": "08/08/2026",
+            "completedDate": "08/08/2026",
+            "status": "Completed",
+            "keyMilestones": "Proposal submitted",
+            "blocker": "",
+            "immediateNextStep": "",
+            "remarks": "",
+            "documents": []
+          },
+          {
+            "stageNumber": 3,
+            "stageName": "Commercial Finalization",
+            "owner": "",
+            "plannedStart": "",
+            "dueDate": "",
+            "completedDate": "",
+            "status": "Completed",
+            "keyMilestones": "",
+            "blocker": "",
+            "immediateNextStep": "",
+            "remarks": "",
+            "documents": []
+          },
+          {
+            "stageNumber": 4,
+            "stageName": "Statement of Work (SOW)",
+            "owner": "",
+            "plannedStart": "",
+            "dueDate": "",
+            "completedDate": "",
+            "status": "Completed",
+            "keyMilestones": "",
+            "blocker": "",
+            "immediateNextStep": "",
+            "remarks": "",
+            "documents": []
+          },
+          {
+            "stageNumber": 5,
+            "stageName": "Project Kickoff",
+            "owner": "",
+            "plannedStart": "",
+            "dueDate": "",
+            "completedDate": "",
+            "status": "Completed",
+            "keyMilestones": "",
+            "blocker": "",
+            "immediateNextStep": "",
+            "remarks": "",
+            "documents": []
+          },
+          {
+            "stageNumber": 6,
+            "stageName": "Project Planning",
+            "owner": "Project Manager",
+            "plannedStart": "10/08/2026",
+            "dueDate": "20/08/2026",
+            "completedDate": "",
+            "status": "In Progress",
+            "keyMilestones": "Project plan and resource allocation",
+            "blocker": "",
+            "immediateNextStep": "Finalize resource plan",
+            "remarks": "",
+            "documents": []
+          },
+          {
+            "stageNumber": 7,
+            "stageName": "Detailed Design",
+            "owner": "",
+            "plannedStart": "",
+            "dueDate": "",
+            "completedDate": "",
+            "status": "Not Started",
+            "keyMilestones": "",
+            "blocker": "",
+            "immediateNextStep": "",
+            "remarks": "",
+            "documents": []
+          },
+          {
+            "stageNumber": 8,
+            "stageName": "Critical Design Review (CDR)",
+            "owner": "",
+            "plannedStart": "",
+            "dueDate": "",
+            "completedDate": "",
+            "status": "Not Started",
+            "keyMilestones": "",
+            "blocker": "",
+            "immediateNextStep": "",
+            "remarks": "",
+            "documents": []
+          },
+          {
+            "stageNumber": 9,
+            "stageName": "Procurement & Development",
+            "owner": "",
+            "plannedStart": "",
+            "dueDate": "",
+            "completedDate": "",
+            "status": "Not Started",
+            "keyMilestones": "",
+            "blocker": "",
+            "immediateNextStep": "",
+            "remarks": "",
+            "documents": []
+          },
+          {
+            "stageNumber": 10,
+            "stageName": "Integration, Verification & Validation",
+            "owner": "",
+            "plannedStart": "",
+            "dueDate": "",
+            "completedDate": "",
+            "status": "Not Started",
+            "keyMilestones": "",
+            "blocker": "",
+            "immediateNextStep": "",
+            "remarks": "",
+            "documents": []
+          }
+        ]
+      }
+    ],
+    "stages": [
+      {
+        "number": 1,
+        "name": "Market Research"
+      },
+      {
+        "number": 2,
+        "name": "Proposal"
+      },
+      {
+        "number": 3,
+        "name": "Commercial Finalization"
+      },
+      {
+        "number": 4,
+        "name": "Statement of Work (SOW)"
+      },
+      {
+        "number": 5,
+        "name": "Project Kickoff"
+      },
+      {
+        "number": 6,
+        "name": "Project Planning"
+      },
+      {
+        "number": 7,
+        "name": "Detailed Design"
+      },
+      {
+        "number": 8,
+        "name": "Critical Design Review (CDR)"
+      },
+      {
+        "number": 9,
+        "name": "Procurement & Development"
+      },
+      {
+        "number": 10,
+        "name": "Integration, Verification & Validation"
+      }
+    ]
+  }
+}
