@@ -573,19 +573,6 @@ rebuildTemplates();
 <script>
 /* LIVE STAGE VISIBILITY + DOWNLOAD PATCH */
 (function(){
-  function hideFutureStages(){
-    const rows = Array.from(document.querySelectorAll('.stage-row'));
-    if(!rows.length) return;
-    rows.forEach((row) => {
-      const status = row.querySelector('.stage-status');
-      const future = status && status.classList.contains('upcoming');
-      const detail = row.nextElementSibling && row.nextElementSibling.classList.contains('stage-detail')
-        ? row.nextElementSibling : null;
-      row.classList.toggle('live-hidden-stage', !!future);
-      if(detail) detail.classList.toggle('live-hidden-stage', !!future);
-    });
-  }
-
   function csvEscape(v){
     if(v === null || v === undefined) return '';
     let x = (typeof v === 'object') ? JSON.stringify(v) : String(v);
@@ -654,7 +641,7 @@ rebuildTemplates();
 <!-- LIVE GOOGLE SHEET CONNECTOR START -->
 <script>
 (function(){
-  const LIVE_API_URL = 'https://script.google.com/macros/s/AKfycby2rAwDYj8bzK5Vgyn2PniZBmuOMoarqR6IRttoESPtR6CTDbvgR3fLWeXwWIXvaDeA/exec';
+const LIVE_API_URL = 'https://script.google.com/macros/s/AKfycby2rAwDYj8bzK5Vgyn2PniZBmuOMoarqR6IRttoESPtR6CTDbvgR3fLWeXwWIXvaDeA/exec';
 
   function normalizeLiveStageProgress(live){
     const total = Number(STAGES.length || 10);
