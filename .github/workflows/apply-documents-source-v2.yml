@@ -1,0 +1,45 @@
+name: Apply Documents source patch v2
+
+on:
+  push:
+    paths:
+      - '.github/workflows/apply-documents-source-v2.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout latest main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Wait for concurrent publisher jobs
+        run: sleep 20
+
+      - name: Rebase on latest main
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
+
+      - name: Apply Documents source patch
+        run: python scripts/apply_documents_source.py
+
+      - name: Commit and push with retry
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add apps-script/Code.gs dashboard.html
+          git commit -m 'Use Documents sheet as live document source' || exit 0
+          for i in 1 2 3; do
+            git fetch origin main
+            git rebase origin/main || { git rebase --abort || true; git reset --hard origin/main; python scripts/apply_documents_source.py; }
+            git push origin HEAD:main && exit 0
+            sleep 5
+          done
+          exit 1
