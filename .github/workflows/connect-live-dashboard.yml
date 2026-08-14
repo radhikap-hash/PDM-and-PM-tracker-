@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Replace data.json loader with live Apps Script API
+      - name: Inject live Google Sheet connector
         shell: python
         run: |
           from pathlib import Path
@@ -24,92 +24,100 @@ jobs:
           path = Path('dashboard.html')
           text = path.read_text(encoding='utf-8')
 
-          pattern = re.compile(
-              r"// ── LIVE DATA SYNC ──\n"
-              r"async function loadData\(manual\)\{.*?\n\}\n"
-              r"loadData\(false\);",
-              re.S,
-          )
+          # Make the dashboard data variables replaceable even if the original
+          # dashboard declared them with const.
+          for name in ('DATA', 'STAGES', 'TOTAL_STAGES'):
+              text = re.sub(r'\bconst\s+' + name + r'\b', 'let ' + name, text, count=1)
 
-          replacement = r'''// ── LIVE DATA SYNC ──
-const API_URL = 'https://script.google.com/macros/s/AKfycby2rAwDYj8bzK5Vgyn2PniZBmuOMoarqR6IRttoESPtR6CTDbvgR3fLWeXwWIXvaDeA/exec';
+          # Remove a previous copy of this connector, if this workflow is ever
+          # re-run, then inject one copy immediately before </body>.
+          marker_start = '<!-- LIVE GOOGLE SHEET CONNECTOR START -->'
+          marker_end = '<!-- LIVE GOOGLE SHEET CONNECTOR END -->'
+          if marker_start in text and marker_end in text:
+              a = text.index(marker_start)
+              b = text.index(marker_end, a) + len(marker_end)
+              text = text[:a] + text[b:]
 
-async function loadData(manual){
-  const note = document.getElementById('syncNote');
-  if(manual) note.textContent = 'Refreshing…';
+          connector = r'''<!-- LIVE GOOGLE SHEET CONNECTOR START -->
+<script>
+(function(){
+  const LIVE_API_URL = 'https://script.google.com/macros/s/AKfycby2rAwDYj8bzK5Vgyn2PniZBmuOMoarqR6IRttoESPtR6CTDbvgR3fLWeXwWIXvaDeA/exec';
+  let liveLoading = false;
 
-  try{
-    const url = API_URL + '?t=' + Date.now();
-    const res = await fetch(url, {
-      method: 'GET',
-      cache: 'no-store'
-    });
+  async function refreshFromGoogleSheet(){
+    if(liveLoading) return;
+    liveLoading = true;
 
-    if(!res.ok) throw new Error('HTTP ' + res.status);
+    try {
+      const res = await fetch(LIVE_API_URL + '?t=' + Date.now(), {
+        method: 'GET',
+        cache: 'no-store',
+        redirect: 'follow'
+      });
 
-    const j = await res.json();
+      if(!res.ok) throw new Error('HTTP ' + res.status);
 
-    if(j && j.success === false){
-      throw new Error(j.error || 'Apps Script API returned an error');
+      const live = await res.json();
+      if(!live || !Array.isArray(live.products)) {
+        throw new Error('Invalid Apps Script response: products missing');
+      }
+
+      DATA = live;
+      STAGES = Array.isArray(live.stages) ? live.stages : [];
+      TOTAL_STAGES = STAGES.length;
+
+      if(typeof rebuildTemplates === 'function') rebuildTemplates();
+
+      const cats = typeof currentCats_ === 'function' ? currentCats_() : [];
+      if(typeof selectedCat !== 'undefined' && !cats.includes(selectedCat)){
+        selectedCat = cats.find(c => typeof catProducts === 'function' && catProducts(c).length) || cats[0] || '';
+      }
+
+      if(typeof selectedProduct !== 'undefined' && !live.products.some(p => p.id === selectedProduct)){
+        selectedProduct = null;
+      }
+
+      if(typeof renderRollup === 'function') renderRollup();
+      if(typeof renderCatStrip === 'function') renderCatStrip();
+      if(typeof renderVariants === 'function') renderVariants();
+      if(typeof renderDetail === 'function') renderDetail();
+
+      const note = document.getElementById('syncNote');
+      if(note){
+        const when = live.generatedAt ? new Date(live.generatedAt).toLocaleString('en-IN') : 'just now';
+        note.textContent = 'Live — Google Sheet synced ' + when;
+        note.classList.add('live');
+      }
+
+      console.log('PDM-PM live sync successful:', {
+        projects: live.products.length,
+        stages: STAGES.length,
+        generatedAt: live.generatedAt
+      });
+
+    } catch(err) {
+      console.error('PDM-PM live sync failed:', err);
+      const note = document.getElementById('syncNote');
+      if(note) note.textContent = 'Live sync unavailable — showing last loaded data';
+    } finally {
+      liveLoading = false;
     }
-
-    if(!j || !Array.isArray(j.products)){
-      throw new Error('Malformed live API response: products array missing');
-    }
-
-    DATA = j;
-    STAGES = (Array.isArray(j.stages) && j.stages.length)
-      ? j.stages
-      : STAGES_FALLBACK;
-    TOTAL_STAGES = STAGES.length;
-
-    const when = j.generatedAt
-      ? new Date(j.generatedAt).toLocaleString('en-GB', {
-          day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'
-        })
-      : 'just now';
-
-    note.textContent = `Live — synced from Google Sheet at ${when}`;
-    note.className = 'sync-note live';
-
-    console.log('PDM-PM live data loaded:', {
-      products: DATA.products.length,
-      stages: TOTAL_STAGES,
-      generatedAt: DATA.generatedAt
-    });
-
-  }catch(e){
-    console.error('Live API load failed:', e);
-    note.textContent = 'Live sync unavailable — check Apps Script deployment';
-    note.className = 'sync-note stale';
   }
 
-  rebuildTemplates();
+  window.refreshPdmPmDashboard = refreshFromGoogleSheet;
+  refreshFromGoogleSheet();
+  window.setInterval(refreshFromGoogleSheet, 5 * 60 * 1000);
+})();
+</script>
+<!-- LIVE GOOGLE SHEET CONNECTOR END -->'''
 
-  const cats = currentCats_();
-  if(!cats.includes(selectedCat)){
-    selectedCat = cats.find(c=>catProducts(c).length) || cats[0] || '';
-  }
+          insert_at = text.lower().rfind('</body>')
+          if insert_at == -1:
+              insert_at = len(text)
+          text = text[:insert_at] + '\n' + connector + '\n' + text[insert_at:]
 
-  if(!DATA.products.some(d=>d.id===selectedProduct)){
-    selectedProduct = null;
-  }
-
-  renderCatStrip();
-  renderVariants();
-  renderDetail();
-}
-
-// Initial load + automatic refresh every 5 minutes.
-loadData(false);
-setInterval(() => loadData(false), 5 * 60 * 1000);'''
-
-          new_text, count = pattern.subn(replacement, text, count=1)
-          if count != 1:
-              raise SystemExit('Expected LIVE DATA SYNC block was not found; dashboard was not changed.')
-
-          path.write_text(new_text, encoding='utf-8')
-          print('dashboard.html updated successfully')
+          path.write_text(text, encoding='utf-8')
+          print('Live connector injected into dashboard.html')
 
       - name: Commit dashboard change
         shell: bash
