@@ -22,6 +22,8 @@ function renderDetail(p){const stages=Array.isArray(p.stages)?p.stages:[],blocke
 function stageHtml(s,current){const st=s.status||'Not Started',cls=st==='Completed'?'done':s.stageNumber===current?'current':'',statusCls=st==='Completed'?'done':s.stageNumber===current?'current':'other',docs=(s.documents||[]).map(d=>`<div class="doc"><span><b>${esc(d.name||'Document')}</b> <span class="muted">${esc(d.status||'')}</span>${d.remarks?'<br>'+esc(d.remarks):''}</span>${d.link?`<a href="${esc(d.link)}" target="_blank" rel="noopener">Open</a>`:''}</div>`).join('');return `<div class="stage" onclick="this.classList.toggle('open')"><div class="stage-head"><div class="num ${cls}">${s.stageNumber}</div><div class="stage-main"><div class="stage-name">${esc(s.stageName)}</div><div class="stage-owner">${esc(s.owner||'Owner not assigned')}</div></div><span class="status ${statusCls}">${esc(st)}</span><span>›</span></div><div class="stage-body"><div class="grid"><div class="field"><b>Planned Start</b><span>${esc(s.plannedStart||'—')}</span></div><div class="field"><b>Due Date</b><span>${esc(s.dueDate||'—')}</span></div><div class="field"><b>Completed Date</b><span>${esc(s.completedDate||'—')}</span></div><div class="field"><b>Key Milestones</b><span>${esc(s.keyMilestones||'—')}</span></div></div>${s.blocker?`<div class="blocker"><b>Blocker</b><br>${esc(s.blocker)}</div>`:''}${s.immediateNextStep?`<div class="next"><b>Immediate Next Step</b><br>${esc(s.immediateNextStep)}</div>`:''}${s.remarks?`<div class="field"><b>Remarks</b><span>${esc(s.remarks)}</span></div>`:''}${docs?`<div class="docs"><b>Documents</b>${docs}</div>`:''}</div></div>`}
 loadData();
 </script>
+
+
 <!-- LIVE GOOGLE SHEET CONNECTOR START -->
 <script>
 (function(){
