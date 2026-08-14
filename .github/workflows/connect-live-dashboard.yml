@@ -1,0 +1,125 @@
+name: Connect dashboard to live Apps Script API
+
+on:
+  push:
+    paths:
+      - '.github/workflows/connect-live-dashboard.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  connect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Replace data.json loader with live Apps Script API
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          path = Path('dashboard.html')
+          text = path.read_text(encoding='utf-8')
+
+          pattern = re.compile(
+              r"// ── LIVE DATA SYNC ──\n"
+              r"async function loadData\(manual\)\{.*?\n\}\n"
+              r"loadData\(false\);",
+              re.S,
+          )
+
+          replacement = r'''// ── LIVE DATA SYNC ──
+const API_URL = 'https://script.google.com/macros/s/AKfycby2rAwDYj8bzK5Vgyn2PniZBmuOMoarqR6IRttoESPtR6CTDbvgR3fLWeXwWIXvaDeA/exec';
+
+async function loadData(manual){
+  const note = document.getElementById('syncNote');
+  if(manual) note.textContent = 'Refreshing…';
+
+  try{
+    const url = API_URL + '?t=' + Date.now();
+    const res = await fetch(url, {
+      method: 'GET',
+      cache: 'no-store'
+    });
+
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+
+    const j = await res.json();
+
+    if(j && j.success === false){
+      throw new Error(j.error || 'Apps Script API returned an error');
+    }
+
+    if(!j || !Array.isArray(j.products)){
+      throw new Error('Malformed live API response: products array missing');
+    }
+
+    DATA = j;
+    STAGES = (Array.isArray(j.stages) && j.stages.length)
+      ? j.stages
+      : STAGES_FALLBACK;
+    TOTAL_STAGES = STAGES.length;
+
+    const when = j.generatedAt
+      ? new Date(j.generatedAt).toLocaleString('en-GB', {
+          day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'
+        })
+      : 'just now';
+
+    note.textContent = `Live — synced from Google Sheet at ${when}`;
+    note.className = 'sync-note live';
+
+    console.log('PDM-PM live data loaded:', {
+      products: DATA.products.length,
+      stages: TOTAL_STAGES,
+      generatedAt: DATA.generatedAt
+    });
+
+  }catch(e){
+    console.error('Live API load failed:', e);
+    note.textContent = 'Live sync unavailable — check Apps Script deployment';
+    note.className = 'sync-note stale';
+  }
+
+  rebuildTemplates();
+
+  const cats = currentCats_();
+  if(!cats.includes(selectedCat)){
+    selectedCat = cats.find(c=>catProducts(c).length) || cats[0] || '';
+  }
+
+  if(!DATA.products.some(d=>d.id===selectedProduct)){
+    selectedProduct = null;
+  }
+
+  renderCatStrip();
+  renderVariants();
+  renderDetail();
+}
+
+// Initial load + automatic refresh every 5 minutes.
+loadData(false);
+setInterval(() => loadData(false), 5 * 60 * 1000);'''
+
+          new_text, count = pattern.subn(replacement, text, count=1)
+          if count != 1:
+              raise SystemExit('Expected LIVE DATA SYNC block was not found; dashboard was not changed.')
+
+          path.write_text(new_text, encoding='utf-8')
+          print('dashboard.html updated successfully')
+
+      - name: Commit dashboard change
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add dashboard.html
+          if git diff --cached --quiet; then
+            echo 'No dashboard change needed.'
+          else
+            git commit -m 'Connect dashboard to live Google Sheet API'
+            git push
+          fi
