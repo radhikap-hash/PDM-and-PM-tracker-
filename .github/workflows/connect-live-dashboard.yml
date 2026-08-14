@@ -16,7 +16,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Inject live connector
-        run: python3 - <<'PY'
+        run: |
+          python3 - <<'PY'
           from pathlib import Path
           import re
 
