@@ -565,39 +565,7 @@ rebuildTemplates();
 
 
 
-<!-- LIVE GOOGLE SHEET CONNECTOR START -->
-<script>
-(function(){
-  const LIVE_API_URL = 'https://script.google.com/macros/s/AKfycby2rAwDYj8bzK5Vgyn2PniZBmuOMoarqR6IRttoESPtR6CTDbvgR3fLWeXwWIXvaDeA/exec';
-  async function refreshLive(){
-    try{
-      const response = await fetch(LIVE_API_URL + '?t=' + Date.now(), {cache:'no-store'});
-      if(!response.ok) throw new Error('HTTP ' + response.status);
-      const live = await response.json();
-      if(!live || !Array.isArray(live.products)) throw new Error('Invalid API response');
-      DATA = live;
-      STAGES = Array.isArray(live.stages) ? live.stages : [];
-      TOTAL_STAGES = STAGES.length;
-      if(typeof rebuildTemplates === 'function') rebuildTemplates();
-      if(typeof renderRollup === 'function') renderRollup();
-      if(typeof renderCatStrip === 'function') renderCatStrip();
-      if(typeof renderVariants === 'function') renderVariants();
-      if(typeof renderDetail === 'function') renderDetail();
-      const note = document.getElementById('syncNote');
-      if(note) note.textContent = 'Live — Google Sheet synced ' + (live.generatedAt ? new Date(live.generatedAt).toLocaleString('en-IN') : 'just now');
-      console.log('PDM-PM live sync successful', live.products.length, 'projects');
-    }catch(error){
-      console.error('PDM-PM live sync failed', error);
-      const note = document.getElementById('syncNote');
-      if(note) note.textContent = 'Live sync unavailable — showing last loaded data';
-    }
-  }
-  window.refreshPdmPmDashboard = refreshLive;
-  refreshLive();
-  setInterval(refreshLive, 5 * 60 * 1000);
-})();
-</script>
-<!-- LIVE GOOGLE SHEET CONNECTOR END -->
+
 <script>
 /* LIVE STAGE VISIBILITY + DOWNLOAD PATCH */
 (function(){
@@ -670,5 +638,39 @@ rebuildTemplates();
   setInterval(apply, 1000);
 })();
 </script>
+
+<!-- LIVE GOOGLE SHEET CONNECTOR START -->
+<script>
+(function(){
+  const LIVE_API_URL = 'https://script.google.com/macros/s/AKfycby2rAwDYj8bzK5Vgyn2PniZBmuOMoarqR6IRttoESPtR6CTDbvgR3fLWeXwWIXvaDeA/exec';
+  async function refreshLive(){
+    try{
+      const response = await fetch(LIVE_API_URL + '?t=' + Date.now(), {cache:'no-store'});
+      if(!response.ok) throw new Error('HTTP ' + response.status);
+      const live = await response.json();
+      if(!live || !Array.isArray(live.products)) throw new Error('Invalid API response');
+      DATA = live;
+      STAGES = Array.isArray(live.stages) ? live.stages : [];
+      TOTAL_STAGES = STAGES.length;
+      if(typeof rebuildTemplates === 'function') rebuildTemplates();
+      if(typeof renderRollup === 'function') renderRollup();
+      if(typeof renderCatStrip === 'function') renderCatStrip();
+      if(typeof renderVariants === 'function') renderVariants();
+      if(typeof renderDetail === 'function') renderDetail();
+      const note = document.getElementById('syncNote');
+      if(note) note.textContent = 'Live — Google Sheet synced ' + (live.generatedAt ? new Date(live.generatedAt).toLocaleString('en-IN') : 'just now');
+      console.log('PDM-PM live sync successful', live.products.length, 'projects');
+    }catch(error){
+      console.error('PDM-PM live sync failed', error);
+      const note = document.getElementById('syncNote');
+      if(note) note.textContent = 'Live sync unavailable — showing last loaded data';
+    }
+  }
+  window.refreshPdmPmDashboard = refreshLive;
+  refreshLive();
+  setInterval(refreshLive, 5 * 60 * 1000);
+})();
+</script>
+<!-- LIVE GOOGLE SHEET CONNECTOR END -->
 </body>
 </html>
