@@ -20,6 +20,8 @@
 
 const PROJECT_SHEET_NAMES = ['Project details', 'Products'];
 const TEMPLATE_SHEET_NAMES = ['Stages/documents', 'Stages / documents'];
+const DOCUMENT_SOURCE_SHEET_NAMES = ['Documents'];
+
 const OWNER_SHEET_NAMES = [
   'Sensor-Durga',
   'Drone-Bharath',
@@ -820,6 +822,91 @@ function calculateProductProgress_(engineering, fallbackStage, totalStages) {
 /* ============================================================
    BUILD PAYLOAD
    ============================================================ */
+
+
+/* ============================================================
+   DOCUMENTS SHEET — AUTHORITATIVE DOCUMENT SOURCE
+   ============================================================ */
+function readDocumentsSheet_(ss, stages, products, warnings) {
+  const sheet = findSheet_(ss, DOCUMENT_SOURCE_SHEET_NAMES);
+  if (!sheet) return { found: false, documents: {} };
+  const values = sheet.getDataRange().getValues();
+  if (!values.length) return { found: true, documents: {} };
+  let headerIdx = -1;
+  for (let r = 0; r < Math.min(values.length, 10); r++) {
+    const row = values[r];
+    const hasDoc = findCol_(row, ['document name','document names','document','file name']) !== -1;
+    const hasProject = findCol_(row, ['project id','project','product id','variant id','id']) !== -1;
+    const hasStage = findCol_(row, ['stage #','stage no','stage number','stage name','stage']) !== -1;
+    if (hasDoc && (hasProject || hasStage)) { headerIdx = r; break; }
+  }
+  if (headerIdx === -1) return { found: true, documents: {} };
+  const header = values[headerIdx];
+  const colId = findCol_(header, ['project id','product id','variant id','project','id']);
+  const colName = findCol_(header, ['product / solution name','solution name','product name','variant name']);
+  const colStageNum = findCol_(header, ['stage #','stage no','stage number']);
+  const colStage = findCol_(header, ['stage name','stage','activity']);
+  const colDoc = findCol_(header, ['document name','document names','file name','document']);
+  const colLink = findCol_(header, ['document link','file link','drive link','url','link']);
+  const colStatus = findCol_(header, ['status','document status']);
+  const colStart = findCol_(header, ['planned start','start date']);
+  const colDue = findCol_(header, ['due date','deadline']);
+  const colCompleted = findCol_(header, ['completed date','completion date']);
+  if (colDoc === -1) return { found: true, documents: {} };
+
+  const knownIds = products.map(p => p.id);
+  const nameToId = {};
+  products.forEach(p => { nameToId[normName_(p.name)] = p.id; });
+  const stageNameToNum = {};
+  stages.forEach((s,i) => { stageNameToNum[norm_(s)] = i + 1; });
+
+  function resolveStage_(rawNum, rawName) {
+    const n = parseInt(str_(rawNum),10);
+    if (!isNaN(n) && n >= 1 && n <= stages.length) return n;
+    const text = norm_(rawName);
+    if (!text) return null;
+    if (stageNameToNum[text]) return stageNameToNum[text];
+    const m = text.match(/stage\s*(\d+)/i);
+    if (m) return parseInt(m[1],10);
+    for (const s in stageNameToNum) if (text.includes(s) || s.includes(text)) return stageNameToNum[s];
+    return null;
+  }
+  function resolveId_(rawId, rawName) {
+    const id = str_(rawId);
+    if (id && knownIds.indexOf(id) !== -1) return id;
+    const name = normName_(rawName);
+    if (name && nameToId[name]) return nameToId[name];
+    return knownIds.find(x => norm_(x) === norm_(id)) || null;
+  }
+  function richLink_(r,c) {
+    if (c === -1) return null;
+    try { const rich = sheet.getRange(r+1,c+1).getRichTextValue(); return rich ? rich.getLinkUrl() : null; } catch(e) { return null; }
+  }
+
+  const documents = {};
+  for (let r = headerIdx + 1; r < values.length; r++) {
+    const row = values[r];
+    const document = str_(row[colDoc]);
+    if (!document) continue;
+    const id = resolveId_(colId === -1 ? '' : row[colId], colName === -1 ? '' : row[colName]);
+    if (!id) continue;
+    const stage = resolveStage_(colStageNum === -1 ? '' : row[colStageNum], colStage === -1 ? '' : row[colStage]);
+    if (!stage) continue;
+    let link = colLink === -1 ? '' : str_(row[colLink]);
+    if (!link) link = richLink_(r,colLink);
+    if (!documents[id]) documents[id] = [];
+    documents[id].push({
+      stage: stage,
+      document: document,
+      plannedStart: colStart === -1 ? null : dateStr_(row[colStart]),
+      dueDate: colDue === -1 ? null : dateStr_(row[colDue]),
+      completedDate: colCompleted === -1 ? null : dateStr_(row[colCompleted]),
+      status: colStatus === -1 ? null : (str_(row[colStatus]) || null),
+      link: link || null
+    });
+  }
+  return { found: true, documents: documents };
+}
 
 function buildPayload_() {
   const ss = SpreadsheetApp.getActive();

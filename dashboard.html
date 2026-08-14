@@ -178,6 +178,10 @@ table.actions tr:last-child td{border-bottom:none;}
 .stage-detail.live-hidden-stage { display:none !important; }
 button.lib.download-btn { border-color: var(--teal); }
 </style>
+<style>
+/* DOCUMENTS SHEET LIVE SOURCE PATCH */
+.doc-row .doc-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}.doc-row .doc-actions a{display:inline-block;padding:4px 8px;border:1px solid var(--line);border-radius:5px;background:var(--panel);font-size:10.5px;font-weight:600;text-decoration:none}.doc-row .doc-actions a.download{color:var(--teal)}.doc-row .doc-actions a.open{color:var(--sub)}
+</style>
 </head>
 <body>
 <div class="wrap">
@@ -741,5 +745,16 @@ rebuildTemplates();
 })();
 </script>
 <!-- LIVE GOOGLE SHEET CONNECTOR END -->
+<script>
+/* DOCUMENTS SHEET LIVE SOURCE PATCH */
+(function(){
+function esc(v){return String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+function docs(pid,n){return ((DATA.documents&&DATA.documents[pid])||[]).filter(x=>Number(x.stage)===Number(n)&&(x.document||x.documentName||x.name))}
+function dl(u){if(!u)return'';var s=String(u),m=s.match(/drive\.google\.com\/file\/d\/([^/]+)/i)||s.match(/[?&]id=([^&]+)/i),id=m?m[1]:null;return id?'https://drive.google.com/uc?export=download&id='+encodeURIComponent(id):s}
+function refresh(){if(!window.selectedProduct||!window.expandedStage)return;var a=docs(window.selectedProduct,window.expandedStage);if(!a.length)return;var p=document.getElementById('detail');if(!p)return;var row=Array.from(p.querySelectorAll('.stage-row')).find(function(r){var n=r.querySelector('.stage-num');return n&&Number(n.textContent.trim())===Number(window.expandedStage)});if(!row)return;var inner=row.nextElementSibling&&row.nextElementSibling.querySelector('.stage-detail-inner');if(!inner)return;var sec=inner.querySelector('.doc-section');if(!sec){sec=document.createElement('div');sec.className='doc-section';inner.appendChild(sec)}sec.innerHTML='<div class="k">Documents</div>'+a.map(function(d){var n=d.document||d.documentName||d.name||'Document',s=d.status||'Available',u=d.link||d.url||d.documentLink||'',c=/complet/i.test(s)?'ready':/progress|track|revision/i.test(s)?'progress':'notstarted',act=u?'<div class="doc-actions"><a class="open" href="'+esc(u)+'" target="_blank" onclick="event.stopPropagation()">Open ↗</a><a class="download" href="'+esc(dl(u))+'" target="_blank" download onclick="event.stopPropagation()">Download ↓</a></div>':'';return '<div class="doc-row"><span>'+esc(n)+'</span><div style="display:flex;align-items:center;gap:8px"><span class="doc-status '+c+'">'+esc(s)+'</span>'+act+'</div></div>'}).join('')}
+function install(){if(window.__documentsPatchInstalled||typeof window.renderDetail!=='function')return;var old=window.renderDetail;window.renderDetail=function(){old();setTimeout(refresh,0)};window.__documentsPatchInstalled=true;setTimeout(refresh,0)}
+var t=setInterval(function(){install();if(window.__documentsPatchInstalled)clearInterval(t)},100)
+})();
+</script>
 </body>
 </html>
