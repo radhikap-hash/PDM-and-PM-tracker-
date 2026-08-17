@@ -1,150 +1,38 @@
-name: Connect dashboard to live Apps Script API
+name: Keep live dashboard connector stable
 
-"on":
+on:
   push:
     branches:
       - main
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  connect:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Inject live connector
+      - name: Verify dashboard uses the current Apps Script endpoint
         run: |
           python3 - <<'PY'
           from pathlib import Path
           import re
 
-          path = Path('dashboard.html')
-          text = path.read_text(encoding='utf-8')
+          text = Path('dashboard.html').read_text(encoding='utf-8')
+          current = 'AKfycbxo59j_9qO_jzoljBlb4ZFrL6RZyXxzOe8c8MCt5wX13DyEKh6ye02N7IcSgky2rOl6'
+          old = 'AKfycby2rAwDYj8bzK5Vgyn2PniZBmuOMoarqR6IRttoESPtR6CTDbvgR3fLWeXwWIXvaDeA'
 
-          for name in ('DATA', 'STAGES', 'TOTAL_STAGES'):
-              text = re.sub(r'\bconst\s+' + name + r'\b', 'let ' + name, text, count=1)
+          if current not in text:
+              raise SystemExit('ERROR: current Apps Script endpoint is missing from dashboard.html')
+          if old in text:
+              raise SystemExit('ERROR: old Apps Script endpoint is still present in dashboard.html')
 
-          start = '<!-- LIVE GOOGLE SHEET CONNECTOR START -->'
-          end = '<!-- LIVE GOOGLE SHEET CONNECTOR END -->'
-          if start in text and end in text:
-              a = text.index(start)
-              b = text.index(end, a) + len(end)
-              text = text[:a] + text[b:]
+          if text.count('LIVE_API_URL') > 1:
+              raise SystemExit('ERROR: multiple live connectors detected')
 
-          connector = '''<!-- LIVE GOOGLE SHEET CONNECTOR START -->
-          <script>
-          (function(){
-            const LIVE_API_URL = 'https://script.google.com/macros/s/AKfycby2rAwDYj8bzK5Vgyn2PniZBmuOMoarqR6IRttoESPtR6CTDbvgR3fLWeXwWIXvaDeA/exec';
-
-            function normalizeLiveStageProgress(live){
-              const total = Number(STAGES.length || 10);
-              const engineering = live.engineering || {};
-              const products = Array.isArray(live.products) ? live.products : [];
-
-              products.forEach(function(p){
-                const eng = engineering[p.id] || {};
-                const stageNums = Object.keys(eng)
-                  .map(Number)
-                  .filter(function(n){ return Number.isFinite(n) && n >= 1 && n <= total; })
-                  .sort(function(a,b){ return a-b; });
-
-                if(!stageNums.length){
-                  const fallback = Math.max(1, Math.min(total, Number(p.currentStage || p.stage || 1)));
-                  p.currentStage = fallback;
-                  p.stage = fallback;
-                  p.currentStageName = STAGES[fallback - 1] || ('Stage ' + fallback);
-                  p.progressPct = Math.round((fallback / total) * 100);
-                  return;
-                }
-
-                const active = stageNums.filter(function(n){
-                  const e = eng[n] || {};
-                  const ratio = Number(e.completionRatio);
-                  const totalCount = Number(e.totalCount || 0);
-                  const completedCount = Number(e.completedCount || 0);
-                  const status = String(e.status || '').trim().toLowerCase();
-                  const completed =
-                    (totalCount > 0 && completedCount >= totalCount) ||
-                    ratio >= 1 ||
-                    /completed|complete|closed|approved/.test(status);
-                  return !completed;
-                });
-
-                let current;
-                if(active.length){
-                  // Highest stage with real tracker data that is not complete.
-                  // Empty stages are ignored completely.
-                  current = Math.max.apply(null, active);
-                }else{
-                  // If every populated stage is complete, advance to the next stage.
-                  current = Math.min(Math.max.apply(null, stageNums) + 1, total);
-                }
-
-                p.currentStage = current;
-                p.stage = current;
-                p.currentStageName = STAGES[current - 1] || ('Stage ' + current);
-
-                // Stage 6 in progress = 60%; Stage 5 in progress = 50%.
-                // Empty stages do not affect this calculation.
-                p.progressPct = Math.round((current / total) * 100);
-              });
-            }
-
-            async function refreshLive(){
-              try{
-                const response = await fetch(LIVE_API_URL + '?t=' + Date.now(), {cache:'no-store'});
-                if(!response.ok) throw new Error('HTTP ' + response.status);
-                const live = await response.json();
-                if(!live || !Array.isArray(live.products)) throw new Error('Invalid API response');
-
-                DATA = live;
-                STAGES = Array.isArray(live.stages) ? live.stages : [];
-                TOTAL_STAGES = STAGES.length;
-
-                normalizeLiveStageProgress(live);
-
-                if(typeof rebuildTemplates === 'function') rebuildTemplates();
-                if(typeof renderRollup === 'function') renderRollup();
-                if(typeof renderCatStrip === 'function') renderCatStrip();
-                if(typeof renderVariants === 'function') renderVariants();
-                if(typeof renderDetail === 'function') renderDetail();
-
-                const note = document.getElementById('syncNote');
-                if(note) note.textContent = 'Live — Google Sheet synced ' + (live.generatedAt ? new Date(live.generatedAt).toLocaleString('en-IN') : 'just now');
-                console.log('PDM-PM live sync successful', live.products.length, 'projects');
-              }catch(error){
-                console.error('PDM-PM live sync failed', error);
-                const note = document.getElementById('syncNote');
-                if(note) note.textContent = 'Live sync unavailable — showing last loaded data';
-              }
-            }
-
-            window.refreshPdmPmDashboard = refreshLive;
-            refreshLive();
-            setInterval(refreshLive, 5 * 60 * 1000);
-          })();
-          </script>
-          <!-- LIVE GOOGLE SHEET CONNECTOR END -->'''
-
-          pos = text.lower().rfind('</body>')
-          if pos < 0:
-              pos = len(text)
-          text = text[:pos] + '\n' + connector + '\n' + text[pos:]
-          path.write_text(text, encoding='utf-8')
-          print('Injected live Google Sheet connector with stage-based progress calculation')
+          print('Dashboard connector check passed.')
+          print('Exactly one live Apps Script endpoint is configured.')
           PY
-
-      - name: Commit dashboard update
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add dashboard.html
-          if git diff --cached --quiet; then
-            echo 'No dashboard changes required.'
-          else
-            git commit -m 'Connect dashboard to live Google Sheet API with stage progress'
-            git push
-          fi
