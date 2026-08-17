@@ -85,5 +85,100 @@ function downloadCSV(){const ps=products();if(!ps.length){alert('No live project
 function showJson(){const w=window.open();w.document.write('<pre style="white-space:pre-wrap">'+esc(JSON.stringify(DATA,null,2))+'</pre>')}
 loadLive();setInterval(loadLive,5*60*1000);
 </script>
+
+<!-- LIVE GOOGLE SHEET CONNECTOR START -->
+<script>
+(function(){
+  const LIVE_API_URL = 'https://script.google.com/macros/s/AKfycby2rAwDYj8bzK5Vgyn2PniZBmuOMoarqR6IRttoESPtR6CTDbvgR3fLWeXwWIXvaDeA/exec';
+
+  function normalizeLiveStageProgress(live){
+    const total = Number(STAGES.length || 10);
+    const engineering = live.engineering || {};
+    const products = Array.isArray(live.products) ? live.products : [];
+
+    products.forEach(function(p){
+      const eng = engineering[p.id] || {};
+      const stageNums = Object.keys(eng)
+        .map(Number)
+        .filter(function(n){ return Number.isFinite(n) && n >= 1 && n <= total; })
+        .sort(function(a,b){ return a-b; });
+
+      if(!stageNums.length){
+        const fallback = Math.max(1, Math.min(total, Number(p.currentStage || p.stage || 1)));
+        p.currentStage = fallback;
+        p.stage = fallback;
+        p.currentStageName = STAGES[fallback - 1] || ('Stage ' + fallback);
+        p.progressPct = Math.round((fallback / total) * 100);
+        return;
+      }
+
+      const active = stageNums.filter(function(n){
+        const e = eng[n] || {};
+        const ratio = Number(e.completionRatio);
+        const totalCount = Number(e.totalCount || 0);
+        const completedCount = Number(e.completedCount || 0);
+        const status = String(e.status || '').trim().toLowerCase();
+        const completed =
+          (totalCount > 0 && completedCount >= totalCount) ||
+          ratio >= 1 ||
+          /completed|complete|closed|approved/.test(status);
+        return !completed;
+      });
+
+      let current;
+      if(active.length){
+        // Highest stage with real tracker data that is not complete.
+        // Empty stages are ignored completely.
+        current = Math.max.apply(null, active);
+      }else{
+        // If every populated stage is complete, advance to the next stage.
+        current = Math.min(Math.max.apply(null, stageNums) + 1, total);
+      }
+
+      p.currentStage = current;
+      p.stage = current;
+      p.currentStageName = STAGES[current - 1] || ('Stage ' + current);
+
+      // Stage 6 in progress = 60%; Stage 5 in progress = 50%.
+      // Empty stages do not affect this calculation.
+      p.progressPct = Math.round((current / total) * 100);
+    });
+  }
+
+  async function refreshLive(){
+    try{
+      const response = await fetch(LIVE_API_URL + '?t=' + Date.now(), {cache:'no-store'});
+      if(!response.ok) throw new Error('HTTP ' + response.status);
+      const live = await response.json();
+      if(!live || !Array.isArray(live.products)) throw new Error('Invalid API response');
+
+      DATA = live;
+      STAGES = Array.isArray(live.stages) ? live.stages : [];
+      TOTAL_STAGES = STAGES.length;
+
+      normalizeLiveStageProgress(live);
+
+      if(typeof rebuildTemplates === 'function') rebuildTemplates();
+      if(typeof renderRollup === 'function') renderRollup();
+      if(typeof renderCatStrip === 'function') renderCatStrip();
+      if(typeof renderVariants === 'function') renderVariants();
+      if(typeof renderDetail === 'function') renderDetail();
+
+      const note = document.getElementById('syncNote');
+      if(note) note.textContent = 'Live — Google Sheet synced ' + (live.generatedAt ? new Date(live.generatedAt).toLocaleString('en-IN') : 'just now');
+      console.log('PDM-PM live sync successful', live.products.length, 'projects');
+    }catch(error){
+      console.error('PDM-PM live sync failed', error);
+      const note = document.getElementById('syncNote');
+      if(note) note.textContent = 'Live sync unavailable — showing last loaded data';
+    }
+  }
+
+  window.refreshPdmPmDashboard = refreshLive;
+  refreshLive();
+  setInterval(refreshLive, 5 * 60 * 1000);
+})();
+</script>
+<!-- LIVE GOOGLE SHEET CONNECTOR END -->
 </body>
 </html>
