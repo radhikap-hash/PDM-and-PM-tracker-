@@ -8,16 +8,32 @@
   "totalProjects": 0,
   "totalStages": 10,
   "projects": [],
+  "products": [],
+  "engineering": {},
+  "documents": {},
+  "stageDocs": {},
   "stages": [
-    {"number": 1, "name": "Market Research"},
-    {"number": 2, "name": "Proposal"},
-    {"number": 3, "name": "Commercial Finalization"},
-    {"number": 4, "name": "Statement of Work (SOW)"},
-    {"number": 5, "name": "Project Kickoff"},
-    {"number": 6, "name": "Project Planning"},
-    {"number": 7, "name": "Detailed Design"},
-    {"number": 8, "name": "Critical Design Review (CDR)"},
-    {"number": 9, "name": "Procurement & Development"},
-    {"number": 10, "name": "Integration, Verification & Validation"}
+    "Market Research",
+    "Proposal",
+    "Commercial Finalization",
+    "Statement of Work (SOW)",
+    "Project Kickoff",
+    "Project Planning",
+    "Detailed Design",
+    "Critical Design Review (CDR)",
+    "Procurement & Development",
+    "Integration, Verification & Validation"
+  ],
+  "stageDefinitions": [
+    {"number":1,"name":"Market Research"},
+    {"number":2,"name":"Proposal"},
+    {"number":3,"name":"Commercial Finalization"},
+    {"number":4,"name":"Statement of Work (SOW)"},
+    {"number":5,"name":"Project Kickoff"},
+    {"number":6,"name":"Project Planning"},
+    {"number":7,"name":"Detailed Design"},
+    {"number":8,"name":"Critical Design Review (CDR)"},
+    {"number":9,"name":"Procurement & Development"},
+    {"number":10,"name":"Integration, Verification & Validation"}
   ]
 }
