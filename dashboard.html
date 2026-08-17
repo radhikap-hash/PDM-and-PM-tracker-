@@ -2,49 +2,3838 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PDM & PM Tracker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PDM & PM Tracker Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
 <base target="_blank">
+
 <style>
-:root{--bg:#f5f8fc;--panel:#fff;--panel2:#f0f4f8;--line:#dee6f0;--text:#182338;--sub:#5c6b84;--mute:#8b98ae;--teal:#0e9c8c;--amber:#c97a0a;--red:#d93636}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px Inter,Arial,sans-serif}.wrap{max-width:1280px;margin:auto;padding:30px 28px 60px}.top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:20px}.brand{font-size:23px;font-weight:700}.brand i{color:var(--teal);font-style:normal}.sub{color:var(--sub);font-size:12px;margin-top:5px}.sync{color:var(--mute);font:11px monospace;margin-top:7px}.buttons{display:flex;gap:8px;flex-wrap:wrap}.btn{background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px 13px;border-radius:8px;cursor:pointer}.btn:hover{border-color:var(--teal);color:var(--teal)}.banner{margin:20px 0;padding:11px 14px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}.ok{color:var(--teal);background:#effaf8}.err{color:var(--red);background:#fff3f3}.label{color:var(--sub);font-size:11px;text-transform:uppercase;letter-spacing:.6px;margin:20px 0 10px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:11px}.card{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:14px;cursor:pointer;box-shadow:0 1px 3px rgba(24,35,56,.05)}.card:hover,.card.sel{border-color:var(--teal);background:#f8fbfc}.name{font-weight:700;font-size:14px}.meta{color:var(--sub);font-size:11px;margin-top:3px}.bar{height:5px;background:#e7edf4;border-radius:4px;margin-top:11px;overflow:hidden}.bar i{display:block;height:100%;background:var(--teal)}.pct{color:var(--sub);font-size:11px;margin-top:5px}.variant{position:relative}.variant .stage{font-size:11px;color:var(--sub);margin-top:9px}.badge{position:absolute;right:0;top:0;background:#fff3df;color:var(--amber);font-size:9px;font-weight:700;padding:4px 7px;border-radius:0 9px 0 7px}.blockers{margin-top:4px}.blocker{display:grid;grid-template-columns:85px 1fr 120px 70px;gap:10px;align-items:center;padding:9px 11px;margin:6px 0;background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--red);border-radius:7px;cursor:pointer;font-size:12px}.blocker .id{font:11px monospace;color:var(--mute);font-weight:700}.blocker .owner{color:var(--sub)}.blocker .age{text-align:right;color:var(--red);font-weight:700}.detail{display:none;margin-top:22px;background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:23px;box-shadow:0 2px 8px rgba(24,35,56,.06)}.detail.open{display:block}.dhead{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:16px;margin-bottom:16px}.dname{font-size:20px;font-weight:700}.people{display:flex;gap:25px;flex-wrap:wrap;margin-top:10px;font-size:12px}.people span{display:block;color:var(--mute);font-size:9px;text-transform:uppercase;margin-bottom:2px}.stats{text-align:right}.big{font-size:29px;font-weight:700;color:var(--teal)}.stage-row{border:1px solid var(--line);border-radius:8px;margin:7px 0;overflow:hidden}.stage-head{display:flex;align-items:center;gap:10px;padding:10px;cursor:pointer}.num{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;background:#e8edf4;color:var(--mute);font-size:11px;font-weight:700;flex-shrink:0}.done .num{background:var(--teal);color:#fff}.current .num{background:var(--amber);color:#fff}.stage-title{flex:1;font-size:13px;font-weight:600}.stage-owner{font-size:10px;color:var(--mute);margin-top:2px}.status{font-size:10px;font-weight:700;padding:4px 8px;border-radius:5px;background:#eef1f5;color:var(--mute)}.done .status{color:var(--teal);background:#eaf8f5}.current .status{color:var(--amber);background:#fff5e7}.stage-body{display:none;padding:13px 15px 15px 47px;background:#fafbfd;border-top:1px solid var(--line)}.open .stage-body{display:block}.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}.field b{display:block;color:var(--mute);font-size:9px;text-transform:uppercase;margin-bottom:3px}.box{padding:8px 10px;margin-top:8px;border-radius:6px;font-size:12px;line-height:1.4}.milestone{background:#effaf8;border:1px solid #b9e8e0}.blockbox{background:#fff0f0;border:1px solid #f0b5b5;color:var(--red)}.next{background:#fff7eb;border:1px solid #f0d19a}.docs{border-top:1px dashed var(--line);margin-top:12px;padding-top:10px}.doc{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 9px;margin-top:5px;background:#f7f9fc;border:1px solid var(--line);border-radius:5px;font-size:11px}.doc a{color:var(--teal);text-decoration:none}.empty{color:var(--mute);font-size:11px}.footer{text-align:center;color:var(--mute);font-size:11px;margin-top:22px}@media(max-width:700px){.wrap{padding:18px 14px 40px}.blocker{grid-template-columns:1fr}.blocker .age{text-align:left}.stats{text-align:left}.stage-head{gap:7px}.status{font-size:9px}.stage-body{padding-left:14px}}
+:root{
+  --bg:#F5F8FC;
+  --panel:#FFFFFF;
+  --panel2:#F0F4F8;
+  --line:#DEE6F0;
+  --text:#182338;
+  --sub:#5C6B84;
+  --mute:#8B98AE;
+  --teal:#0E9C8C;
+  --amber:#C97A0A;
+  --red:#D93636;
+
+  --cam:#3B6FE0;
+  --sen:#7C4FE0;
+  --edg:#0E9C8C;
+  --drn:#E0507F;
+  --vdb:#C97A0A;
+  --nvr:#4B5DA8;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Inter',sans-serif;
+}
+
+.wrap{
+  max-width:1280px;
+  margin:0 auto;
+  padding:32px 28px 60px;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  flex-wrap:wrap;
+  gap:20px;
+  border-bottom:1px solid var(--line);
+  padding-bottom:20px;
+  margin-bottom:26px;
+}
+
+.brand{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:700;
+  font-size:22px;
+}
+
+.brand span{
+  color:var(--teal);
+}
+
+.sub{
+  color:var(--sub);
+  font-size:13px;
+  margin-top:4px;
+}
+
+.sync-note{
+  color:var(--mute);
+  font-size:11px;
+  margin-top:6px;
+  font-family:'JetBrains Mono',monospace;
+}
+
+.topbtns{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+button.lib{
+  background:var(--panel2);
+  border:1px solid var(--line);
+  color:var(--text);
+  padding:10px 16px;
+  border-radius:8px;
+  font-size:13px;
+  font-family:'Inter',sans-serif;
+  cursor:pointer;
+  font-weight:500;
+}
+
+button.lib:hover{
+  border-color:var(--teal);
+  color:var(--teal);
+}
+
+/* ---------------- BLOCKERS ---------------- */
+
+.rollup{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:16px 18px;
+  margin-bottom:28px;
+  box-shadow:0 1px 3px rgba(24,35,56,.06);
+}
+
+.rollup-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:12px;
+}
+
+.rollup-title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:14px;
+  font-weight:600;
+  margin:0;
+}
+
+.badge-count{
+  background:rgba(217,54,54,.12);
+  color:var(--red);
+  font-size:12px;
+  font-weight:700;
+  padding:3px 10px;
+  border-radius:999px;
+}
+
+.blocker-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-left:3px solid var(--red);
+  border-radius:6px;
+  padding:9px 12px;
+  margin-bottom:6px;
+  font-size:13px;
+  cursor:pointer;
+}
+
+.blocker-row:hover{
+  background:var(--panel2);
+}
+
+.blocker-row .pid{
+  font-family:'JetBrains Mono',monospace;
+  color:var(--mute);
+  min-width:70px;
+  font-weight:600;
+  font-size:11.5px;
+}
+
+.blocker-row .desc{
+  flex:1;
+}
+
+.blocker-row .owner{
+  color:var(--sub);
+  min-width:110px;
+  font-size:12px;
+  text-align:right;
+}
+
+.blocker-row .age{
+  min-width:60px;
+  text-align:right;
+  font-size:12px;
+  font-weight:700;
+  color:var(--red);
+}
+
+.rollup-note{
+  font-size:11.5px;
+  color:var(--mute);
+  margin:6px 0 0;
+}
+
+.rollup-empty{
+  font-size:13px;
+  color:var(--teal);
+  background:rgba(14,156,140,.08);
+  border-radius:6px;
+  padding:10px 12px;
+}
+
+/* ---------------- CATEGORY ---------------- */
+
+.section-label{
+  font-size:12px;
+  color:var(--sub);
+  text-transform:uppercase;
+  letter-spacing:.6px;
+  margin:0 0 12px;
+}
+
+.cat-strip{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:12px;
+  margin-bottom:28px;
+}
+
+.cat-tile{
+  background:var(--panel);
+  border:2px solid var(--line);
+  border-radius:12px;
+  padding:16px;
+  cursor:pointer;
+  transition:.15s;
+  box-shadow:0 1px 3px rgba(24,35,56,.06);
+}
+
+.cat-tile:hover{
+  border-color:#3a4a6b;
+}
+
+.cat-tile.active{
+  border-color:var(--tile-color,var(--teal));
+  background:var(--panel2);
+}
+
+.cat-tile .icon{
+  font-size:22px;
+  margin-bottom:8px;
+}
+
+.cat-tile .cname{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:600;
+  font-size:15px;
+}
+
+.cat-tile .ccount{
+  color:var(--sub);
+  font-size:11.5px;
+  margin-top:2px;
+}
+
+.cat-tile .cbar{
+  height:5px;
+  border-radius:3px;
+  background:#E4EAF3;
+  margin-top:10px;
+  overflow:hidden;
+}
+
+.cat-tile .cbar i{
+  display:block;
+  height:100%;
+  background:var(--tile-color,var(--teal));
+}
+
+.cat-tile .cpct{
+  font-size:11px;
+  color:var(--sub);
+  margin-top:5px;
+}
+
+/* ---------------- VARIANTS ---------------- */
+
+.variant-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:12px;
+  margin-bottom:34px;
+}
+
+.variant{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:14px 16px;
+  cursor:pointer;
+  transition:.15s;
+  box-shadow:0 1px 3px rgba(24,35,56,.06);
+  position:relative;
+  overflow:hidden;
+}
+
+.variant:hover{
+  border-color:var(--teal);
+}
+
+.variant.selected{
+  border-color:var(--teal);
+  background:var(--panel2);
+}
+
+.variant .vname{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:600;
+  font-size:14px;
+}
+
+.variant .vid{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10.5px;
+  color:var(--mute);
+  margin-top:2px;
+}
+
+.variant .vmeta{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:10px;
+}
+
+.variant .vpct{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:700;
+  font-size:15px;
+}
+
+.variant .vstage{
+  font-size:11px;
+  color:var(--sub);
+}
+
+.variant.blocked{
+  border-left:3px solid var(--red);
+}
+
+.stuck-badge{
+  position:absolute;
+  top:0;
+  right:0;
+  font-size:10px;
+  font-weight:700;
+  padding:4px 8px;
+  border-bottom-left-radius:8px;
+  text-transform:uppercase;
+  letter-spacing:.3px;
+}
+
+.stuck-badge.red{
+  background:rgba(217,54,54,.12);
+  color:var(--red);
+}
+
+.stuck-badge.amber{
+  background:rgba(201,122,10,.12);
+  color:var(--amber);
+}
+
+.stuck-badge.teal{
+  background:rgba(14,156,140,.12);
+  color:var(--teal);
+}
+
+/* ---------------- DETAIL ---------------- */
+
+.detail{
+  display:none;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:24px 26px;
+  margin-bottom:20px;
+  box-shadow:0 2px 8px rgba(24,35,56,.07);
+}
+
+.detail.open{
+  display:block;
+}
+
+.dhead{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  flex-wrap:wrap;
+  gap:16px;
+  border-bottom:1px solid var(--line);
+  padding-bottom:16px;
+  margin-bottom:18px;
+}
+
+.dname{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:19px;
+  font-weight:600;
+}
+
+.did{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11.5px;
+  color:var(--mute);
+  margin-top:3px;
+}
+
+.dpeople{
+  display:flex;
+  gap:26px;
+  margin-top:10px;
+  font-size:12.5px;
+  flex-wrap:wrap;
+}
+
+.dpeople div span{
+  display:block;
+  color:var(--mute);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.4px;
+  margin-bottom:2px;
+}
+
+.dstats{
+  text-align:right;
+}
+
+.dpct{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:28px;
+  font-weight:700;
+  color:var(--teal);
+}
+
+.dsub{
+  color:var(--sub);
+  font-size:11.5px;
+  margin-top:2px;
+}
+
+.ddays{
+  display:flex;
+  gap:18px;
+  margin-top:8px;
+  font-size:11.5px;
+  color:var(--sub);
+}
+
+.ddays b{
+  color:var(--text);
+}
+
+.pm-missing{
+  color:var(--red);
+  font-style:italic;
+}
+
+/* ---------------- STAGE ---------------- */
+
+.stuck-banner{
+  background:rgba(201,122,10,.08);
+  border:1px solid rgba(201,122,10,.25);
+  border-radius:8px;
+  padding:10px 14px;
+  margin-bottom:16px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.stuck-banner.red{
+  background:rgba(217,54,54,.08);
+  border-color:rgba(217,54,54,.25);
+}
+
+.stuck-banner .k{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:600;
+  font-size:13px;
+  color:var(--amber);
+}
+
+.stuck-banner.red .k{
+  color:var(--red);
+}
+
+.stuck-banner .v{
+  font-size:12.5px;
+  color:var(--text);
+}
+
+.dblocker{
+  background:rgba(217,54,54,.07);
+  border:1px solid rgba(217,54,54,.25);
+  border-radius:8px;
+  padding:10px 14px;
+  margin-bottom:16px;
+  font-size:12.5px;
+}
+
+.dblocker .k{
+  color:var(--red);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.4px;
+  margin-bottom:3px;
+}
+
+.stage-row{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:10px 8px;
+  border-radius:8px;
+  cursor:pointer;
+  border:1px solid transparent;
+}
+
+.stage-row:hover{
+  background:var(--panel2);
+}
+
+.stage-row.expanded{
+  background:var(--panel2);
+  border-color:var(--line);
+}
+
+.stage-num{
+  width:26px;
+  height:26px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:11px;
+  font-weight:600;
+  flex-shrink:0;
+  background:#E4EAF3;
+  color:var(--mute);
+}
+
+.stage-num.done{
+  background:var(--teal);
+  color:#fff;
+}
+
+.stage-num.current{
+  background:var(--amber);
+  color:#fff;
+}
+
+.stage-line{
+  flex:1;
+}
+
+.stage-name{
+  font-size:13.5px;
+  font-weight:500;
+}
+
+.stage-owner{
+  font-size:10.5px;
+  color:var(--mute);
+  margin-top:1px;
+}
+
+.stage-status{
+  font-size:11px;
+  padding:3px 9px;
+  border-radius:5px;
+  font-weight:600;
+  flex-shrink:0;
+}
+
+.stage-status.done{
+  background:rgba(45,212,191,.15);
+  color:var(--teal);
+}
+
+.stage-status.current{
+  background:rgba(245,166,35,.15);
+  color:var(--amber);
+}
+
+.stage-status.upcoming{
+  background:rgba(140,150,170,.1);
+  color:var(--mute);
+}
+
+.chev{
+  color:var(--mute);
+  font-size:11px;
+  transition:.15s;
+  flex-shrink:0;
+}
+
+.stage-row.expanded .chev{
+  transform:rotate(90deg);
+}
+
+.stage-detail{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height .18s ease;
+  padding-left:40px;
+}
+
+.stage-detail.open{
+  max-height:1800px;
+}
+
+.stage-detail-inner{
+  padding:6px 0 14px;
+  font-size:12.5px;
+}
+
+/* ---------------- ENGINEERING ---------------- */
+
+.eng-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:12px;
+  margin-bottom:12px;
+}
+
+.eng-field .k{
+  color:var(--mute);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.4px;
+  margin-bottom:3px;
+}
+
+.eng-field .v{
+  font-size:12.5px;
+}
+
+.eng-blocker{
+  background:rgba(217,54,54,.06);
+  border:1px solid rgba(217,54,54,.2);
+  border-radius:6px;
+  padding:7px 10px;
+  margin:4px 0 6px;
+  font-size:12px;
+}
+
+.eng-milestone{
+  background:rgba(14,156,140,.06);
+  border:1px solid rgba(14,156,140,.2);
+  border-radius:6px;
+  padding:7px 10px;
+  margin:4px 0 6px;
+  font-size:12px;
+}
+
+.eng-next{
+  background:rgba(201,122,10,.06);
+  border:1px solid rgba(201,122,10,.2);
+  border-radius:6px;
+  padding:7px 10px;
+  margin:4px 0 6px;
+  font-size:12px;
+}
+
+.eng-blocker .k,
+.eng-milestone .k,
+.eng-next .k{
+  display:block;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.4px;
+  margin-bottom:2px;
+}
+
+.eng-blocker .k{
+  color:var(--red);
+}
+
+.eng-milestone .k{
+  color:var(--teal);
+}
+
+.eng-next .k{
+  color:var(--amber);
+}
+
+/* ---------------- DOCUMENTS ---------------- */
+
+.doc-section{
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px dashed var(--line);
+}
+
+.doc-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:8px;
+}
+
+.doc-title{
+  color:var(--mute);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.4px;
+}
+
+.doc-filter{
+  display:flex;
+  gap:6px;
+  align-items:center;
+}
+
+.doc-filter select{
+  border:1px solid var(--line);
+  background:var(--panel);
+  color:var(--text);
+  border-radius:5px;
+  padding:5px 8px;
+  font-size:11px;
+}
+
+.doc-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:8px 10px;
+  background:var(--bg);
+  border-radius:6px;
+  margin-top:6px;
+  border:1px solid var(--line);
+}
+
+.doc-name{
+  flex:1;
+  font-size:11.5px;
+  font-weight:500;
+}
+
+.doc-actions{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-shrink:0;
+}
+
+.doc-actions a{
+  display:inline-block;
+  padding:4px 8px;
+  border:1px solid var(--line);
+  border-radius:5px;
+  background:var(--panel);
+  font-size:10.5px;
+  font-weight:600;
+  text-decoration:none;
+}
+
+.doc-actions .open{
+  color:var(--sub);
+}
+
+.doc-actions .download{
+  color:var(--teal);
+}
+
+.doc-status{
+  font-size:10px;
+  padding:2px 7px;
+  border-radius:4px;
+  font-weight:600;
+}
+
+.doc-status.ready{
+  background:rgba(45,212,191,.15);
+  color:var(--teal);
+}
+
+.doc-status.progress{
+  background:rgba(245,166,35,.15);
+  color:var(--amber);
+}
+
+.doc-status.notstarted{
+  background:rgba(140,150,170,.1);
+  color:var(--mute);
+}
+
+.doc-status.blocked{
+  background:rgba(217,54,54,.12);
+  color:var(--red);
+}
+
+.no-docs{
+  color:var(--mute);
+  font-size:11.5px;
+  padding:5px 0;
+}
+
+/* ---------------- MILESTONES ---------------- */
+
+.stage-section{
+  margin-top:14px;
+  padding-top:12px;
+  border-top:1px dashed var(--line);
+}
+
+.stage-section .k{
+  color:var(--mute);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.4px;
+  margin-bottom:8px;
+}
+
+.milestone-item{
+  display:flex;
+  align-items:flex-start;
+  gap:9px;
+  font-size:12.5px;
+  padding:6px 10px;
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:6px;
+  margin-top:6px;
+}
+
+.milestone-item .dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  flex-shrink:0;
+  margin-top:4px;
+  background:var(--mute);
+}
+
+.milestone-item.done .dot{
+  background:var(--teal);
+}
+
+.milestone-item .m-text{
+  flex:1;
+}
+
+.empty-note{
+  color:var(--mute);
+  font-size:12px;
+  padding:4px 0;
+}
+
+/* ---------------- ACTIONS ---------------- */
+
+table.actions{
+  width:100%;
+  border-collapse:collapse;
+  font-size:12.5px;
+  margin-top:6px;
+}
+
+table.actions th{
+  text-align:left;
+  color:var(--mute);
+  font-weight:600;
+  font-size:10.5px;
+  text-transform:uppercase;
+  padding:0 8px 6px;
+  border-bottom:1px solid var(--line);
+}
+
+table.actions td{
+  padding:8px;
+  border-bottom:1px solid var(--panel2);
+}
+
+.status-pill{
+  font-size:10.5px;
+  font-weight:700;
+  padding:2px 9px;
+  border-radius:999px;
+  display:inline-block;
+}
+
+.status-pill.overdue{
+  background:rgba(217,54,54,.12);
+  color:var(--red);
+}
+
+.status-pill.open{
+  background:rgba(201,122,10,.12);
+  color:var(--amber);
+}
+
+.status-pill.done{
+  background:rgba(14,156,140,.12);
+  color:var(--teal);
+}
+
+/* ---------------- MODAL ---------------- */
+
+.modal-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(4,7,14,.7);
+  z-index:50;
+  align-items:center;
+  justify-content:center;
+}
+
+.modal-overlay.open{
+  display:flex;
+}
+
+.modal{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:14px;
+  width:min(850px,94vw);
+  max-height:82vh;
+  overflow-y:auto;
+  padding:22px 24px;
+}
+
+.modal h3{
+  font-family:'Space Grotesk',sans-serif;
+  margin:0 0 4px;
+  font-size:17px;
+}
+
+.modal .sub{
+  margin-bottom:16px;
+  color:var(--sub);
+  font-size:12px;
+}
+
+.close-x{
+  float:right;
+  background:none;
+  border:none;
+  color:var(--sub);
+  font-size:18px;
+  cursor:pointer;
+}
+
+.tmpl-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:11px 0;
+  border-bottom:1px solid var(--line);
+  font-size:13px;
+  gap:12px;
+}
+
+.tmpl-name{
+  font-weight:500;
+}
+
+.tmpl-desc{
+  color:var(--sub);
+  font-size:11.5px;
+  margin-top:2px;
+}
+
+.tmpl-stage{
+  font-size:10.5px;
+  color:var(--teal);
+  text-transform:uppercase;
+  letter-spacing:.4px;
+  white-space:nowrap;
+}
+
+.dl-btn{
+  background:var(--teal);
+  color:#fff;
+  border:none;
+  padding:7px 13px;
+  border-radius:6px;
+  font-size:11.5px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.dl-btn:hover{
+  opacity:.85;
+}
+
+.footer-note{
+  color:var(--mute);
+  font-size:11.5px;
+  margin-top:20px;
+  text-align:center;
+}
+
+/* ---------------- MOBILE ---------------- */
+
+@media(max-width:700px){
+
+  .wrap{
+    padding:20px 14px 40px;
+  }
+
+  .blocker-row{
+    flex-wrap:wrap;
+  }
+
+  .blocker-row .owner,
+  .blocker-row .age{
+    text-align:left;
+    min-width:auto;
+  }
+
+  .stage-row{
+    gap:8px;
+  }
+
+  .stage-status{
+    font-size:9.5px;
+  }
+
+  .doc-row{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .doc-actions{
+    width:100%;
+  }
+
+  .doc-actions a{
+    flex:1;
+    text-align:center;
+  }
+
+}
 </style>
 </head>
+
 <body>
+
 <div class="wrap">
-<div class="top"><div><div class="brand">PDM <i>&</i> PM Tracker</div><div class="sub">Product development pipeline — live tracker</div><div id="sync" class="sync">Connecting to Google Sheet…</div></div><div class="buttons"><button class="btn" onclick="loadLive()">↻ Refresh data</button><button class="btn" onclick="downloadCSV()">Download CSV</button></div></div>
-<div id="message" class="banner">Loading live data…</div>
-<div id="blockers" class="blockers"></div>
-<div class="label">Product lines — click to view variants</div><div id="cats" class="grid"></div>
-<div class="label" id="variantLabel">Variants</div><div id="variants" class="grid"></div>
-<div id="detail" class="detail"></div>
-<div class="footer">Stage 1–5: PDM owns solo · Stage 6+: PDM + PM jointly · Click any stage to see tracker fields and documents</div>
+
+  <div class="topbar">
+
+    <div>
+      <div class="brand">PDM <span>&</span> PM Tracker</div>
+
+      <div class="sub">
+        Product development pipeline — snapshot as of
+        <span id="today"></span>
+      </div>
+
+      <div class="sync-note" id="syncNote">
+        Connecting to Google Sheet...
+      </div>
+    </div>
+
+    <div class="topbtns">
+
+      <button class="lib"
+        onclick="refreshLive()">
+        ↻ Refresh data
+      </button>
+
+      <button class="lib"
+        onclick="document.getElementById('libModal').classList.add('open'); rebuildTemplates();">
+        Master Template Library
+      </button>
+
+      <button class="lib download-btn"
+        onclick="downloadLiveCSV()">
+        Download CSV
+      </button>
+
+    </div>
+
+  </div>
+
+  <div id="rollupStrip"></div>
+
+  <div class="section-label">
+    Product lines — click to view variants
+  </div>
+
+  <div class="cat-strip" id="catStrip"></div>
+
+  <div class="section-label" id="variantLabel">
+    Variants
+  </div>
+
+  <div class="variant-grid" id="variantGrid"></div>
+
+  <div class="detail" id="detail"></div>
+
+  <div class="footer-note">
+    Stage 1–5: PDM owns solo
+    &nbsp;·&nbsp;
+    Stage 6+: PDM + PM jointly
+    &nbsp;·&nbsp;
+    Click any stage to see tracker fields and documents
+  </div>
+
 </div>
+
+
+<!-- MASTER TEMPLATE MODAL -->
+
+<div class="modal-overlay" id="libModal">
+
+  <div class="modal">
+
+    <button class="close-x"
+      onclick="document.getElementById('libModal').classList.remove('open')">
+      ✕
+    </button>
+
+    <h3>Master Template Library</h3>
+
+    <div class="sub" id="tmplSub">
+      Documents for the selected variant.
+    </div>
+
+    <div id="tmplList"></div>
+
+  </div>
+
+</div>
+
+
 <script>
-const API='https://script.google.com/macros/s/AKfycbxo59j_9qO_jzoljBlb4ZFrL6RZyXxzOe8c8MCt5wX13DyEKh6ye02N7IcSgky2rOl6/exec';
-const FALLBACK='data.json';
-const STAGE_FALLBACK=['Market Research','Proposal','Commercial Finalization','Statement of Work (SOW)','Project Kickoff','Project Planning','Detailed Design','Critical Design Review (CDR)','Procurement & Development','Integration, Verification & Validation'];
-let D={products:[],stages:STAGE_FALLBACK,engineering:{},documents:{},generatedAt:''},selectedCat='',selectedId='',openStage=0;
-const $=id=>document.getElementById(id);
-const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const stages=()=>Array.isArray(D.stages)&&D.stages.length?D.stages:STAGE_FALLBACK;
-const products=()=>Array.isArray(D.products)?D.products:[];
-const pct=p=>Math.max(0,Math.min(100,Number(p.progressPct??p.progress??0)));
-function category(id){const s=String(id||'').toUpperCase();if(/^CAM/.test(s))return'Camera';if(/^SEN/.test(s))return'Sensor';if(/^EDGE|^EDG/.test(s))return'Edge';if(/^DRN|^DRONE/.test(s))return'Drone';if(/^VDB|^VDEL/.test(s))return'VDelibot';if(/^NVR/.test(s))return'NVR';return'Project'}
-function status(v){const s=String(v||'').toLowerCase();if(/complete|closed|approved/.test(s))return'Completed';if(/progress|active|started/.test(s))return'In Progress';if(/blocked/.test(s))return'Blocked';if(/hold/.test(s))return'On Hold';return'Not Started'}
-function adapt(x){if(x&&x.data)x=x.data;if(!x)throw Error('Empty API response');const names=Array.isArray(x.stages)?x.stages.map(s=>typeof s==='string'?s:(s&&s.name)||'').filter(Boolean):STAGE_FALLBACK;let ps=Array.isArray(x.projects)?x.projects:(Array.isArray(x.products)?x.products:[]);let eng={},docs={};if(Array.isArray(x.projects)){ps=ps.map(p=>{const id=String(p.projectId||p.id||'').trim();const ss=Array.isArray(p.stages)?p.stages:[];eng[id]={};docs[id]=[];let done=0,cur=0,last=0,next=0;for(let i=1;i<=names.length;i++){const s=ss[i-1]||{};const st=status(s.status);eng[id][i]={...s,status:st,milestone:s.keyMilestones||s.milestone||'',nextStep:s.immediateNextStep||s.nextStep||''};if(st==='Completed'){done++;last=i}else if(!cur&&(st==='In Progress'||st==='Blocked'||st==='On Hold'))cur=i;else if(!next&&st==='Not Started')next=i;(s.documents||[]).forEach(d=>docs[id].push({stage:i,stageNumber:i,...d}));}cur=cur||next||Math.min(last+1,names.length)||1;return{id,name:p.name||p.projectName||id,cat:p.category||category(id),pdm:p.pdm||p.owner||'',pm:p.pm||'',stage:cur,currentStage:cur,currentStageName:names[cur-1],progressPct:Math.round(done/names.length*100),completedStages:done,totalStages:names.length}})}); }else{ps=ps.map(p=>({...p,id:p.id||p.projectId,name:p.name||p.projectName||p.id,cat:p.cat||p.category||category(p.id)}));eng=x.engineering||{};docs=x.documents||{}}
-return{products:ps,stages:names,engineering:eng,documents:docs,generatedAt:x.generatedAt||'',source:x.source||{}}}
-function currentStage(p){return Math.max(1,Math.min(stages().length,Number(p.currentStage||p.stage||1)))}
-function cats(){return[...new Set(products().map(p=>p.cat||p.category||'Project'))]}
-function render(){const ps=products();if(!selectedCat||!cats().includes(selectedCat))selectedCat=cats()[0]||'';if(selectedId&&!ps.some(p=>p.id===selectedId))selectedId='';$('cats').innerHTML=cats().map(c=>{const a=ps.filter(p=>(p.cat||p.category||'Project')===c);const avg=a.length?Math.round(a.reduce((s,p)=>s+pct(p),0)/a.length):0;return`<div class="card ${c===selectedCat?'sel':''}" onclick="selectCat('${esc(c)}')"><div style="font-size:21px">${c==='Camera'?'📷':c==='Sensor'?'🔌':c==='Edge'?'🖥️':c==='Drone'?'🚁':c==='VDelibot'?'📦':c==='NVR'?'💾':'📁'}</div><div class="name">${esc(c)}</div><div class="meta">${a.length} variant${a.length===1?'':'s'}</div><div class="bar"><i style="width:${avg}%"></i></div><div class="pct">${avg}% average progress</div></div>`}).join('');const list=ps.filter(p=>(p.cat||p.category||'Project')===selectedCat);$('variantLabel').textContent=(selectedCat||'Variants')+' — variants';$('variants').innerHTML=list.map(p=>{const st=currentStage(p),e=(D.engineering[p.id]||{})[st]||{};return`<div class="card variant ${p.id===selectedId?'sel':''}" onclick="selectProduct('${esc(p.id)}')">${e.blocker?'<div class="badge">BLOCKED</div>':''}<div class="name">${esc(p.name||p.id)}</div><div class="meta">${esc(p.id)}</div><div class="stage">Stage ${st}/${stages().length} · ${esc(p.currentStageName||stages()[st-1]||'')}</div><div class="bar"><i style="width:${pct(p)}%"></i></div><div class="pct">${pct(p)}% · ${p.completedStages||0}/${p.totalStages||stages().length} completed</div></div>`}).join('');renderBlockers();renderDetail()}
-function renderBlockers(){const rows=[];products().forEach(p=>{const e=(D.engineering[p.id]||{})[currentStage(p)];if(e&&e.blocker)rows.push({p,e})});$('blockers').innerHTML=rows.length?'<div class="label">Open blockers</div>'+rows.map(r=>`<div class="blocker" onclick="selectProduct('${esc(r.p.id)}',${currentStage(r.p)})"><span class="id">${esc(r.p.id)}</span><span>${esc(r.e.blocker)}</span><span class="owner">${esc(r.p.pm||r.pdm||r.e.owner||'—')}</span><span class="age">Stage ${currentStage(r.p)}</span></div>`).join(''):'<div class="banner ok">✓ No open blockers across the portfolio.</div>'}
-function selectCat(c){selectedCat=c;selectedId='';openStage=0;render()}
-function selectProduct(id,stageNo){selectedId=id;openStage=stageNo||0;render();setTimeout(()=>{const el=$('detail');if(el&&el.classList.contains('open'))el.scrollIntoView({behavior:'smooth',block:'start'})},50)}
-function renderDetail(){const el=$('detail');if(!selectedId){el.classList.remove('open');return}const p=products().find(x=>x.id===selectedId);if(!p){el.classList.remove('open');return}el.classList.add('open');const st=currentStage(p),en=D.engineering[p.id]||{};let html=`<div class="dhead"><div><div class="dname">${esc(p.name||p.id)}</div><div class="meta">${esc(p.id)} · ${esc(p.cat||p.category||'Project')}</div><div class="people"><div><span>PDM</span>${esc(p.pdm||'—')}</div><div><span>PM / TL</span>${p.pm?esc(p.pm):'<em style="color:var(--red)">Not assigned</em>'}</div><div><span>Current Stage</span>Stage ${st} — ${esc(p.currentStageName||stages()[st-1]||'')}</div></div></div><div class="stats"><div class="big">${pct(p)}%</div><div class="meta">overall progress · ${p.completedStages||0}/${p.totalStages||stages().length} completed</div></div></div>`;html+=stages().map((name,i)=>{const n=i+1,e=en[n]||{},done=e.status==='Completed'||!!e.completedDate||(n<st&&!e.status),cur=n===st&&!done,cls=done?'done':cur?'current':'',label=done?'Completed':cur?(e.status||'In Progress'):'Not Started';const docs=(D.documents[p.id]||[]).filter(d=>Number(d.stage??d.stageNumber??0)===n);const fields=[['Owner',e.owner],['Planned Start',e.plannedStart],['Due Date',e.dueDate],['Completed Date',e.completedDate],['Status',e.status],['Remarks',e.remarks]].filter(x=>x[1]);let body=`${fields.length?'<div class="fields">'+fields.map(x=>`<div class="field"><b>${x[0]}</b>${esc(x[1])}</div>`).join('')+'</div>':''}${e.milestone?`<div class="box milestone"><b>Key Milestones</b><br>${esc(e.milestone)}</div>`:''}${e.blocker?`<div class="box blockbox"><b>Blocker</b><br>${esc(e.blocker)}</div>`:''}${e.nextStep?`<div class="box next"><b>Immediate Next Step / Action Item</b><br>${esc(e.nextStep)}</div>`:''}<div class="docs"><b>Documents (${docs.length})</b>${docs.length?docs.map(d=>{const link=d.link||d.url||d.documentLink||'';const nm=d.name||d.documentName||d.document||'Document';return`<div class="doc"><span>${esc(nm)} <small class="meta">${esc(d.status||'Not Uploaded')}</small></span>${/^https?:\/\//i.test(link)?`<a href="${esc(link)}">Open ↗</a>`:'<span class="empty">No file link</span>'}</div>`}).join(''):'<div class="empty" style="margin-top:7px">No documents uploaded for this stage yet.</div>'}</div>`;return`<div class="stage-row ${cls} ${openStage===n?'open':''}"><div class="stage-head" onclick="toggleStage(${n})"><div class="num">${n}</div><div class="stage-title">${esc(name)}<div class="stage-owner">${n<=5?'PDM':'PDM + PM'}</div></div><div class="status">${esc(label)}</div><div>›</div></div><div class="stage-body">${body}</div></div>`}).join('');el.innerHTML=html}
-function toggleStage(n){openStage=openStage===n?0:n;renderDetail()}
-function downloadCSV(){const ps=products();if(!ps.length){alert('No live project data available.');return}const keys=['id','name','cat','currentStage','currentStageName','progressPct','completedStages','totalStages','pdm','pm'];const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';const rows=[keys.map(q).join(',')].concat(ps.map(p=>keys.map(k=>q(p[k])).join(',')));const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+rows.join('\r\n')],{type:'text/csv;charset=utf-8'}));a.download='PDM-PM-Live-Tracker.csv';a.click()}
-async function loadLive(){const sync=$('sync'),msg=$('message');sync.textContent='Connecting to Google Sheet…';msg.className='banner';msg.textContent='Loading live data…';try{const r=await fetch(API+'?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);D=adapt(await r.json());render();sync.textContent='Live — Google Sheet synced '+(D.generatedAt?new Date(D.generatedAt).toLocaleString('en-IN'):'just now');msg.className='banner ok';msg.textContent='✓ Live data loaded — '+products().length+' project(s).'}catch(e){console.error(e);try{const r=await fetch(FALLBACK+'?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error();D=adapt(await r.json());render();sync.textContent='Live API unavailable — fallback loaded';msg.className='banner err';msg.textContent='Live API unavailable; showing data.json.'}catch(x){sync.textContent='Live sync unavailable';msg.className='banner err';msg.textContent='✕ '+e.message}}}
-loadLive();setInterval(loadLive,300000);window.refreshPdmPmDashboard=loadLive;
+
+/* ============================================================
+   CONFIGURATION
+   ============================================================ */
+
+const LIVE_API_URL =
+'https://script.google.com/macros/s/AKfycby2rAwDYj8bzK5Vgyn2PniZBmuOMoarqR6IRttoESPtR6CTDbvgR3fLWeXwWIXvaDeA/exec';
+
+const STUCK_WARN_DAYS = 7;
+const STUCK_CRITICAL_DAYS = 14;
+
+
+/* ============================================================
+   GLOBAL DATA
+   ============================================================ */
+
+let DATA = {
+  products: [],
+  stages: [],
+  engineering: {},
+  documents: {},
+  stageDocs: {}
+};
+
+let STAGES = [];
+let TOTAL_STAGES = 0;
+
+let selectedCat = '';
+let selectedProduct = null;
+let expandedStage = null;
+
+
+/* ============================================================
+   CATEGORY CONFIG
+   ============================================================ */
+
+const CAT_COLOR = {
+  Camera:'--cam',
+  Sensor:'--sen',
+  Edge:'--edg',
+  Drone:'--drn',
+  VDelibot:'--vdb',
+  NVR:'--nvr'
+};
+
+const CAT_ICON = {
+  Camera:'📷',
+  Sensor:'🔌',
+  Edge:'🖥️',
+  Drone:'🚁',
+  VDelibot:'📦',
+  NVR:'💾'
+};
+
+
+/* ============================================================
+   BASIC HELPERS
+   ============================================================ */
+
+function esc(value){
+
+  return String(value ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+
+}
+
+
+function catColor_(cat){
+
+  return CAT_COLOR[cat] || '--sub';
+
+}
+
+
+function catIcon_(cat){
+
+  return CAT_ICON[cat] || '📁';
+
+}
+
+
+function catProducts(cat){
+
+  return DATA.products.filter(p => p.cat === cat);
+
+}
+
+
+function currentCats_(){
+
+  const known = [
+    'Camera',
+    'Sensor',
+    'Edge',
+    'Drone',
+    'VDelibot',
+    'NVR'
+  ];
+
+  const present =
+    Array.from(
+      new Set(
+        DATA.products
+          .map(p => p.cat)
+          .filter(Boolean)
+      )
+    );
+
+  return known
+    .filter(c => present.includes(c))
+    .concat(
+      present.filter(c => !known.includes(c))
+    );
+
+}
+
+
+/* ============================================================
+   DATE HELPERS
+   ============================================================ */
+
+function parseDate_(value){
+
+  if(!value) return null;
+
+  if(value instanceof Date)
+    return value;
+
+  const str = String(value).trim();
+
+  let d = new Date(str);
+
+  if(!isNaN(d)){
+    d.setHours(0,0,0,0);
+    return d;
+  }
+
+  const m =
+    str.match(/^(\d{1,2})-([A-Za-z]{3})-(\d{4})$/);
+
+  if(!m) return null;
+
+  const months = {
+    jan:0,feb:1,mar:2,apr:3,
+    may:4,jun:5,jul:6,aug:7,
+    sep:8,oct:9,nov:10,dec:11
+  };
+
+  const mon = months[m[2].toLowerCase()];
+
+  if(mon === undefined) return null;
+
+  d = new Date(
+    Number(m[3]),
+    mon,
+    Number(m[1])
+  );
+
+  d.setHours(0,0,0,0);
+
+  return isNaN(d) ? null : d;
+
+}
+
+
+function daysBetween_(a,b){
+
+  if(!a || !b) return null;
+
+  return Math.ceil(
+    (b-a)/(1000*60*60*24)
+  );
+
+}
+
+
+/* ============================================================
+   NORMALIZE STAGE
+   ============================================================ */
+
+/*
+   IMPORTANT RULE
+
+   The dashboard determines the current stage from the
+   tracker stage status.
+
+   Completed:
+     status = Completed / Complete / Closed / Approved
+     OR completionRatio >= 1
+     OR completedCount >= totalCount
+
+   In Progress:
+     status = In Progress / Active / Started etc.
+
+   Empty:
+     ignored.
+
+   Therefore:
+
+   Stage 6 In Progress
+       -> current stage 6
+       -> 60%
+
+   Stage 5 In Progress
+       -> current stage 5
+       -> 50%
+
+   Stage 1-5 completed + Stage 6 empty
+       -> next logical stage = 6
+
+   Empty stages 7-10
+       -> NOT STARTED
+       -> do NOT count as completed.
+*/
+
+function normalizeLiveStageProgress(live){
+
+  const total =
+    Number(
+      Array.isArray(live.stages)
+        ? live.stages.length
+        : 10
+    );
+
+  const engineering =
+    live.engineering || {};
+
+  const products =
+    Array.isArray(live.products)
+      ? live.products
+      : [];
+
+  products.forEach(p => {
+
+    const eng =
+      engineering[p.id] || {};
+
+    const stageNums =
+      Object.keys(eng)
+        .map(Number)
+        .filter(
+          n =>
+            Number.isFinite(n) &&
+            n >= 1 &&
+            n <= total
+        )
+        .sort(
+          (a,b) => a-b
+        );
+
+    /*
+      First try an explicitly supplied current stage
+      from Apps Script.
+    */
+
+    let supplied =
+      Number(
+        p.currentStage ||
+        p.stage ||
+        0
+      );
+
+    if(
+      supplied >= 1 &&
+      supplied <= total
+    ){
+
+      const suppliedData =
+        eng[supplied] || {};
+
+      const suppliedStatus =
+        String(
+          suppliedData.status || ''
+        )
+        .trim()
+        .toLowerCase();
+
+      const suppliedCompleted =
+        !!suppliedData.completedDate ||
+        /completed|complete|closed|approved/
+          .test(suppliedStatus);
+
+      /*
+        If Apps Script explicitly says this stage is
+        in progress, trust it.
+      */
+
+      if(!suppliedCompleted){
+
+        p.currentStage = supplied;
+        p.stage = supplied;
+
+        p.currentStageName =
+          STAGES[supplied-1] ||
+          ('Stage ' + supplied);
+
+        p.progressPct =
+          Math.round(
+            (supplied / total) * 100
+          );
+
+        return;
+
+      }
+
+    }
+
+
+    /*
+      Find stages with real tracker data.
+    */
+
+    const activeStages = [];
+
+    const completedStages = [];
+
+    stageNums.forEach(n => {
+
+      const e = eng[n] || {};
+
+      const status =
+        String(e.status || '')
+          .trim()
+          .toLowerCase();
+
+      // FIX: a stage with no recorded data at all (no status, no dates, no
+      // milestone/blocker/next-step) must be skipped entirely — otherwise it
+      // was falling into activeStages below, and since "current" picks the
+      // MAX of activeStages, every untouched future stage was dragging
+      // "current" all the way to the last stage number that exists in the
+      // engineering object (stage 10 for a fresh Tracker export), showing
+      // brand-new, barely-started products as 100% complete.
+      const hasAnyData =
+        !!(
+          e.status ||
+          e.plannedStart ||
+          e.dueDate ||
+          e.completedDate ||
+          e.milestone ||
+          e.blocker ||
+          e.nextStep
+        );
+
+      if(!hasAnyData) return;
+
+      const ratio =
+        Number(e.completionRatio);
+
+      const totalCount =
+        Number(e.totalCount || 0);
+
+      const completedCount =
+        Number(e.completedCount || 0);
+
+      const complete =
+        !!e.completedDate ||
+        (
+          totalCount > 0 &&
+          completedCount >= totalCount
+        ) ||
+        ratio >= 1 ||
+        /completed|complete|closed|approved/
+          .test(status);
+
+      if(complete){
+
+        completedStages.push(n);
+
+      }else{
+
+        activeStages.push(n);
+
+      }
+
+    });
+
+
+    let current;
+
+    if(activeStages.length){
+
+      current =
+        Math.max(...activeStages);
+
+    }
+    else if(completedStages.length){
+
+      current =
+        Math.min(
+          Math.max(...completedStages) + 1,
+          total
+        );
+
+    }
+    else{
+
+      current = 1;
+
+    }
+
+
+    p.currentStage = current;
+    p.stage = current;
+
+    p.currentStageName =
+      STAGES[current-1] ||
+      ('Stage ' + current);
+
+    p.progressPct =
+      Math.round(
+        (current / total) * 100
+      );
+
+  });
+
+}
+
+
+/* ============================================================
+   STUCK INFORMATION
+   ============================================================ */
+
+function getStuckInfo_(product){
+
+  const eng =
+    DATA.engineering[product.id] || {};
+
+  const stageNum =
+    Number(product.stage || 1);
+
+  const current =
+    eng[stageNum];
+
+  const today =
+    new Date();
+
+  today.setHours(0,0,0,0);
+
+  if(
+    current &&
+    current.completedDate
+  ){
+
+    return {
+      days:0,
+      label:'Stage complete',
+      status:'done',
+      overdue:0,
+      blocked:false
+    };
+
+  }
+
+  let startDate = null;
+
+  if(
+    current &&
+    current.plannedStart
+  ){
+
+    startDate =
+      parseDate_(current.plannedStart);
+
+  }
+
+  if(
+    !startDate &&
+    stageNum > 1
+  ){
+
+    const prev =
+      eng[stageNum-1];
+
+    if(
+      prev &&
+      prev.completedDate
+    ){
+
+      startDate =
+        parseDate_(prev.completedDate);
+
+    }
+
+  }
+
+  if(
+    !startDate &&
+    current &&
+    current.dueDate
+  ){
+
+    const due =
+      parseDate_(current.dueDate);
+
+    if(
+      due &&
+      due <= today
+    ){
+
+      startDate = due;
+
+    }
+
+  }
+
+  if(!startDate){
+
+    return {
+      days:null,
+      label:'—',
+      status:'unknown',
+      overdue:0,
+      blocked:false
+    };
+
+  }
+
+  const daysInStage =
+    daysBetween_(
+      startDate,
+      today
+    );
+
+  let overdueDays = 0;
+
+  if(
+    current &&
+    current.dueDate
+  ){
+
+    const due =
+      parseDate_(current.dueDate);
+
+    if(
+      due &&
+      today > due
+    ){
+
+      overdueDays =
+        daysBetween_(
+          due,
+          today
+        );
+
+    }
+
+  }
+
+  const hasBlocker =
+    !!(
+      current &&
+      current.blocker
+    );
+
+  let label =
+    daysInStage +
+    'd in stage';
+
+  if(overdueDays > 0){
+
+    label +=
+      ' (' +
+      overdueDays +
+      'd overdue)';
+
+  }
+  else if(hasBlocker){
+
+    label +=
+      ' (blocked)';
+
+  }
+
+  let status = 'active';
+
+  if(hasBlocker || overdueDays > 0){
+
+    status = 'stuck';
+
+  }
+  else if(
+    daysInStage >=
+    STUCK_CRITICAL_DAYS
+  ){
+
+    status = 'critical';
+
+  }
+  else if(
+    daysInStage >=
+    STUCK_WARN_DAYS
+  ){
+
+    status = 'warn';
+
+  }
+
+  return {
+    days:daysInStage,
+    label,
+    status,
+    overdue:overdueDays,
+    blocked:hasBlocker
+  };
+
+}
+
+
+/* ============================================================
+   BLOCKER ROLLUP
+   ============================================================ */
+
+function renderRollup(){
+
+  const rows = [];
+
+  DATA.products.forEach(d => {
+
+    const eng =
+      (
+        DATA.engineering[d.id] || {}
+      )[d.stage];
+
+    if(
+      eng &&
+      eng.blocker
+    ){
+
+      const stuck =
+        getStuckInfo_(d);
+
+      rows.push({
+
+        productId:d.id,
+
+        productName:d.name,
+
+        cat:d.cat,
+
+        who:eng.blocker,
+
+        owner:
+          d.pm
+            ? `${d.pdm || '—'} / ${d.pm}`
+            : (d.pdm || '—'),
+
+        daysOpen:
+          stuck.days === null
+            ? 0
+            : stuck.days,
+
+        stage:d.stage
+
+      });
+
+    }
+
+  });
+
+  rows.sort(
+    (a,b) =>
+      b.daysOpen -
+      a.daysOpen
+  );
+
+  const el =
+    document.getElementById(
+      'rollupStrip'
+    );
+
+  if(!rows.length){
+
+    el.innerHTML = `
+      <div class="rollup rollup-empty">
+        ✓ No open blockers across the portfolio.
+      </div>
+    `;
+
+    return;
+
+  }
+
+  const head = `
+    <div class="rollup-head">
+      <p class="rollup-title">
+        Open blockers
+      </p>
+
+      <span class="badge-count">
+        ${rows.length} open
+      </span>
+    </div>
+  `;
+
+  const body =
+    rows.map(r => {
+
+      return `
+        <div
+          class="blocker-row"
+          onclick="jumpToBlocker('${esc(r.productId)}',${r.stage})"
+        >
+
+          <span class="pid">
+            ${esc(r.productId)}
+          </span>
+
+          <span class="desc">
+            ${esc(r.who)}
+          </span>
+
+          <span class="owner">
+            ${esc(r.owner)}
+          </span>
+
+          <span class="age">
+            ${r.daysOpen}d
+          </span>
+
+        </div>
+      `;
+
+    }).join('');
+
+  el.innerHTML = `
+    <div class="rollup">
+
+      ${head}
+
+      ${body}
+
+      <p class="rollup-note">
+        Sorted oldest first · click a row to open that
+        variant at the blocked stage.
+      </p>
+
+    </div>
+  `;
+
+}
+
+
+/* ============================================================
+   CATEGORY STRIP
+   ============================================================ */
+
+function renderCatStrip(){
+
+  const cats =
+    currentCats_();
+
+  document.getElementById(
+    'catStrip'
+  ).innerHTML =
+
+    cats.map(cat => {
+
+      const list =
+        catProducts(cat);
+
+      if(!list.length){
+
+        return '';
+
+      }
+
+      const avg =
+        Math.round(
+          list.reduce(
+            (sum,d) =>
+              sum +
+              Number(
+                d.progressPct ||
+                (d.stage / TOTAL_STAGES * 100)
+              ),
+            0
+          ) / list.length
+        );
+
+      const active =
+        cat === selectedCat
+          ? 'active'
+          : '';
+
+      return `
+        <div
+          class="cat-tile ${active}"
+          style="--tile-color:var(${catColor_(cat)})"
+          onclick="selectCategory('${esc(cat)}')"
+        >
+
+          <div class="icon">
+            ${catIcon_(cat)}
+          </div>
+
+          <div class="cname">
+            ${esc(cat)}
+          </div>
+
+          <div class="ccount">
+            ${list.length}
+            variant${list.length > 1 ? 's' : ''}
+          </div>
+
+          <div class="cbar">
+            <i style="width:${Math.min(avg,100)}%"></i>
+          </div>
+
+          <div class="cpct">
+            ${avg}% avg progress
+          </div>
+
+        </div>
+      `;
+
+    }).join('');
+
+}
+
+
+/* ============================================================
+   VARIANTS
+   ============================================================ */
+
+function renderVariants(){
+
+  const list =
+    catProducts(selectedCat);
+
+  document.getElementById(
+    'variantLabel'
+  ).textContent =
+    `${selectedCat || 'Variants'} — variants`;
+
+  document.getElementById(
+    'variantGrid'
+  ).innerHTML =
+
+    list.map(d => {
+
+      const pct =
+        Number(
+          d.progressPct ??
+          (
+            Number(d.stage || 1) /
+            TOTAL_STAGES *
+            100
+          )
+        );
+
+      const sel =
+        d.id === selectedProduct
+          ? 'selected'
+          : '';
+
+      const eng =
+        DATA.engineering[d.id] || {};
+
+      const currentStage =
+        eng[d.stage] || {};
+
+      const hasBlocker =
+        !!currentStage.blocker;
+
+      const stuck =
+        getStuckInfo_(d);
+
+      let stuckBadge = '';
+
+      if(
+        stuck.days !== null &&
+        stuck.status !== 'done'
+      ){
+
+        const cls =
+          stuck.status === 'critical' ||
+          stuck.status === 'stuck'
+            ? 'red'
+            : stuck.status === 'warn'
+              ? 'amber'
+              : 'teal';
+
+        stuckBadge = `
+          <div class="stuck-badge ${cls}">
+            ${esc(stuck.label)}
+          </div>
+        `;
+
+      }
+
+      return `
+        <div
+          class="variant ${sel} ${hasBlocker ? 'blocked' : ''}"
+          onclick="selectProduct('${esc(d.id)}')"
+        >
+
+          ${stuckBadge}
+
+          <div class="vname">
+            ${esc(d.name)}
+          </div>
+
+          <div class="vid">
+            ${esc(d.id)}
+          </div>
+
+          <div class="vmeta">
+
+            <div class="vstage">
+              Stage ${d.stage}/${TOTAL_STAGES}
+            </div>
+
+            <div class="vpct">
+              ${Math.min(pct,100)}%
+            </div>
+
+          </div>
+
+        </div>
+      `;
+
+    }).join('');
+
+}
+
+
+/* ============================================================
+   CATEGORY / PRODUCT SELECTION
+   ============================================================ */
+
+function selectCategory(cat){
+
+  selectedCat = cat;
+
+  selectedProduct = null;
+
+  expandedStage = null;
+
+  document
+    .getElementById('detail')
+    .classList
+    .remove('open');
+
+  renderCatStrip();
+
+  renderVariants();
+
+}
+
+
+function selectProduct(id){
+
+  selectedProduct = id;
+
+  expandedStage = null;
+
+  renderVariants();
+
+  renderDetail();
+
+  rebuildTemplates();
+
+}
+
+
+function jumpToBlocker(
+  pid,
+  stageNum
+){
+
+  const d =
+    DATA.products.find(
+      p => p.id === pid
+    );
+
+  if(!d) return;
+
+  selectedCat =
+    d.cat;
+
+  selectedProduct =
+    pid;
+
+  expandedStage =
+    stageNum;
+
+  renderCatStrip();
+
+  renderVariants();
+
+  renderDetail();
+
+  document
+    .getElementById('detail')
+    .scrollIntoView({
+      behavior:'smooth',
+      block:'start'
+    });
+
+}
+
+
+/* ============================================================
+   STAGE TOGGLE
+   ============================================================ */
+
+function toggleStage(n){
+
+  expandedStage =
+    expandedStage === n
+      ? null
+      : n;
+
+  renderDetail();
+
+}
+
+
+/* ============================================================
+   DOCUMENT NORMALIZATION
+   ============================================================ */
+
+/*
+  Supports all of these backend names:
+
+  document
+  documentName
+  name
+
+  link
+  url
+  documentLink
+
+  stage
+  stageNumber
+
+  status
+*/
+
+function getProductDocuments(pid){
+
+  const source =
+    DATA.documents || {};
+
+  let docs =
+    source[pid];
+
+  if(Array.isArray(docs))
+    return docs;
+
+  /*
+    Also support a flat document array if Apps Script
+    returns documents as an array.
+  */
+
+  if(Array.isArray(source)){
+
+    return source.filter(
+      d =>
+        String(
+          d.productId ||
+          d.projectId ||
+          d.id ||
+          ''
+        ) === String(pid)
+    );
+
+  }
+
+  return [];
+
+}
+
+
+function getDocumentStage(doc){
+
+  return Number(
+    doc.stage ??
+    doc.stageNumber ??
+    doc.stageNo ??
+    0
+  );
+
+}
+
+
+function getDocumentName(doc){
+
+  return String(
+    doc.document ??
+    doc.documentName ??
+    doc.name ??
+    doc.title ??
+    'Document'
+  );
+
+}
+
+
+function getDocumentLink(doc){
+
+  return String(
+    doc.link ??
+    doc.url ??
+    doc.documentLink ??
+    doc.fileUrl ??
+    ''
+  ).trim();
+
+}
+
+
+function getDocumentStatus(doc){
+
+  return String(
+    doc.status ??
+    'Available'
+  ).trim();
+
+}
+
+
+/* ============================================================
+   URL VALIDATION
+   ============================================================ */
+
+// Your Documents sheet currently stores plain filenames (e.g.
+// "Parking_Sensor_MRD") rather than real links in some rows. Rendering
+// those as "Open ↗ / Download ↓" buttons produced a dead link (browser
+// tries to open a relative path that doesn't exist). This checks the
+// value actually looks like a URL before treating it as one.
+function looksLikeUrl(s){
+
+  return /^https?:\/\//i.test(
+    String(s || '').trim()
+  );
+
+}
+
+
+/* ============================================================
+   DRIVE DOWNLOAD URL
+   ============================================================ */
+
+function makeDownloadUrl(url){
+
+  if(!url)
+    return '';
+
+  const s =
+    String(url);
+
+  let m =
+    s.match(
+      /drive\.google\.com\/file\/d\/([^/]+)/i
+    );
+
+  if(!m){
+
+    m =
+      s.match(
+        /[?&]id=([^&]+)/i
+      );
+
+  }
+
+  if(m){
+
+    return (
+      'https://drive.google.com/uc?export=download&id=' +
+      encodeURIComponent(m[1])
+    );
+
+  }
+
+  return s;
+
+}
+
+
+/* ============================================================
+   DOCUMENT STATUS CLASS
+   ============================================================ */
+
+function documentStatusClass(status){
+
+  const s =
+    String(status || '')
+      .toLowerCase();
+
+  if(
+    /blocked/
+      .test(s)
+  ){
+
+    return 'blocked';
+
+  }
+
+  if(
+    /complete|ready|approved|available/
+      .test(s)
+  ){
+
+    return 'ready';
+
+  }
+
+  if(
+    /progress|revision|review|working/
+      .test(s)
+  ){
+
+    return 'progress';
+
+  }
+
+  return 'notstarted';
+
+}
+
+
+/* ============================================================
+   RENDER DOCUMENTS FOR A STAGE
+   ============================================================ */
+
+function renderDocuments(
+  pid,
+  stageNum
+){
+
+  const allDocs =
+    getProductDocuments(pid);
+
+  const docs =
+    allDocs.filter(
+      d =>
+        getDocumentStage(d) ===
+        Number(stageNum)
+    );
+
+  if(!docs.length){
+
+    return `
+      <div class="doc-section">
+
+        <div class="doc-header">
+          <div class="doc-title">
+            Documents
+          </div>
+        </div>
+
+        <div class="no-docs">
+          No documents uploaded for this stage yet.
+        </div>
+
+      </div>
+    `;
+
+  }
+
+
+  const filterId =
+    `docFilter_${pid}_${stageNum}`;
+
+  const listId =
+    `docList_${pid}_${stageNum}`;
+
+
+  const options = `
+    <select
+      id="${filterId}"
+      onchange="filterStageDocuments(
+        '${esc(pid)}',
+        ${stageNum}
+      )"
+    >
+      <option value="ALL">
+        All documents (${docs.length})
+      </option>
+
+      ${docs.map((d,i) => `
+        <option value="${i}">
+          ${esc(getDocumentName(d))}
+        </option>
+      `).join('')}
+
+    </select>
+  `;
+
+
+  return `
+    <div class="doc-section">
+
+      <div class="doc-header">
+
+        <div class="doc-title">
+          Documents (${docs.length})
+        </div>
+
+        <div class="doc-filter">
+          ${options}
+        </div>
+
+      </div>
+
+      <div id="${listId}">
+
+        ${renderDocumentRows(docs)}
+
+      </div>
+
+    </div>
+  `;
+
+}
+
+
+/* ============================================================
+   DOCUMENT ROWS
+   ============================================================ */
+
+function renderDocumentRows(docs){
+
+  return docs.map(doc => {
+
+    const name =
+      getDocumentName(doc);
+
+    const link =
+      getDocumentLink(doc);
+
+    const status =
+      getDocumentStatus(doc);
+
+    const statusClass =
+      documentStatusClass(status);
+
+    const download =
+      makeDownloadUrl(link);
+
+    let actions = '';
+
+    if(link && looksLikeUrl(link)){
+
+      actions = `
+        <div class="doc-actions">
+
+          <a
+            class="open"
+            href="${esc(link)}"
+            target="_blank"
+            onclick="event.stopPropagation()"
+          >
+            Open ↗
+          </a>
+
+          <a
+            class="download"
+            href="${esc(download)}"
+            target="_blank"
+            download
+            onclick="event.stopPropagation()"
+          >
+            Download ↓
+          </a>
+
+        </div>
+      `;
+
+    }
+    else if(link){
+
+      // Non-blank but not a real URL (e.g. a plain filename typed in the
+      // sheet) — show it as text instead of a dead link.
+      actions = `
+        <div class="doc-actions">
+          <span
+            style="
+              color:var(--mute);
+              font-size:10px;
+            "
+            title="Not a link — paste the actual file URL in Documents to make this clickable"
+          >
+            ${esc(link)}
+          </span>
+        </div>
+      `;
+
+    }
+    else{
+
+      actions = `
+        <div class="doc-actions">
+          <span
+            style="
+              color:var(--mute);
+              font-size:10px;
+            "
+          >
+            No file link
+          </span>
+        </div>
+      `;
+
+    }
+
+
+    return `
+      <div class="doc-row">
+
+        <div class="doc-name">
+          ${esc(name)}
+        </div>
+
+        <span class="doc-status ${statusClass}">
+          ${esc(status)}
+        </span>
+
+        ${actions}
+
+      </div>
+    `;
+
+  }).join('');
+
+}
+
+
+/* ============================================================
+   DOCUMENT FILTER
+   ============================================================ */
+
+function filterStageDocuments(
+  pid,
+  stageNum
+){
+
+  const select =
+    document.getElementById(
+      `docFilter_${pid}_${stageNum}`
+    );
+
+  const container =
+    document.getElementById(
+      `docList_${pid}_${stageNum}`
+    );
+
+  if(!select || !container)
+    return;
+
+  const docs =
+    getProductDocuments(pid)
+      .filter(
+        d =>
+          getDocumentStage(d) ===
+          Number(stageNum)
+      );
+
+  const value =
+    select.value;
+
+  if(value === 'ALL'){
+
+    container.innerHTML =
+      renderDocumentRows(docs);
+
+    return;
+
+  }
+
+  const index =
+    Number(value);
+
+  if(
+    Number.isNaN(index) ||
+    !docs[index]
+  ){
+
+    container.innerHTML =
+      renderDocumentRows(docs);
+
+    return;
+
+  }
+
+  container.innerHTML =
+    renderDocumentRows(
+      [docs[index]]
+    );
+
+}
+
+
+/* ============================================================
+   DETAIL PANEL
+   ============================================================ */
+
+function renderDetail(){
+
+  const panel =
+    document.getElementById(
+      'detail'
+    );
+
+  if(!selectedProduct){
+
+    panel.classList.remove('open');
+
+    return;
+
+  }
+
+  const d =
+    DATA.products.find(
+      p => p.id === selectedProduct
+    );
+
+  if(!d){
+
+    selectedProduct = null;
+
+    panel.classList.remove('open');
+
+    return;
+
+  }
+
+  const pct =
+    Number(
+      d.progressPct ??
+      (
+        d.stage /
+        TOTAL_STAGES *
+        100
+      )
+    );
+
+  const owner =
+    Number(d.stage) <= 5
+      ? 'PDM'
+      : 'PDM + PM';
+
+  const eng =
+    DATA.engineering[d.id] || {};
+
+  const stuck =
+    getStuckInfo_(d);
+
+  let stageRows = '';
+
+
+  STAGES.forEach(
+    (stageName,index) => {
+
+      const n =
+        index + 1;
+
+      let status;
+
+      if(n < d.stage){
+
+        status = 'done';
+
+      }
+      else if(n === d.stage){
+
+        status = 'current';
+
+      }
+      else{
+
+        status = 'upcoming';
+
+      }
+
+      const label =
+        status === 'done'
+          ? 'Completed'
+          : status === 'current'
+            ? 'In progress'
+            : 'Not Started';
+
+
+      const rowOwner =
+        n <= 5
+          ? 'PDM'
+          : 'PDM + PM';
+
+      const isOpen =
+        expandedStage === n;
+
+      const stageEng =
+        eng[n] || {};
+
+
+      const fields = [];
+
+
+      if(stageEng.plannedStart){
+
+        fields.push(`
+          <div class="eng-field">
+
+            <div class="k">
+              Planned Start
+            </div>
+
+            <div class="v">
+              ${esc(stageEng.plannedStart)}
+            </div>
+
+          </div>
+        `);
+
+      }
+
+
+      if(stageEng.dueDate){
+
+        fields.push(`
+          <div class="eng-field">
+
+            <div class="k">
+              Due Date
+            </div>
+
+            <div class="v">
+              ${esc(stageEng.dueDate)}
+            </div>
+
+          </div>
+        `);
+
+      }
+
+
+      if(stageEng.completedDate){
+
+        fields.push(`
+          <div class="eng-field">
+
+            <div class="k">
+              Completion Date
+            </div>
+
+            <div class="v">
+              ${esc(stageEng.completedDate)}
+            </div>
+
+          </div>
+        `);
+
+      }
+
+
+      if(stageEng.status){
+
+        fields.push(`
+          <div class="eng-field">
+
+            <div class="k">
+              Status
+            </div>
+
+            <div class="v">
+              ${esc(stageEng.status)}
+            </div>
+
+          </div>
+        `);
+
+      }
+
+
+      if(stageEng.remarks){
+
+        fields.push(`
+          <div class="eng-field">
+
+            <div class="k">
+              Remarks
+            </div>
+
+            <div class="v">
+              ${esc(stageEng.remarks)}
+            </div>
+
+          </div>
+        `);
+
+      }
+
+
+      let extra = '';
+
+
+      if(status === 'upcoming'){
+
+        /*
+          Future stages stay visible.
+          They are NOT hidden.
+        */
+
+        extra = `
+
+          <div
+            style="
+              color:var(--mute);
+              font-size:12px;
+              padding:5px 0;
+            "
+          >
+            This stage has not started yet.
+          </div>
+
+          ${renderDocuments(
+            d.id,
+            n
+          )}
+
+        `;
+
+      }
+      else{
+
+        const stageDone =
+          status === 'done';
+
+
+        const isOverdue =
+          stageEng.dueDate &&
+          !stageEng.completedDate &&
+          (() => {
+
+            const due =
+              parseDate_(
+                stageEng.dueDate
+              );
+
+            const today =
+              new Date();
+
+            today.setHours(
+              0,0,0,0
+            );
+
+            return (
+              due &&
+              today > due
+            );
+
+          })();
+
+
+        const milestoneHtml =
+          stageEng.milestone
+
+            ? `
+              <div class="milestone-item ${stageDone ? 'done' : ''}">
+
+                <span class="dot"></span>
+
+                <span class="m-text">
+                  ${esc(stageEng.milestone)}
+                </span>
+
+              </div>
+            `
+
+            : `
+              <div class="empty-note">
+                No milestones logged for this stage yet.
+              </div>
+            `;
+
+
+        const blockerHtml =
+          stageEng.blocker
+
+            ? `
+              <div class="eng-blocker">
+
+                <div class="k">
+                  Blocker
+                </div>
+
+                ${esc(stageEng.blocker)}
+
+              </div>
+            `
+
+            : `
+              <div class="empty-note">
+                No blockers on this stage.
+              </div>
+            `;
+
+
+        let actionsHtml;
+
+
+        if(stageEng.nextStep){
+
+          const actionStatus =
+            stageDone
+              ? 'done'
+              : isOverdue
+                ? 'overdue'
+                : 'open';
+
+          const actionLabel =
+            stageDone
+              ? 'Done'
+              : isOverdue
+                ? 'Overdue'
+                : 'Open';
+
+
+          actionsHtml = `
+            <table class="actions">
+
+              <tr>
+                <th>Item</th>
+                <th>Owner</th>
+                <th>Due</th>
+                <th>Status</th>
+              </tr>
+
+              <tr>
+
+                <td>
+                  ${esc(stageEng.nextStep)}
+                </td>
+
+                <td>
+                  ${esc(rowOwner)}
+                </td>
+
+                <td>
+                  ${esc(stageEng.dueDate || '—')}
+                </td>
+
+                <td>
+                  <span class="status-pill ${actionStatus}">
+                    ${actionLabel}
+                  </span>
+                </td>
+
+              </tr>
+
+            </table>
+          `;
+
+        }
+        else{
+
+          actionsHtml = `
+            <div class="empty-note">
+              No action items logged for this stage yet.
+            </div>
+          `;
+
+        }
+
+
+        extra = `
+
+          ${
+            fields.length
+              ? `
+                <div class="eng-grid">
+                  ${fields.join('')}
+                </div>
+              `
+              : ''
+          }
+
+
+          <div class="stage-section">
+
+            <div class="k">
+              Milestones
+            </div>
+
+            ${milestoneHtml}
+
+          </div>
+
+
+          <div class="stage-section">
+
+            <div class="k">
+              Blockers
+            </div>
+
+            ${blockerHtml}
+
+          </div>
+
+
+          <div class="stage-section">
+
+            <div class="k">
+              Action items
+            </div>
+
+            ${actionsHtml}
+
+          </div>
+
+
+          ${renderDocuments(
+            d.id,
+            n
+          )}
+
+        `;
+
+      }
+
+
+      stageRows += `
+
+        <div
+          class="stage-row ${isOpen ? 'expanded' : ''}"
+          onclick="toggleStage(${n})"
+        >
+
+          <div class="stage-num ${status}">
+            ${n}
+          </div>
+
+          <div class="stage-line">
+
+            <div class="stage-name">
+              ${esc(stageName)}
+            </div>
+
+            <div class="stage-owner">
+              ${rowOwner}
+            </div>
+
+          </div>
+
+          <div class="stage-status ${status}">
+            ${label}
+          </div>
+
+          <div class="chev">
+            ▶
+          </div>
+
+        </div>
+
+
+        <div
+          class="stage-detail ${isOpen ? 'open' : ''}"
+        >
+
+          <div class="stage-detail-inner">
+
+            ${extra}
+
+          </div>
+
+        </div>
+
+      `;
+
+    }
+  );
+
+
+  let stuckBanner = '';
+
+
+  if(
+    stuck.days !== null &&
+    stuck.status !== 'done'
+  ){
+
+    const bannerCls =
+      stuck.status === 'critical' ||
+      stuck.status === 'stuck'
+        ? 'red'
+        : '';
+
+    const bannerIcon =
+      stuck.blocked
+        ? '⛔'
+        : stuck.overdue > 0
+          ? '⚠️'
+          : '⏱️';
+
+
+    stuckBanner = `
+
+      <div class="stuck-banner ${bannerCls}">
+
+        <span class="k">
+          ${bannerIcon}
+          Stuck for ${stuck.days} days
+        </span>
+
+        <span class="v">
+          ${esc(stuck.label)}
+        </span>
+
+      </div>
+
+    `;
+
+  }
+
+
+  const currentEng =
+    eng[d.stage] || {};
+
+  const productBlocker =
+    currentEng.blocker;
+
+
+  panel.innerHTML = `
+
+    <div class="dhead">
+
+      <div>
+
+        <div class="dname">
+          ${esc(d.name)}
+        </div>
+
+        <div class="did">
+          ${esc(d.id)} — ${esc(d.cat)}
+        </div>
+
+        <div class="dpeople">
+
+          <div>
+            <span>PDM</span>
+            ${esc(d.pdm || '—')}
+          </div>
+
+          <div>
+            <span>PM / TL</span>
+
+            ${
+              d.pm
+                ? esc(d.pm)
+                : '<span class="pm-missing">Not assigned</span>'
+            }
+
+          </div>
+
+          <div>
+            <span>Owner (current stage)</span>
+            ${owner}
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="dstats">
+
+        <div class="dpct">
+          ${Math.min(pct,100)}%
+        </div>
+
+        <div class="dsub">
+          overall progress
+        </div>
+
+        <div class="ddays">
+
+          <span>
+            <b>${esc(d.plannedStart || '—')}</b>
+            start
+          </span>
+
+          <span>
+            <b>${esc(d.plannedEnd || '—')}</b>
+            end
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    ${stuckBanner}
+
+
+    ${
+      productBlocker
+        ? `
+          <div class="dblocker">
+
+            <div class="k">
+              Blocker
+            </div>
+
+            ${esc(productBlocker)}
+
+          </div>
+        `
+        : ''
+    }
+
+
+    ${stageRows}
+
+  `;
+
+
+  panel.classList.add('open');
+
+}
+
+
+/* ============================================================
+   MASTER TEMPLATE LIBRARY
+   ============================================================ */
+
+function rebuildTemplates(){
+
+  const list =
+    document.getElementById(
+      'tmplList'
+    );
+
+  if(!list)
+    return;
+
+
+  if(!selectedProduct){
+
+    list.innerHTML = `
+      <div class="empty-note">
+        Select a variant first to see its documents.
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  const docs =
+    getProductDocuments(
+      selectedProduct
+    );
+
+
+  const sub =
+    document.getElementById(
+      'tmplSub'
+    );
+
+  if(sub){
+
+    sub.textContent =
+      `Documents uploaded for ${selectedProduct}.`;
+
+  }
+
+
+  if(!docs.length){
+
+    list.innerHTML = `
+      <div class="empty-note">
+        No documents uploaded for this variant yet.
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  list.innerHTML =
+    docs.map(doc => {
+
+      const stage =
+        getDocumentStage(doc);
+
+      const name =
+        getDocumentName(doc);
+
+      const link =
+        getDocumentLink(doc);
+
+      const download =
+        makeDownloadUrl(link);
+
+      const status =
+        getDocumentStatus(doc);
+
+
+      const button =
+        link
+
+          ? `
+            <div style="
+              display:flex;
+              gap:6px;
+              flex-wrap:wrap;
+            ">
+
+              <a
+                class="dl-btn"
+                href="${esc(link)}"
+                target="_blank"
+                style="
+                  text-decoration:none;
+                  display:inline-block;
+                "
+              >
+                Open ↗
+              </a>
+
+              <a
+                class="dl-btn"
+                href="${esc(download)}"
+                target="_blank"
+                download
+                style="
+                  text-decoration:none;
+                  display:inline-block;
+                "
+              >
+                Download ↓
+              </a>
+
+            </div>
+          `
+
+          : `
+            <span
+              style="
+                color:var(--mute);
+                font-size:11px;
+              "
+            >
+              No file
+            </span>
+          `;
+
+
+      return `
+
+        <div class="tmpl-row">
+
+          <div>
+
+            <div class="tmpl-name">
+              ${esc(name)}
+            </div>
+
+            <div class="tmpl-desc">
+              ${esc(status)}
+            </div>
+
+          </div>
+
+          <div
+            style="
+              display:flex;
+              align-items:center;
+              gap:10px;
+              flex-wrap:wrap;
+              justify-content:flex-end;
+            "
+          >
+
+            <span class="tmpl-stage">
+              Stage ${stage}
+            </span>
+
+            ${button}
+
+          </div>
+
+        </div>
+
+      `;
+
+    }).join('');
+
+}
+
+
+/* ============================================================
+   DOWNLOAD LIVE CSV
+   ============================================================ */
+
+function csvEscape(value){
+
+  if(
+    value === null ||
+    value === undefined
+  ){
+
+    return '';
+
+  }
+
+  let x =
+    typeof value === 'object'
+      ? JSON.stringify(value)
+      : String(value);
+
+  return (
+    '"' +
+    x.replace(/"/g,'""') +
+    '"'
+  );
+
+}
+
+
+function downloadLiveCSV(){
+
+  const products =
+    Array.isArray(DATA.products)
+      ? DATA.products
+      : [];
+
+
+  if(!products.length){
+
+    alert(
+      'No live project data is available.'
+    );
+
+    return;
+
+  }
+
+
+  const preferred = [
+
+    'id',
+    'projectId',
+    'name',
+    'projectName',
+    'productName',
+    'cat',
+    'category',
+    'sku',
+    'type',
+    'pdm',
+    'pm',
+    'stage',
+    'currentStage',
+    'currentStageName',
+    'progressPct',
+    'status',
+    'blocker',
+    'plannedStart',
+    'plannedEnd'
+
+  ];
+
+
+  const keys = [];
+
+
+  preferred.forEach(k => {
+
+    if(
+      products.some(
+        p =>
+          Object.prototype
+            .hasOwnProperty
+            .call(p,k)
+      )
+    ){
+
+      keys.push(k);
+
+    }
+
+  });
+
+
+  products.forEach(p => {
+
+    Object.keys(p).forEach(k => {
+
+      if(!keys.includes(k))
+        keys.push(k);
+
+    });
+
+  });
+
+
+  const rows = [];
+
+  rows.push(
+    keys
+      .map(csvEscape)
+      .join(',')
+  );
+
+
+  products.forEach(p => {
+
+    rows.push(
+      keys
+        .map(
+          k =>
+            csvEscape(p[k])
+        )
+        .join(',')
+    );
+
+  });
+
+
+  const blob =
+    new Blob(
+      [
+        '\ufeff' +
+        rows.join('\r\n')
+      ],
+      {
+        type:
+          'text/csv;charset=utf-8;'
+      }
+    );
+
+
+  const url =
+    URL.createObjectURL(blob);
+
+
+  const a =
+    document.createElement('a');
+
+  a.href = url;
+
+  a.download =
+    'PDM-PM-Live-Tracker-' +
+    new Date()
+      .toISOString()
+      .slice(0,10) +
+    '.csv';
+
+  document.body.appendChild(a);
+
+  a.click();
+
+  a.remove();
+
+  setTimeout(
+    () =>
+      URL.revokeObjectURL(url),
+    1000
+  );
+
+}
+
+
+/* ============================================================
+   LIVE GOOGLE SHEET SYNC
+   ============================================================ */
+
+async function refreshLive(){
+
+  try{
+
+    const response =
+      await fetch(
+        LIVE_API_URL +
+        '?t=' +
+        Date.now(),
+        {
+          cache:'no-store'
+        }
+      );
+
+
+    if(!response.ok){
+
+      throw new Error(
+        'HTTP ' +
+        response.status
+      );
+
+    }
+
+
+    const live =
+      await response.json();
+
+
+    if(
+      !live ||
+      !Array.isArray(live.products)
+    ){
+
+      throw new Error(
+        'Invalid API response'
+      );
+
+    }
+
+
+    DATA =
+      live;
+
+
+    STAGES =
+      Array.isArray(live.stages)
+        ? live.stages
+        : [];
+
+
+    TOTAL_STAGES =
+      STAGES.length;
+
+
+    /*
+      Normalize the current stage only.
+    */
+
+    normalizeLiveStageProgress(
+      live
+    );
+
+
+    /*
+      Keep selected product if it still exists.
+    */
+
+    if(
+      selectedProduct &&
+      !DATA.products.some(
+        p =>
+          p.id === selectedProduct
+      )
+    ){
+
+      selectedProduct = null;
+
+    }
+
+
+    /*
+      If no category selected,
+      select first available.
+    */
+
+    const cats =
+      currentCats_();
+
+
+    if(
+      !selectedCat ||
+      !cats.includes(selectedCat)
+    ){
+
+      selectedCat =
+        cats[0] || '';
+
+    }
+
+
+    renderRollup();
+
+    renderCatStrip();
+
+    renderVariants();
+
+    renderDetail();
+
+    rebuildTemplates();
+
+
+    const note =
+      document.getElementById(
+        'syncNote'
+      );
+
+
+    if(note){
+
+      note.textContent =
+        'Live — Google Sheet synced ' +
+        (
+          live.generatedAt
+            ? new Date(
+                live.generatedAt
+              ).toLocaleString(
+                'en-IN'
+              )
+            : 'just now'
+        );
+
+    }
+
+
+    console.log(
+      'PDM-PM live sync successful:',
+      DATA.products.length,
+      'projects'
+    );
+
+
+  }
+  catch(error){
+
+    console.error(
+      'PDM-PM live sync failed:',
+      error
+    );
+
+
+    const note =
+      document.getElementById(
+        'syncNote'
+      );
+
+
+    if(note){
+
+      note.textContent =
+        'Live sync unavailable — retrying...';
+
+    }
+
+  }
+
+}
+
+
+/* ============================================================
+   INIT
+   ============================================================ */
+
+document.getElementById(
+  'today'
+).textContent =
+  new Date().toLocaleDateString(
+    'en-GB',
+    {
+      day:'2-digit',
+      month:'short',
+      year:'numeric'
+    }
+  );
+
+
+/*
+  Initial rendering.
+*/
+
+renderRollup();
+
+renderCatStrip();
+
+renderVariants();
+
+renderDetail();
+
+rebuildTemplates();
+
+
+/*
+  Immediately load Google Sheet.
+*/
+
+refreshLive();
+
+
+/*
+  Refresh every 5 minutes.
+*/
+
+setInterval(
+  refreshLive,
+  5 * 60 * 1000
+);
+
+
+/*
+  Allow manual refresh from browser console if required.
+*/
+
+window.refreshPdmPmDashboard =
+  refreshLive;
+
 </script>
+
 </body>
 </html>
