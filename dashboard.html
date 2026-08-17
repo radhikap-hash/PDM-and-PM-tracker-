@@ -1467,9 +1467,15 @@ function normalizeLiveStageProgress(live){
       // "current" all the way to the last stage number that exists in the
       // engineering object (stage 10 for a fresh Tracker export), showing
       // brand-new, barely-started products as 100% complete.
+      //
+      // "Not Started" is Apps Script's DEFAULT placeholder for every empty
+      // stage — it is not real data. Treating it as real data was the bug:
+      // it made hasAnyData true for every stage, so ALL stages counted as
+      // "active," and current = the last one (10). Explicitly excluding
+      // the "Not Started" placeholder fixes it.
       const hasAnyData =
         !!(
-          e.status ||
+          (e.status && e.status !== 'Not Started') ||
           e.plannedStart ||
           e.dueDate ||
           e.completedDate ||
